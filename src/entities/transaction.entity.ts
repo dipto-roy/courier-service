@@ -67,10 +67,22 @@ export class Transaction {
   @Column({ name: 'net_amount', type: 'decimal', precision: 10, scale: 2 })
   netAmount: number;
 
-  @Column({ name: 'previous_balance', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({
+    name: 'previous_balance',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
   previousBalance: number;
 
-  @Column({ name: 'new_balance', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({
+    name: 'new_balance',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
   newBalance: number;
 
   @Column({ type: 'text', nullable: true })

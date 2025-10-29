@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -102,7 +103,13 @@ export class Shipment {
   @Column({ name: 'quantity', type: 'int', default: 1 })
   quantity: number;
 
-  @Column({ name: 'declared_value', type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({
+    name: 'declared_value',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
   declaredValue: number;
 
   @Column({
@@ -134,13 +141,25 @@ export class Shipment {
   })
   paymentStatus: PaymentStatus;
 
-  @Column({ name: 'cod_amount', type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({
+    name: 'cod_amount',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
   codAmount: number;
 
   @Column({ name: 'delivery_fee', type: 'decimal', precision: 10, scale: 2 })
   deliveryFee: number;
 
-  @Column({ name: 'cod_fee', type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({
+    name: 'cod_fee',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
   codFee: number;
 
   @Column({ name: 'total_amount', type: 'decimal', precision: 10, scale: 2 })

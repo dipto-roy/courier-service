@@ -70,7 +70,13 @@ export class User {
   @Exclude()
   refreshToken: string | null;
 
-  @Column({ name: 'wallet_balance', type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({
+    name: 'wallet_balance',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
   walletBalance: number;
 
   @Column({ nullable: true })
