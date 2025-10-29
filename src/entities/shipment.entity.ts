@@ -186,6 +186,15 @@ export class Shipment {
   rtoReason: string;
 
   // Additional fields
+  @Column({ name: 'current_hub', nullable: true })
+  currentHub: string; // Current hub location
+
+  @Column({ name: 'next_hub', nullable: true })
+  nextHub: string; // Next hub for routing
+
+  @Column({ name: 'delivery_area', nullable: true })
+  deliveryArea: string; // Delivery area/zone
+
   @Column({ name: 'special_instructions', type: 'text', nullable: true })
   specialInstructions: string;
 

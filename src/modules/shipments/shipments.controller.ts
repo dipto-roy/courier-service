@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
 import { ShipmentsService } from './shipments.service';
 import {
@@ -151,12 +152,95 @@ export class ShipmentsController {
   @Roles(UserRole.MERCHANT, UserRole.ADMIN)
   @ApiOperation({
     summary: 'Bulk upload shipments from CSV',
-    description:
-      'CSV format: receiverName, receiverPhone, receiverCity, receiverArea, receiverAddress, weight, codAmount, deliveryType',
+    description: `Upload multiple shipments at once using CSV format.
+    
+    **CSV Format:**
+    - Header: receiverName,receiverPhone,receiverCity,receiverArea,receiverAddress,weight,codAmount,deliveryType
+    - Each row represents one shipment
+    - Sender information is automatically taken from the logged-in merchant
+    
+    **Example CSV:**
+    \`\`\`
+    receiverName,receiverPhone,receiverCity,receiverArea,receiverAddress,weight,codAmount,deliveryType
+    Jane Smith,01798765432,Dhaka,Dhanmondi,House 5 Road 3,2.5,3500,normal
+    Michael Johnson,01687654321,Chittagong,Nasirabad,Building 10 Block A,1.2,1500,express
+    \`\`\`
+    
+    **Response includes:**
+    - Total rows processed
+    - Success/failure counts
+    - Error details for failed rows
+    - AWB numbers for successful shipments`,
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['csvData'],
+      properties: {
+        csvData: {
+          type: 'string',
+          description: 'CSV data as a string with header and data rows separated by newlines',
+          example:
+            'receiverName,receiverPhone,receiverCity,receiverArea,receiverAddress,weight,codAmount,deliveryType\nJane Smith,01798765432,Dhaka,Dhanmondi,House 5 Road 3,2.5,3500,normal\nMichael Johnson,01687654321,Chittagong,Nasirabad,Building 10 Block A,1.2,1500,express',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
     description: 'Bulk upload completed with results',
+    schema: {
+      type: 'object',
+      properties: {
+        totalRows: {
+          type: 'number',
+          example: 2,
+          description: 'Total number of rows processed (excluding header)',
+        },
+        successCount: {
+          type: 'number',
+          example: 2,
+          description: 'Number of successfully created shipments',
+        },
+        failedCount: {
+          type: 'number',
+          example: 0,
+          description: 'Number of failed shipments',
+        },
+        errors: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              row: { type: 'number', example: 2 },
+              error: { type: 'string', example: 'Invalid phone number' },
+            },
+          },
+          description: 'List of errors for failed rows',
+        },
+        shipments: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              awb: { type: 'string', example: 'FX20251028929833' },
+              receiverName: { type: 'string', example: 'Jane Smith' },
+              receiverPhone: { type: 'string', example: '01798765432' },
+            },
+          },
+          description: 'List of successfully created shipments',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - Invalid CSV format or missing data',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Only merchants and admins can bulk upload',
   })
   async bulkUpload(
     @Body('csvData') csvData: string,

@@ -37,8 +37,8 @@ export class PickupController {
   constructor(private readonly pickupService: PickupService) {}
 
   @Post()
-  @Roles(UserRole.MERCHANT)
-  @ApiOperation({ summary: 'Create a new pickup request (Merchant)' })
+  @Roles(UserRole.MERCHANT, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Create a new pickup request (Merchant/Admin)' })
   @ApiResponse({ status: 201, description: 'Pickup created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   async create(

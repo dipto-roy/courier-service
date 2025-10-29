@@ -1,0 +1,434 @@
+{
+  "info": {
+    "name": "FastX Courier - User Management",
+    "_postman_id": "user-management-collection",
+    "description": "Complete user management endpoints for FastX Courier Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3001/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Create User (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"01712345678\",\n  \"password\": \"Password@123\",\n  \"role\": \"merchant\",\n  \"city\": \"Dhaka\",\n  \"area\": \"Gulshan\",\n  \"address\": \"House 12, Road 5\",\n  \"companyName\": \"ABC Company Ltd.\",\n  \"businessWebsite\": \"www.abccompany.com\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users",
+          "host": ["{{base_url}}"],
+          "path": ["users"]
+        },
+        "description": "Create a new user. Admin only.\n\n**Required Role:** admin\n\n**Request Body:**\n- fullName (required): Full name\n- email (required): Email address\n- phone (required): Phone number\n- password (required): Min 6 characters\n- role (required): admin, merchant, customer, rider, support, finance, agent\n- city, area, address: Optional\n- companyName, businessWebsite: Optional\n\n**Response 201:**\nReturns created user without sensitive data (password, tokens)"
+      },
+      "response": []
+    },
+    {
+      "name": "2. Get All Users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users?page=1&limit=10",
+          "host": ["{{base_url}}"],
+          "path": ["users"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1",
+              "description": "Page number (default: 1)"
+            },
+            {
+              "key": "limit",
+              "value": "10",
+              "description": "Items per page (default: 10, max: 100)"
+            },
+            {
+              "key": "search",
+              "value": "john",
+              "disabled": true,
+              "description": "Search by name, email, or phone"
+            },
+            {
+              "key": "role",
+              "value": "merchant",
+              "disabled": true,
+              "description": "Filter by role"
+            },
+            {
+              "key": "isActive",
+              "value": "true",
+              "disabled": true,
+              "description": "Filter by active status"
+            },
+            {
+              "key": "isEmailVerified",
+              "value": "true",
+              "disabled": true,
+              "description": "Filter by email verification"
+            },
+            {
+              "key": "isKYCVerified",
+              "value": "false",
+              "disabled": true,
+              "description": "Filter by KYC verification"
+            },
+            {
+              "key": "city",
+              "value": "Dhaka",
+              "disabled": true,
+              "description": "Filter by city"
+            },
+            {
+              "key": "sortBy",
+              "value": "createdAt",
+              "disabled": true,
+              "description": "Field to sort by"
+            },
+            {
+              "key": "sortOrder",
+              "value": "DESC",
+              "disabled": true,
+              "description": "ASC or DESC"
+            }
+          ]
+        },
+        "description": "Get all users with filters and pagination.\n\n**Required Role:** admin, support\n\n**Query Parameters (all optional):**\n- page: Page number (default: 1)\n- limit: Items per page (default: 10, max: 100)\n- search: Search by name, email, or phone\n- role: Filter by user role\n- isActive: Filter by active status\n- isEmailVerified: Filter by email verification\n- isKYCVerified: Filter by KYC verification\n- city: Filter by city\n- sortBy: Field to sort by\n- sortOrder: ASC or DESC\n\n**Response 200:**\nReturns paginated user list with metadata"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Get Users - Merchants Only",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users?role=merchant&isActive=true&page=1&limit=20",
+          "host": ["{{base_url}}"],
+          "path": ["users"],
+          "query": [
+            {
+              "key": "role",
+              "value": "merchant"
+            },
+            {
+              "key": "isActive",
+              "value": "true"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "20"
+            }
+          ]
+        },
+        "description": "Get all active merchants.\n\n**Example:** Filter for merchants only"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Get Users - Search by Name",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users?search=john&page=1&limit=10",
+          "host": ["{{base_url}}"],
+          "path": ["users"],
+          "query": [
+            {
+              "key": "search",
+              "value": "john"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        },
+        "description": "Search users by name, email, or phone.\n\n**Example:** Search for 'john'"
+      },
+      "response": []
+    },
+    {
+      "name": "5. Get User Statistics (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/statistics",
+          "host": ["{{base_url}}"],
+          "path": ["users", "statistics"]
+        },
+        "description": "Get comprehensive user statistics.\n\n**Required Role:** admin\n\n**Response 200:**\n```json\n{\n  \"totalUsers\": 150,\n  \"activeUsers\": 142,\n  \"verifiedUsers\": 120,\n  \"kycVerifiedUsers\": 85,\n  \"byRole\": { ... },\n  \"byCity\": { ... },\n  \"totalWalletBalance\": 750000,\n  \"newUsersThisMonth\": 15,\n  \"newUsersToday\": 2\n}\n```"
+      },
+      "response": []
+    },
+    {
+      "name": "6. Get User by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}"]
+        },
+        "description": "Get specific user by ID.\n\n**Required Role:** admin, support\n\n**Path Parameter:**\n- id: User UUID\n\n**Response 200:**\nReturns user details without sensitive data\n\n**Response 404:**\nUser not found"
+      },
+      "response": []
+    },
+    {
+      "name": "7. Update User",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"John Michael Doe\",\n  \"city\": \"Chittagong\",\n  \"area\": \"Agrabad\",\n  \"isActive\": true\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}"]
+        },
+        "description": "Update user information. All fields are optional.\n\n**Required Role:** admin, support\n\n**Request Body (all optional):**\n- fullName: Update name\n- email: Update email\n- phone: Update phone\n- password: Update password (min 6 chars)\n- role: Change role\n- city, area, address: Update location\n- companyName, businessWebsite: Update business info\n- isEmailVerified, isPhoneVerified: Update verification\n- isActive: Activate/deactivate account\n- walletBalance: Update wallet\n\n**Response 200:**\nReturns updated user\n\n**Response 409:**\nEmail/phone already exists"
+      },
+      "response": []
+    },
+    {
+      "name": "8. Update User - Name Only",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"Jane Smith Updated\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}"]
+        },
+        "description": "Example: Update only the user's name.\n\nAll other fields remain unchanged."
+      },
+      "response": []
+    },
+    {
+      "name": "9. Update User - Activate Account",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"isActive\": true,\n  \"isEmailVerified\": true,\n  \"isPhoneVerified\": true\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}"]
+        },
+        "description": "Example: Activate user account and mark as verified."
+      },
+      "response": []
+    },
+    {
+      "name": "10. Update KYC Status - Approve",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"isKYCVerified\": true,\n  \"kycRemarks\": \"KYC documents verified successfully. Trade license and NID verified.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}/kyc",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}", "kyc"]
+        },
+        "description": "Approve user's KYC verification.\n\n**Required Role:** admin, finance\n\n**Request Body:**\n- isKYCVerified (required): true or false\n- kycRemarks (optional): Notes about verification\n\n**Response 200:**\nReturns updated user with KYC status"
+      },
+      "response": []
+    },
+    {
+      "name": "11. Update KYC Status - Reject",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"isKYCVerified\": false,\n  \"kycRemarks\": \"Invalid trade license. Please resubmit valid documents.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}/kyc",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}", "kyc"]
+        },
+        "description": "Reject user's KYC verification with remarks."
+      },
+      "response": []
+    },
+    {
+      "name": "12. Update Wallet - Credit",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"operation\": \"credit\",\n  \"amount\": 5000,\n  \"remarks\": \"Monthly delivery payment for October 2025\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}/wallet",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}", "wallet"]
+        },
+        "description": "Credit amount to user's wallet.\n\n**Required Role:** admin, finance\n\n**Request Body:**\n- operation (required): 'credit' or 'debit'\n- amount (required): Amount (min: 0.01)\n- remarks (optional): Transaction notes\n\n**Response 200:**\nReturns updated user with new wallet balance\n\n**Response 400:**\nInsufficient balance (for debit)"
+      },
+      "response": []
+    },
+    {
+      "name": "13. Update Wallet - Debit",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"operation\": \"debit\",\n  \"amount\": 500,\n  \"remarks\": \"Service charge deduction for Q4 2025\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}/wallet",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}", "wallet"]
+        },
+        "description": "Debit amount from user's wallet.\n\n**Note:** Will fail if insufficient balance."
+      },
+      "response": []
+    },
+    {
+      "name": "14. Update Wallet - Refund",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"operation\": \"credit\",\n  \"amount\": 250,\n  \"remarks\": \"Refund for cancelled shipment #AWB123456789\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}/wallet",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}", "wallet"]
+        },
+        "description": "Example: Credit refund to user's wallet for cancelled shipment."
+      },
+      "response": []
+    },
+    {
+      "name": "15. Delete User (Soft Delete)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}"]
+        },
+        "description": "Soft delete user (Admin only).\n\n**Required Role:** admin\n\n**Response 204:**\nNo content - User deleted successfully\n\n**Response 404:**\nUser not found\n\n**Notes:**\n- This is a SOFT DELETE - data not permanently removed\n- Sets deletedAt timestamp\n- User won't appear in normal queries\n- Can be restored using restore endpoint"
+      },
+      "response": []
+    },
+    {
+      "name": "16. Restore Deleted User",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}/restore",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{user_id}}", "restore"]
+        },
+        "description": "Restore soft-deleted user (Admin only).\n\n**Required Role:** admin\n\n**Response 200:**\nReturns restored user with deletedAt = null\n\n**Response 404:**\nUser not found or not deleted\n\n**Notes:**\n- Only works for soft-deleted users\n- Clears deletedAt timestamp\n- User becomes active again"
+      },
+      "response": []
+    }
+  ]
+}

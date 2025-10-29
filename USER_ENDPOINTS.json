@@ -1,0 +1,818 @@
+{
+  "info": {
+    "title": "FastX Courier - User Management API",
+    "description": "Complete user endpoints with request/response examples",
+    "version": "1.0.0",
+    "baseUrl": "http://localhost:3001/api"
+  },
+  "authentication": {
+    "type": "Bearer Token",
+    "header": "Authorization: Bearer {access_token}",
+    "note": "All endpoints require authentication with appropriate roles"
+  },
+  "endpoints": [
+    {
+      "name": "Create User",
+      "method": "POST",
+      "path": "/users",
+      "description": "Create a new user (Admin only)",
+      "requiredRoles": ["admin"],
+      "authentication": "Required",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {access_token}"
+        },
+        "body": {
+          "fullName": "John Doe",
+          "email": "john.doe@example.com",
+          "phone": "01712345678",
+          "password": "Password@123",
+          "role": "merchant",
+          "city": "Dhaka",
+          "area": "Gulshan",
+          "address": "House 12, Road 5",
+          "companyName": "ABC Company Ltd.",
+          "businessWebsite": "www.abccompany.com"
+        },
+        "bodyDescription": {
+          "fullName": "string (required) - Full name of the user",
+          "email": "string (required) - Email address",
+          "phone": "string (required) - Phone number",
+          "password": "string (required) - User password (min 6 characters)",
+          "role": "enum (required) - User role: admin, merchant, customer, rider, support, finance, agent",
+          "city": "string (optional) - City name",
+          "area": "string (optional) - Area name",
+          "address": "string (optional) - Detailed address",
+          "companyName": "string (optional) - Company name (for Merchant)",
+          "businessWebsite": "string (optional) - Business website"
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "User created successfully",
+          "body": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "email": "john.doe@example.com",
+            "name": "John Doe",
+            "phone": "01712345678",
+            "role": "merchant",
+            "isActive": true,
+            "isVerified": false,
+            "isKycVerified": false,
+            "twoFaEnabled": false,
+            "walletBalance": 0,
+            "address": "House 12, Road 5",
+            "city": "Dhaka",
+            "area": "Gulshan",
+            "postalCode": null,
+            "latitude": null,
+            "longitude": null,
+            "hubId": null,
+            "merchantBusinessName": "ABC Company Ltd.",
+            "merchantTradeLicense": null,
+            "profileImage": null,
+            "lastLogin": null,
+            "createdAt": "2025-10-28T10:30:00.000Z",
+            "updatedAt": "2025-10-28T10:30:00.000Z",
+            "deletedAt": null
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "body": {
+            "statusCode": 400,
+            "message": ["fullName should not be empty", "email must be an email"],
+            "error": "Bad Request"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "body": {
+            "statusCode": 401,
+            "message": "Unauthorized"
+          }
+        },
+        "403": {
+          "description": "Forbidden - Insufficient permissions",
+          "body": {
+            "statusCode": 403,
+            "message": "Forbidden resource",
+            "error": "Forbidden"
+          }
+        },
+        "409": {
+          "description": "Email or phone already exists",
+          "body": {
+            "statusCode": 409,
+            "message": "User with this email or phone already exists",
+            "error": "Conflict"
+          }
+        }
+      }
+    },
+    {
+      "name": "Get All Users",
+      "method": "GET",
+      "path": "/users",
+      "description": "Get all users with filters and pagination",
+      "requiredRoles": ["admin", "support"],
+      "authentication": "Required",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {access_token}"
+        },
+        "queryParameters": {
+          "page": "1",
+          "limit": "10",
+          "search": "john",
+          "role": "merchant",
+          "isActive": "true",
+          "isEmailVerified": "true",
+          "isPhoneVerified": "true",
+          "isKYCVerified": "false",
+          "city": "Dhaka",
+          "sortBy": "createdAt",
+          "sortOrder": "DESC"
+        },
+        "queryDescription": {
+          "page": "number (optional) - Page number, default: 1",
+          "limit": "number (optional) - Items per page, default: 10",
+          "search": "string (optional) - Search by name, email, or phone",
+          "role": "enum (optional) - Filter by role: admin, merchant, customer, rider, support, finance, agent",
+          "isActive": "boolean (optional) - Filter by active status",
+          "isEmailVerified": "boolean (optional) - Filter by email verification",
+          "isPhoneVerified": "boolean (optional) - Filter by phone verification",
+          "isKYCVerified": "boolean (optional) - Filter by KYC verification",
+          "city": "string (optional) - Filter by city",
+          "sortBy": "string (optional) - Field to sort by",
+          "sortOrder": "string (optional) - ASC or DESC"
+        },
+        "examples": {
+          "allUsers": "/users",
+          "withPagination": "/users?page=2&limit=20",
+          "merchantsOnly": "/users?role=merchant",
+          "activeUsers": "/users?isActive=true",
+          "verifiedUsers": "/users?isEmailVerified=true&isKYCVerified=true",
+          "searchByName": "/users?search=john",
+          "byCity": "/users?city=Dhaka&page=1&limit=50"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Users retrieved successfully",
+          "body": {
+            "data": [
+              {
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "email": "john.doe@example.com",
+                "name": "John Doe",
+                "phone": "01712345678",
+                "role": "merchant",
+                "isActive": true,
+                "isVerified": true,
+                "isKycVerified": false,
+                "twoFaEnabled": false,
+                "walletBalance": 5000,
+                "address": "House 12, Road 5",
+                "city": "Dhaka",
+                "area": "Gulshan",
+                "merchantBusinessName": "ABC Company Ltd.",
+                "lastLogin": "2025-10-28T10:30:00.000Z",
+                "createdAt": "2025-10-27T08:00:00.000Z",
+                "updatedAt": "2025-10-28T10:30:00.000Z"
+              },
+              {
+                "id": "660e8400-e29b-41d4-a716-446655440001",
+                "email": "jane.smith@example.com",
+                "name": "Jane Smith",
+                "phone": "01812345678",
+                "role": "rider",
+                "isActive": true,
+                "isVerified": true,
+                "isKycVerified": true,
+                "twoFaEnabled": false,
+                "walletBalance": 2500,
+                "city": "Dhaka",
+                "area": "Banani",
+                "lastLogin": "2025-10-28T09:15:00.000Z",
+                "createdAt": "2025-10-26T10:00:00.000Z",
+                "updatedAt": "2025-10-28T09:15:00.000Z"
+              }
+            ],
+            "meta": {
+              "total": 45,
+              "page": 1,
+              "limit": 10,
+              "totalPages": 5
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "body": {
+            "statusCode": 401,
+            "message": "Unauthorized"
+          }
+        },
+        "403": {
+          "description": "Forbidden - Insufficient permissions",
+          "body": {
+            "statusCode": 403,
+            "message": "Forbidden resource",
+            "error": "Forbidden"
+          }
+        }
+      }
+    },
+    {
+      "name": "Get User Statistics",
+      "method": "GET",
+      "path": "/users/statistics",
+      "description": "Get user statistics (Admin only)",
+      "requiredRoles": ["admin"],
+      "authentication": "Required",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {access_token}"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Statistics retrieved successfully",
+          "body": {
+            "totalUsers": 150,
+            "activeUsers": 142,
+            "inactiveUsers": 8,
+            "verifiedUsers": 120,
+            "kycVerifiedUsers": 85,
+            "byRole": {
+              "admin": 3,
+              "merchant": 50,
+              "customer": 60,
+              "rider": 25,
+              "support": 5,
+              "finance": 4,
+              "agent": 3
+            },
+            "byCity": {
+              "Dhaka": 100,
+              "Chittagong": 30,
+              "Sylhet": 15,
+              "Rajshahi": 5
+            },
+            "totalWalletBalance": 750000,
+            "newUsersThisMonth": 15,
+            "newUsersToday": 2
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "body": {
+            "statusCode": 401,
+            "message": "Unauthorized"
+          }
+        },
+        "403": {
+          "description": "Forbidden - Insufficient permissions",
+          "body": {
+            "statusCode": 403,
+            "message": "Forbidden resource",
+            "error": "Forbidden"
+          }
+        }
+      }
+    },
+    {
+      "name": "Get User by ID",
+      "method": "GET",
+      "path": "/users/{id}",
+      "description": "Get user by ID",
+      "requiredRoles": ["admin", "support"],
+      "authentication": "Required",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {access_token}"
+        },
+        "pathParameters": {
+          "id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "examples": {
+          "getUser": "/users/550e8400-e29b-41d4-a716-446655440000"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "User found",
+          "body": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "email": "john.doe@example.com",
+            "name": "John Doe",
+            "phone": "01712345678",
+            "role": "merchant",
+            "isActive": true,
+            "isVerified": true,
+            "isKycVerified": false,
+            "twoFaEnabled": false,
+            "walletBalance": 5000,
+            "address": "House 12, Road 5",
+            "city": "Dhaka",
+            "area": "Gulshan",
+            "postalCode": "1212",
+            "latitude": "23.7808",
+            "longitude": "90.4196",
+            "hubId": null,
+            "merchantBusinessName": "ABC Company Ltd.",
+            "merchantTradeLicense": "TRADE-12345",
+            "profileImage": "https://example.com/profiles/john.jpg",
+            "lastLogin": "2025-10-28T10:30:00.000Z",
+            "createdAt": "2025-10-27T08:00:00.000Z",
+            "updatedAt": "2025-10-28T10:30:00.000Z",
+            "deletedAt": null
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "body": {
+            "statusCode": 401,
+            "message": "Unauthorized"
+          }
+        },
+        "403": {
+          "description": "Forbidden - Insufficient permissions",
+          "body": {
+            "statusCode": 403,
+            "message": "Forbidden resource",
+            "error": "Forbidden"
+          }
+        },
+        "404": {
+          "description": "User not found",
+          "body": {
+            "statusCode": 404,
+            "message": "User not found",
+            "error": "Not Found"
+          }
+        }
+      }
+    },
+    {
+      "name": "Update User",
+      "method": "PATCH",
+      "path": "/users/{id}",
+      "description": "Update user information",
+      "requiredRoles": ["admin", "support"],
+      "authentication": "Required",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {access_token}"
+        },
+        "pathParameters": {
+          "id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "body": {
+          "fullName": "John Michael Doe",
+          "email": "john.michael@example.com",
+          "phone": "01712345679",
+          "password": "NewPassword@123",
+          "role": "merchant",
+          "city": "Chittagong",
+          "area": "Agrabad",
+          "address": "House 25, Road 10",
+          "companyName": "ABC Trading Ltd.",
+          "businessWebsite": "www.abctrading.com",
+          "isEmailVerified": true,
+          "isPhoneVerified": true,
+          "isActive": true,
+          "walletBalance": 10000
+        },
+        "bodyDescription": {
+          "note": "All fields are optional. Only provide fields that need to be updated.",
+          "fullName": "string (optional) - Full name",
+          "email": "string (optional) - Email address",
+          "phone": "string (optional) - Phone number",
+          "password": "string (optional) - New password (min 6 characters)",
+          "role": "enum (optional) - User role",
+          "city": "string (optional) - City name",
+          "area": "string (optional) - Area name",
+          "address": "string (optional) - Detailed address",
+          "companyName": "string (optional) - Company name",
+          "businessWebsite": "string (optional) - Business website",
+          "isEmailVerified": "boolean (optional) - Email verification status",
+          "isPhoneVerified": "boolean (optional) - Phone verification status",
+          "isActive": "boolean (optional) - Account active status",
+          "walletBalance": "number (optional) - Wallet balance (min: 0)"
+        },
+        "examples": {
+          "updateName": {
+            "fullName": "John Michael Doe"
+          },
+          "updateContact": {
+            "email": "newemail@example.com",
+            "phone": "01812345678"
+          },
+          "activateAccount": {
+            "isActive": true,
+            "isEmailVerified": true
+          },
+          "updateAddress": {
+            "city": "Dhaka",
+            "area": "Dhanmondi",
+            "address": "House 5, Road 3/A"
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "User updated successfully",
+          "body": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "email": "john.michael@example.com",
+            "name": "John Michael Doe",
+            "phone": "01712345679",
+            "role": "merchant",
+            "isActive": true,
+            "isVerified": true,
+            "isKycVerified": false,
+            "walletBalance": 10000,
+            "city": "Chittagong",
+            "area": "Agrabad",
+            "address": "House 25, Road 10",
+            "merchantBusinessName": "ABC Trading Ltd.",
+            "updatedAt": "2025-10-28T11:00:00.000Z"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "body": {
+            "statusCode": 400,
+            "message": ["email must be an email"],
+            "error": "Bad Request"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "body": {
+            "statusCode": 401,
+            "message": "Unauthorized"
+          }
+        },
+        "403": {
+          "description": "Forbidden - Insufficient permissions",
+          "body": {
+            "statusCode": 403,
+            "message": "Forbidden resource",
+            "error": "Forbidden"
+          }
+        },
+        "404": {
+          "description": "User not found",
+          "body": {
+            "statusCode": 404,
+            "message": "User not found",
+            "error": "Not Found"
+          }
+        },
+        "409": {
+          "description": "Email or phone already exists",
+          "body": {
+            "statusCode": 409,
+            "message": "Email or phone already in use by another user",
+            "error": "Conflict"
+          }
+        }
+      }
+    },
+    {
+      "name": "Update KYC Status",
+      "method": "PATCH",
+      "path": "/users/{id}/kyc",
+      "description": "Update KYC verification status",
+      "requiredRoles": ["admin", "finance"],
+      "authentication": "Required",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {access_token}"
+        },
+        "pathParameters": {
+          "id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "body": {
+          "isKYCVerified": true,
+          "kycRemarks": "KYC documents verified successfully. Trade license and NID verified."
+        },
+        "bodyDescription": {
+          "isKYCVerified": "boolean (required) - KYC verification status",
+          "kycRemarks": "string (optional) - Verification remarks or notes"
+        },
+        "examples": {
+          "approveKYC": {
+            "isKYCVerified": true,
+            "kycRemarks": "All documents verified and approved"
+          },
+          "rejectKYC": {
+            "isKYCVerified": false,
+            "kycRemarks": "Invalid trade license. Please resubmit valid documents"
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "KYC status updated successfully",
+          "body": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "email": "john.doe@example.com",
+            "name": "John Doe",
+            "phone": "01712345678",
+            "role": "merchant",
+            "isKycVerified": true,
+            "merchantBusinessName": "ABC Company Ltd.",
+            "merchantTradeLicense": "TRADE-12345",
+            "updatedAt": "2025-10-28T11:15:00.000Z"
+          }
+        },
+        "400": {
+          "description": "Bad request",
+          "body": {
+            "statusCode": 400,
+            "message": ["isKYCVerified must be a boolean value"],
+            "error": "Bad Request"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "body": {
+            "statusCode": 401,
+            "message": "Unauthorized"
+          }
+        },
+        "403": {
+          "description": "Forbidden - Insufficient permissions",
+          "body": {
+            "statusCode": 403,
+            "message": "Forbidden resource",
+            "error": "Forbidden"
+          }
+        },
+        "404": {
+          "description": "User not found",
+          "body": {
+            "statusCode": 404,
+            "message": "User not found",
+            "error": "Not Found"
+          }
+        }
+      }
+    },
+    {
+      "name": "Update Wallet Balance",
+      "method": "PATCH",
+      "path": "/users/{id}/wallet",
+      "description": "Update user wallet balance (credit or debit)",
+      "requiredRoles": ["admin", "finance"],
+      "authentication": "Required",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {access_token}"
+        },
+        "pathParameters": {
+          "id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "body": {
+          "operation": "credit",
+          "amount": 1000,
+          "remarks": "Payment for delivery charges"
+        },
+        "bodyDescription": {
+          "operation": "enum (required) - Operation type: 'credit' or 'debit'",
+          "amount": "number (required) - Amount to credit or debit (min: 0.01)",
+          "remarks": "string (optional) - Transaction remarks or notes"
+        },
+        "examples": {
+          "creditWallet": {
+            "operation": "credit",
+            "amount": 5000,
+            "remarks": "Monthly delivery payment"
+          },
+          "debitWallet": {
+            "operation": "debit",
+            "amount": 500,
+            "remarks": "Service charge deduction"
+          },
+          "refund": {
+            "operation": "credit",
+            "amount": 250,
+            "remarks": "Refund for cancelled shipment #AWB123456"
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Wallet updated successfully",
+          "body": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "email": "john.doe@example.com",
+            "name": "John Doe",
+            "phone": "01712345678",
+            "role": "merchant",
+            "walletBalance": 6000,
+            "updatedAt": "2025-10-28T11:30:00.000Z"
+          }
+        },
+        "400": {
+          "description": "Bad request or insufficient balance",
+          "body": {
+            "statusCode": 400,
+            "message": "Insufficient wallet balance for debit operation",
+            "error": "Bad Request"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "body": {
+            "statusCode": 401,
+            "message": "Unauthorized"
+          }
+        },
+        "403": {
+          "description": "Forbidden - Insufficient permissions",
+          "body": {
+            "statusCode": 403,
+            "message": "Forbidden resource",
+            "error": "Forbidden"
+          }
+        },
+        "404": {
+          "description": "User not found",
+          "body": {
+            "statusCode": 404,
+            "message": "User not found",
+            "error": "Not Found"
+          }
+        }
+      }
+    },
+    {
+      "name": "Delete User",
+      "method": "DELETE",
+      "path": "/users/{id}",
+      "description": "Soft delete user (Admin only)",
+      "requiredRoles": ["admin"],
+      "authentication": "Required",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {access_token}"
+        },
+        "pathParameters": {
+          "id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "examples": {
+          "deleteUser": "/users/550e8400-e29b-41d4-a716-446655440000"
+        }
+      },
+      "responses": {
+        "204": {
+          "description": "User deleted successfully (No Content)",
+          "body": null
+        },
+        "401": {
+          "description": "Unauthorized",
+          "body": {
+            "statusCode": 401,
+            "message": "Unauthorized"
+          }
+        },
+        "403": {
+          "description": "Forbidden - Insufficient permissions",
+          "body": {
+            "statusCode": 403,
+            "message": "Forbidden resource",
+            "error": "Forbidden"
+          }
+        },
+        "404": {
+          "description": "User not found",
+          "body": {
+            "statusCode": 404,
+            "message": "User not found",
+            "error": "Not Found"
+          }
+        }
+      },
+      "notes": [
+        "This is a soft delete operation. User data is not permanently removed.",
+        "User's deletedAt field is set to current timestamp.",
+        "Deleted users are not returned in normal queries.",
+        "Use restore endpoint to recover soft-deleted users."
+      ]
+    },
+    {
+      "name": "Restore User",
+      "method": "POST",
+      "path": "/users/{id}/restore",
+      "description": "Restore soft deleted user (Admin only)",
+      "requiredRoles": ["admin"],
+      "authentication": "Required",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {access_token}"
+        },
+        "pathParameters": {
+          "id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "examples": {
+          "restoreUser": "/users/550e8400-e29b-41d4-a716-446655440000/restore"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "User restored successfully",
+          "body": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "email": "john.doe@example.com",
+            "name": "John Doe",
+            "phone": "01712345678",
+            "role": "merchant",
+            "isActive": true,
+            "isVerified": true,
+            "isKycVerified": false,
+            "walletBalance": 5000,
+            "deletedAt": null,
+            "updatedAt": "2025-10-28T11:45:00.000Z"
+          }
+        },
+        "401": {
+          "description": "Unauthorized",
+          "body": {
+            "statusCode": 401,
+            "message": "Unauthorized"
+          }
+        },
+        "403": {
+          "description": "Forbidden - Insufficient permissions",
+          "body": {
+            "statusCode": 403,
+            "message": "Forbidden resource",
+            "error": "Forbidden"
+          }
+        },
+        "404": {
+          "description": "User not found or not deleted",
+          "body": {
+            "statusCode": 404,
+            "message": "Deleted user not found",
+            "error": "Not Found"
+          }
+        }
+      },
+      "notes": [
+        "Only soft-deleted users can be restored.",
+        "User's deletedAt field is set to null.",
+        "User becomes active and accessible again."
+      ]
+    }
+  ],
+  "userRoles": {
+    "admin": "Full system access, can manage all resources",
+    "merchant": "Business users who create shipments",
+    "customer": "End customers who receive shipments",
+    "rider": "Delivery personnel",
+    "support": "Customer support staff",
+    "finance": "Financial operations staff",
+    "agent": "Pickup agents"
+  },
+  "commonErrors": {
+    "401": {
+      "description": "Unauthorized - Invalid or missing token",
+      "solution": "Login to get a valid access token"
+    },
+    "403": {
+      "description": "Forbidden - Insufficient permissions",
+      "solution": "User role doesn't have permission for this action"
+    },
+    "404": {
+      "description": "Not Found - Resource doesn't exist",
+      "solution": "Check the ID or create the resource first"
+    },
+    "409": {
+      "description": "Conflict - Duplicate resource",
+      "solution": "Email or phone already exists in the system"
+    },
+    "500": {
+      "description": "Internal Server Error",
+      "solution": "Contact system administrator"
+    }
+  },
+  "notes": [
+    "All endpoints require Bearer token authentication",
+    "Sensitive fields (password, refreshToken, otpCode, twoFaSecret) are excluded from responses",
+    "Timestamps are in ISO 8601 format (UTC)",
+    "Pagination defaults: page=1, limit=10",
+    "Maximum limit per page: 100",
+    "Soft delete is used - deleted records have deletedAt timestamp",
+    "All monetary values (walletBalance) are in BDT (Bangladeshi Taka)"
+  ]
+}

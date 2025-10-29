@@ -181,8 +181,9 @@ export class ShipmentsService {
     const queryBuilder = this.shipmentRepository
       .createQueryBuilder('shipment')
       .leftJoinAndSelect('shipment.merchant', 'merchant')
-      .leftJoinAndSelect('shipment.assignedAgent', 'assignedAgent')
-      .leftJoinAndSelect('shipment.assignedRider', 'assignedRider');
+      .leftJoinAndSelect('shipment.customer', 'customer')
+      .leftJoinAndSelect('shipment.rider', 'rider')
+      .leftJoinAndSelect('shipment.pickup', 'pickup');
 
     // Apply filters
     Object.keys(where).forEach((key) => {
@@ -202,7 +203,7 @@ export class ShipmentsService {
     // Apply search
     if (search) {
       queryBuilder.andWhere(
-        '(shipment.receiverName ILIKE :search OR shipment.receiverPhone ILIKE :search OR shipment.awbNumber ILIKE :search)',
+        '(shipment.receiverName ILIKE :search OR shipment.receiverPhone ILIKE :search OR shipment.awb ILIKE :search)',
         { search: `%${search}%` },
       );
     }
@@ -238,7 +239,7 @@ export class ShipmentsService {
   async findOne(id: string, user: User): Promise<Shipment> {
     const shipment = await this.shipmentRepository.findOne({
       where: { id },
-      relations: ['merchant', 'assignedAgent', 'assignedRider'],
+      relations: ['merchant', 'customer', 'rider', 'pickup', 'manifest'],
     });
 
     if (!shipment) {
@@ -445,8 +446,18 @@ export class ShipmentsService {
       shipments: [],
     };
 
+    // Validate csvData
+    if (!csvData || typeof csvData !== 'string') {
+      throw new BadRequestException('CSV data is required and must be a valid string');
+    }
+
     // Parse CSV data (simplified - in production use a proper CSV parser like papaparse)
     const rows = csvData.split('\n').filter((row) => row.trim());
+    
+    if (rows.length < 2) {
+      throw new BadRequestException('CSV must contain at least a header row and one data row');
+    }
+    
     result.totalRows = rows.length - 1; // Exclude header
 
     // Skip header row
@@ -462,8 +473,8 @@ export class ShipmentsService {
         const createDto: CreateShipmentDto = {
           sender: {
             name: merchant.name || 'Merchant',
-            phone: merchant.phone,
-            email: merchant.email || '',
+            phone: merchant.phone || '01700000000',
+            email: merchant.email || undefined,
             city: merchant.city || 'Dhaka',
             area: merchant.area || 'Unknown',
             address: merchant.address || 'Unknown',

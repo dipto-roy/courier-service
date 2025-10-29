@@ -40,6 +40,7 @@ export class UsersService {
     // Create user
     const user = this.userRepository.create({
       ...createUserDto,
+      name: createUserDto.fullName, // Map fullName to name
       password: hashedPassword,
     });
 

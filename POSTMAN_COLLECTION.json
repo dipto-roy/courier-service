@@ -1,0 +1,1980 @@
+{
+  "info": {
+    "name": "FastX Courier Service API",
+    "description": "Complete API collection for FastX Courier Service with 102 endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Core",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": \"ok\",\n  \"timestamp\": \"2025-10-28T10:00:00.000Z\",\n  \"database\": \"connected\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api",
+              "host": ["{{baseUrl}}"],
+              "path": ["api"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"FastX Courier Service API v1.0\",\n  \"documentation\": \"/api/docs\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Auth Module",
+      "item": [
+        {
+          "name": "Signup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.environment.set('userId', jsonData.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Merchant\",\n  \"email\": \"merchant@fastx.com\",\n  \"password\": \"Test@123456\",\n  \"phone\": \"+8801712345678\",\n  \"role\": \"MERCHANT\",\n  \"businessName\": \"FastX Logistics\",\n  \"businessAddress\": \"Dhaka, Bangladesh\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "signup"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Signup successful. OTP sent to your phone.\",\n  \"user\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"email\": \"merchant@fastx.com\",\n    \"name\": \"Test Merchant\",\n    \"role\": \"MERCHANT\",\n    \"phone\": \"+8801712345678\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.environment.set('accessToken', jsonData.accessToken);",
+                  "    pm.environment.set('refreshToken', jsonData.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"merchant@fastx.com\",\n  \"password\": \"Test@123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"OTP sent to your phone\",\n  \"requiresOTP\": true,\n  \"tempToken\": \"temp_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.environment.set('accessToken', jsonData.accessToken);",
+                  "    pm.environment.set('refreshToken', jsonData.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"merchant@fastx.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "verify-otp"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"email\": \"merchant@fastx.com\",\n    \"name\": \"Test Merchant\",\n    \"role\": \"MERCHANT\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "refresh"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "logout"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Logged out successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"email\": \"merchant@fastx.com\",\n  \"name\": \"Test Merchant\",\n  \"role\": \"MERCHANT\",\n  \"phone\": \"+8801712345678\",\n  \"kycVerified\": false,\n  \"walletBalance\": 0,\n  \"createdAt\": \"2025-10-28T10:00:00.000Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Users Module",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Rider\",\n  \"email\": \"rider@fastx.com\",\n  \"password\": \"Rider@123456\",\n  \"phone\": \"+8801812345678\",\n  \"role\": \"RIDER\",\n  \"vehicleType\": \"MOTORCYCLE\",\n  \"vehicleNumber\": \"DHAKA-GA-1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n  \"name\": \"John Rider\",\n  \"email\": \"rider@fastx.com\",\n  \"role\": \"RIDER\",\n  \"phone\": \"+8801812345678\",\n  \"kycVerified\": false,\n  \"isActive\": true,\n  \"createdAt\": \"2025-10-28T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page=1&limit=10&role=MERCHANT&kycVerified=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "role",
+                  "value": "MERCHANT"
+                },
+                {
+                  "key": "kycVerified",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n      \"name\": \"Test Merchant\",\n      \"email\": \"merchant@fastx.com\",\n      \"role\": \"MERCHANT\",\n      \"kycVerified\": true,\n      \"walletBalance\": 5000\n    }\n  ],\n  \"meta\": {\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 10,\n    \"totalPages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/statistics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "statistics"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"totalUsers\": 150,\n  \"activeUsers\": 142,\n  \"byRole\": {\n    \"ADMIN\": 5,\n    \"MERCHANT\": 80,\n    \"RIDER\": 40,\n    \"HUB_STAFF\": 15,\n    \"SUPPORT\": 5,\n    \"FINANCE\": 5\n  },\n  \"kycVerified\": 120,\n  \"kycPending\": 30\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/550e8400-e29b-41d4-a716-446655440000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "550e8400-e29b-41d4-a716-446655440000"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"name\": \"Test Merchant\",\n  \"email\": \"merchant@fastx.com\",\n  \"phone\": \"+8801712345678\",\n  \"role\": \"MERCHANT\",\n  \"kycVerified\": true,\n  \"walletBalance\": 5000,\n  \"businessName\": \"FastX Logistics\",\n  \"businessAddress\": \"Dhaka, Bangladesh\",\n  \"createdAt\": \"2025-10-28T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Merchant Name\",\n  \"businessName\": \"FastX Logistics Ltd\",\n  \"businessAddress\": \"Gulshan, Dhaka\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/550e8400-e29b-41d4-a716-446655440000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "550e8400-e29b-41d4-a716-446655440000"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"User updated successfully\",\n  \"user\": {\n    \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"name\": \"Updated Merchant Name\",\n    \"businessName\": \"FastX Logistics Ltd\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update KYC Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kycVerified\": true,\n  \"kycDocuments\": {\n    \"nid\": \"1234567890\",\n    \"tradeLicense\": \"TL-12345\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/550e8400-e29b-41d4-a716-446655440000/kyc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "550e8400-e29b-41d4-a716-446655440000", "kyc"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"KYC status updated successfully\",\n  \"kycVerified\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Wallet Balance",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000,\n  \"type\": \"CREDIT\",\n  \"description\": \"Payout for delivered shipments\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/550e8400-e29b-41d4-a716-446655440000/wallet",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "550e8400-e29b-41d4-a716-446655440000", "wallet"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Wallet updated successfully\",\n  \"newBalance\": 6000\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/660e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "660e8400-e29b-41d4-a716-446655440001"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"User deleted successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Restore User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/660e8400-e29b-41d4-a716-446655440001/restore",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "660e8400-e29b-41d4-a716-446655440001", "restore"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"User restored successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Shipments Module",
+      "item": [
+        {
+          "name": "Create Shipment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderName\": \"FastX Logistics\",\n  \"senderPhone\": \"+8801712345678\",\n  \"senderAddress\": \"Gulshan-2, Dhaka\",\n  \"senderCity\": \"Dhaka\",\n  \"senderArea\": \"Gulshan\",\n  \"receiverName\": \"Md Rahim\",\n  \"receiverPhone\": \"+8801912345678\",\n  \"receiverAddress\": \"Mirpur-10, Dhaka\",\n  \"receiverCity\": \"Dhaka\",\n  \"receiverArea\": \"Mirpur\",\n  \"productDescription\": \"Electronics - Mobile Phone\",\n  \"weight\": 0.5,\n  \"quantity\": 1,\n  \"declaredValue\": 25000,\n  \"deliveryType\": \"EXPRESS\",\n  \"paymentMethod\": \"COD\",\n  \"codAmount\": 25000,\n  \"deliveryFee\": 100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n  \"awb\": \"FX1234567890123\",\n  \"status\": \"PENDING\",\n  \"deliveryType\": \"EXPRESS\",\n  \"codAmount\": 25000,\n  \"deliveryFee\": 100,\n  \"totalAmount\": 25100,\n  \"expectedDeliveryDate\": \"2025-10-29T10:00:00.000Z\",\n  \"createdAt\": \"2025-10-28T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Shipments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments?page=1&limit=20&status=PENDING&deliveryType=EXPRESS",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                },
+                {
+                  "key": "deliveryType",
+                  "value": "EXPRESS"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n      \"awb\": \"FX1234567890123\",\n      \"status\": \"PENDING\",\n      \"receiverName\": \"Md Rahim\",\n      \"receiverPhone\": \"+8801912345678\",\n      \"deliveryType\": \"EXPRESS\",\n      \"codAmount\": 25000,\n      \"createdAt\": \"2025-10-28T10:00:00.000Z\"\n    }\n  ],\n  \"meta\": {\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 20,\n    \"totalPages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Shipment Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/statistics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "statistics"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"total\": 1500,\n  \"byStatus\": {\n    \"PENDING\": 120,\n    \"PICKED_UP\": 80,\n    \"IN_TRANSIT\": 150,\n    \"OUT_FOR_DELIVERY\": 50,\n    \"DELIVERED\": 1000,\n    \"FAILED\": 50,\n    \"CANCELLED\": 50\n  },\n  \"byDeliveryType\": {\n    \"EXPRESS\": 800,\n    \"NORMAL\": 700\n  },\n  \"totalCODAmount\": 15000000,\n  \"totalDeliveryFee\": 150000\n}"
+            }
+          ]
+        },
+        {
+          "name": "Track Shipment by AWB",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/track/FX1234567890123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "track", "FX1234567890123"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"awb\": \"FX1234567890123\",\n  \"status\": \"OUT_FOR_DELIVERY\",\n  \"receiverName\": \"Md Rahim\",\n  \"receiverCity\": \"Dhaka\",\n  \"currentHub\": \"Mirpur Hub\",\n  \"expectedDeliveryDate\": \"2025-10-29T10:00:00.000Z\",\n  \"timeline\": [\n    {\n      \"status\": \"PENDING\",\n      \"timestamp\": \"2025-10-28T10:00:00.000Z\",\n      \"location\": \"Gulshan Hub\"\n    },\n    {\n      \"status\": \"PICKED_UP\",\n      \"timestamp\": \"2025-10-28T12:00:00.000Z\",\n      \"location\": \"Gulshan Hub\"\n    },\n    {\n      \"status\": \"IN_TRANSIT\",\n      \"timestamp\": \"2025-10-28T14:00:00.000Z\",\n      \"location\": \"Mirpur Hub\"\n    },\n    {\n      \"status\": \"OUT_FOR_DELIVERY\",\n      \"timestamp\": \"2025-10-29T09:00:00.000Z\",\n      \"location\": \"Mirpur Hub\",\n      \"rider\": \"Rafiq Ahmed\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Shipment by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/770e8400-e29b-41d4-a716-446655440002",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "770e8400-e29b-41d4-a716-446655440002"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n  \"awb\": \"FX1234567890123\",\n  \"status\": \"OUT_FOR_DELIVERY\",\n  \"senderName\": \"FastX Logistics\",\n  \"senderPhone\": \"+8801712345678\",\n  \"senderAddress\": \"Gulshan-2, Dhaka\",\n  \"receiverName\": \"Md Rahim\",\n  \"receiverPhone\": \"+8801912345678\",\n  \"receiverAddress\": \"Mirpur-10, Dhaka\",\n  \"productDescription\": \"Electronics - Mobile Phone\",\n  \"weight\": 0.5,\n  \"deliveryType\": \"EXPRESS\",\n  \"codAmount\": 25000,\n  \"deliveryFee\": 100,\n  \"rider\": {\n    \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"name\": \"Rafiq Ahmed\",\n    \"phone\": \"+8801812345678\"\n  },\n  \"createdAt\": \"2025-10-28T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Shipment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiverPhone\": \"+8801912345679\",\n  \"receiverAddress\": \"Mirpur-11, Dhaka\",\n  \"specialInstructions\": \"Call before delivery\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/770e8400-e29b-41d4-a716-446655440002",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "770e8400-e29b-41d4-a716-446655440002"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Shipment updated successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Shipment Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DELIVERED\",\n  \"deliveryNote\": \"Delivered successfully\",\n  \"podPhotoUrl\": \"https://storage.fastx.com/pod/123.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/770e8400-e29b-41d4-a716-446655440002/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "770e8400-e29b-41d4-a716-446655440002", "status"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Shipment status updated successfully\",\n  \"shipment\": {\n    \"id\": \"770e8400-e29b-41d4-a716-446655440002\",\n    \"awb\": \"FX1234567890123\",\n    \"status\": \"DELIVERED\",\n    \"actualDeliveryDate\": \"2025-10-29T12:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Shipment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/770e8400-e29b-41d4-a716-446655440002",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "770e8400-e29b-41d4-a716-446655440002"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Shipment deleted successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Bulk Upload Shipments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shipments\": [\n    {\n      \"receiverName\": \"Customer 1\",\n      \"receiverPhone\": \"+8801912345681\",\n      \"receiverAddress\": \"Address 1, Dhaka\",\n      \"receiverCity\": \"Dhaka\",\n      \"receiverArea\": \"Mirpur\",\n      \"productDescription\": \"Product 1\",\n      \"weight\": 1.0,\n      \"codAmount\": 1000\n    },\n    {\n      \"receiverName\": \"Customer 2\",\n      \"receiverPhone\": \"+8801912345682\",\n      \"receiverAddress\": \"Address 2, Dhaka\",\n      \"receiverCity\": \"Dhaka\",\n      \"receiverArea\": \"Gulshan\",\n      \"productDescription\": \"Product 2\",\n      \"weight\": 2.0,\n      \"codAmount\": 2000\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/bulk-upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shipments", "bulk-upload"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"2 shipments created successfully\",\n  \"shipments\": [\n    {\n      \"awb\": \"FX1234567890124\",\n      \"receiverName\": \"Customer 1\"\n    },\n    {\n      \"awb\": \"FX1234567890125\",\n      \"receiverName\": \"Customer 2\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Pickup Module",
+      "item": [
+        {
+          "name": "Create Pickup Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"merchantId\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"pickupAddress\": \"Gulshan-2, Dhaka\",\n  \"pickupCity\": \"Dhaka\",\n  \"pickupArea\": \"Gulshan\",\n  \"contactPerson\": \"Kamal Hossain\",\n  \"contactPhone\": \"+8801712345678\",\n  \"numberOfParcels\": 5,\n  \"totalWeight\": 5.5,\n  \"preferredPickupTime\": \"2025-10-29T10:00:00.000Z\",\n  \"specialInstructions\": \"Office closes at 6 PM\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"880e8400-e29b-41d4-a716-446655440003\",\n  \"pickupCode\": \"PU202510280001\",\n  \"status\": \"PENDING\",\n  \"numberOfParcels\": 5,\n  \"preferredPickupTime\": \"2025-10-29T10:00:00.000Z\",\n  \"createdAt\": \"2025-10-28T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Pickups",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups?page=1&limit=20&status=PENDING",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"880e8400-e29b-41d4-a716-446655440003\",\n      \"pickupCode\": \"PU202510280001\",\n      \"status\": \"PENDING\",\n      \"merchantName\": \"FastX Logistics\",\n      \"numberOfParcels\": 5,\n      \"pickupArea\": \"Gulshan\"\n    }\n  ],\n  \"meta\": {\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 20,\n    \"totalPages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Pickup Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups/statistics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups", "statistics"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"total\": 500,\n  \"byStatus\": {\n    \"PENDING\": 50,\n    \"ASSIGNED\": 30,\n    \"IN_PROGRESS\": 20,\n    \"COMPLETED\": 380,\n    \"CANCELLED\": 20\n  },\n  \"avgPickupTime\": 45,\n  \"todayPickups\": 15\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Pickup by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups/880e8400-e29b-41d4-a716-446655440003",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups", "880e8400-e29b-41d4-a716-446655440003"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"880e8400-e29b-41d4-a716-446655440003\",\n  \"pickupCode\": \"PU202510280001\",\n  \"status\": \"ASSIGNED\",\n  \"pickupAddress\": \"Gulshan-2, Dhaka\",\n  \"contactPerson\": \"Kamal Hossain\",\n  \"contactPhone\": \"+8801712345678\",\n  \"numberOfParcels\": 5,\n  \"rider\": {\n    \"name\": \"Rafiq Ahmed\",\n    \"phone\": \"+8801812345678\"\n  },\n  \"assignedAt\": \"2025-10-28T11:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Pickup",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contactPhone\": \"+8801712345679\",\n  \"preferredPickupTime\": \"2025-10-29T14:00:00.000Z\",\n  \"specialInstructions\": \"Call 30 minutes before arrival\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups/880e8400-e29b-41d4-a716-446655440003",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups", "880e8400-e29b-41d4-a716-446655440003"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Pickup updated successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Assign Rider to Pickup",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"riderId\": \"660e8400-e29b-41d4-a716-446655440001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups/880e8400-e29b-41d4-a716-446655440003/assign",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups", "880e8400-e29b-41d4-a716-446655440003", "assign"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Rider assigned successfully\",\n  \"pickup\": {\n    \"id\": \"880e8400-e29b-41d4-a716-446655440003\",\n    \"status\": \"ASSIGNED\",\n    \"rider\": {\n      \"name\": \"Rafiq Ahmed\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Start Pickup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 23.7937,\n  \"longitude\": 90.4066\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups/880e8400-e29b-41d4-a716-446655440003/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups", "880e8400-e29b-41d4-a716-446655440003", "start"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Pickup started\",\n  \"status\": \"IN_PROGRESS\",\n  \"startedAt\": \"2025-10-29T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Complete Pickup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actualParcels\": 5,\n  \"actualWeight\": 5.5,\n  \"pickupPhotoUrl\": \"https://storage.fastx.com/pickup/123.jpg\",\n  \"notes\": \"All parcels collected successfully\",\n  \"latitude\": 23.7937,\n  \"longitude\": 90.4066\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups/880e8400-e29b-41d4-a716-446655440003/complete",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups", "880e8400-e29b-41d4-a716-446655440003", "complete"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Pickup completed successfully\",\n  \"status\": \"COMPLETED\",\n  \"completedAt\": \"2025-10-29T11:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Cancel Pickup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Merchant not available\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups/880e8400-e29b-41d4-a716-446655440003/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups", "880e8400-e29b-41d4-a716-446655440003", "cancel"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Pickup cancelled successfully\",\n  \"status\": \"CANCELLED\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Pickup",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pickups/880e8400-e29b-41d4-a716-446655440003",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "pickups", "880e8400-e29b-41d4-a716-446655440003"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Pickup deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Hub Module",
+      "item": [
+        {
+          "name": "Create Hub",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mirpur Hub\",\n  \"code\": \"MRP-HUB-01\",\n  \"hubType\": \"DISTRIBUTION\",\n  \"address\": \"Mirpur-10, Dhaka\",\n  \"city\": \"Dhaka\",\n  \"area\": \"Mirpur\",\n  \"capacity\": 1000,\n  \"contactPerson\": \"Hub Manager\",\n  \"contactPhone\": \"+8801712345678\",\n  \"operatingHours\": \"24/7\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"990e8400-e29b-41d4-a716-446655440004\",\n  \"name\": \"Mirpur Hub\",\n  \"code\": \"MRP-HUB-01\",\n  \"hubType\": \"DISTRIBUTION\",\n  \"status\": \"ACTIVE\",\n  \"createdAt\": \"2025-10-28T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Hubs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs?page=1&limit=20&city=Dhaka&hubType=DISTRIBUTION",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "city",
+                  "value": "Dhaka"
+                },
+                {
+                  "key": "hubType",
+                  "value": "DISTRIBUTION"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"990e8400-e29b-41d4-a716-446655440004\",\n      \"name\": \"Mirpur Hub\",\n      \"code\": \"MRP-HUB-01\",\n      \"hubType\": \"DISTRIBUTION\",\n      \"city\": \"Dhaka\",\n      \"status\": \"ACTIVE\",\n      \"currentLoad\": 450,\n      \"capacity\": 1000\n    }\n  ],\n  \"meta\": {\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 20,\n    \"totalPages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Hub Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs/statistics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs", "statistics"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"totalHubs\": 25,\n  \"activeHubs\": 23,\n  \"byType\": {\n    \"MAIN\": 3,\n    \"DISTRIBUTION\": 15,\n    \"LOCAL\": 7\n  },\n  \"totalCapacity\": 25000,\n  \"currentLoad\": 15000,\n  \"utilizationRate\": 60\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Hub by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs/990e8400-e29b-41d4-a716-446655440004",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs", "990e8400-e29b-41d4-a716-446655440004"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"990e8400-e29b-41d4-a716-446655440004\",\n  \"name\": \"Mirpur Hub\",\n  \"code\": \"MRP-HUB-01\",\n  \"hubType\": \"DISTRIBUTION\",\n  \"address\": \"Mirpur-10, Dhaka\",\n  \"city\": \"Dhaka\",\n  \"capacity\": 1000,\n  \"currentLoad\": 450,\n  \"staff\": [\n    {\n      \"name\": \"Staff 1\",\n      \"role\": \"HUB_STAFF\"\n    }\n  ],\n  \"operatingHours\": \"24/7\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Hub",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"capacity\": 1200,\n  \"contactPhone\": \"+8801712345679\",\n  \"operatingHours\": \"8 AM - 10 PM\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs/990e8400-e29b-41d4-a716-446655440004",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs", "990e8400-e29b-41d4-a716-446655440004"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Hub updated successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Scan Shipment In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"awb\": \"FX1234567890123\",\n  \"scanType\": \"IN\",\n  \"notes\": \"Received from Gulshan Hub\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs/990e8400-e29b-41d4-a716-446655440004/scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs", "990e8400-e29b-41d4-a716-446655440004", "scan"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Shipment scanned in successfully\",\n  \"awb\": \"FX1234567890123\",\n  \"hubName\": \"Mirpur Hub\",\n  \"scannedAt\": \"2025-10-28T14:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Scan Shipment Out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"awb\": \"FX1234567890123\",\n  \"scanType\": \"OUT\",\n  \"destinationHub\": \"Local Hub\",\n  \"riderId\": \"660e8400-e29b-41d4-a716-446655440001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs/990e8400-e29b-41d4-a716-446655440004/scan-out",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs", "990e8400-e29b-41d4-a716-446655440004", "scan-out"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Shipment scanned out successfully\",\n  \"awb\": \"FX1234567890123\",\n  \"assignedRider\": \"Rafiq Ahmed\",\n  \"scannedAt\": \"2025-10-28T16:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Hub Inventory",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs/990e8400-e29b-41d4-a716-446655440004/inventory",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs", "990e8400-e29b-41d4-a716-446655440004", "inventory"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"hubName\": \"Mirpur Hub\",\n  \"totalShipments\": 450,\n  \"byStatus\": {\n    \"IN_TRANSIT\": 200,\n    \"OUT_FOR_DELIVERY\": 150,\n    \"PENDING\": 100\n  },\n  \"lastUpdated\": \"2025-10-28T16:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Transfer Shipments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destinationHubId\": \"990e8400-e29b-41d4-a716-446655440005\",\n  \"awbList\": [\"FX1234567890123\", \"FX1234567890124\"],\n  \"vehicleNumber\": \"DHAKA-GA-5678\",\n  \"driverName\": \"Karim\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs/990e8400-e29b-41d4-a716-446655440004/transfer",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs", "990e8400-e29b-41d4-a716-446655440004", "transfer"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"2 shipments transferred successfully\",\n  \"transferId\": \"TR202510280001\",\n  \"destinationHub\": \"Gulshan Hub\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Hub",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hubs/990e8400-e29b-41d4-a716-446655440004",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "hubs", "990e8400-e29b-41d4-a716-446655440004"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Hub deleted successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "7. Rider Module",
+      "item": [
+        {
+          "name": "List Available Riders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/available?area=Mirpur&vehicleType=MOTORCYCLE",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "available"],
+              "query": [
+                {
+                  "key": "area",
+                  "value": "Mirpur"
+                },
+                {
+                  "key": "vehicleType",
+                  "value": "MOTORCYCLE"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n      \"name\": \"Rafiq Ahmed\",\n      \"phone\": \"+8801812345678\",\n      \"vehicleType\": \"MOTORCYCLE\",\n      \"vehicleNumber\": \"DHAKA-GA-1234\",\n      \"currentArea\": \"Mirpur\",\n      \"isOnline\": true,\n      \"currentLoad\": 5\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Rider Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/statistics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "statistics"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"totalRiders\": 150,\n  \"onlineRiders\": 120,\n  \"busyRiders\": 80,\n  \"availableRiders\": 40,\n  \"byVehicleType\": {\n    \"MOTORCYCLE\": 120,\n    \"VAN\": 20,\n    \"TRUCK\": 10\n  },\n  \"avgDeliveriesPerDay\": 25\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Rider by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/660e8400-e29b-41d4-a716-446655440001",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "660e8400-e29b-41d4-a716-446655440001"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n  \"name\": \"Rafiq Ahmed\",\n  \"phone\": \"+8801812345678\",\n  \"email\": \"rider@fastx.com\",\n  \"vehicleType\": \"MOTORCYCLE\",\n  \"vehicleNumber\": \"DHAKA-GA-1234\",\n  \"kycVerified\": true,\n  \"isOnline\": true,\n  \"totalDeliveries\": 250,\n  \"successRate\": 95.5,\n  \"rating\": 4.7\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Rider Deliveries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/660e8400-e29b-41d4-a716-446655440001/deliveries?status=ASSIGNED",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "660e8400-e29b-41d4-a716-446655440001", "deliveries"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ASSIGNED"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"data\": [\n    {\n      \"awb\": \"FX1234567890123\",\n      \"receiverName\": \"Md Rahim\",\n      \"receiverAddress\": \"Mirpur-10, Dhaka\",\n      \"codAmount\": 25000,\n      \"status\": \"OUT_FOR_DELIVERY\",\n      \"assignedAt\": \"2025-10-29T09:00:00.000Z\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Rider Location",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 23.7937,\n  \"longitude\": 90.4066,\n  \"accuracy\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/660e8400-e29b-41d4-a716-446655440001/location",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "660e8400-e29b-41d4-a716-446655440001", "location"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Location updated successfully\",\n  \"latitude\": 23.7937,\n  \"longitude\": 90.4066,\n  \"updatedAt\": \"2025-10-29T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Rider Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isOnline\": true,\n  \"status\": \"AVAILABLE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/660e8400-e29b-41d4-a716-446655440001/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "660e8400-e29b-41d4-a716-446655440001", "status"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Rider status updated\",\n  \"isOnline\": true,\n  \"status\": \"AVAILABLE\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Start Delivery",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"awb\": \"FX1234567890123\",\n  \"latitude\": 23.7937,\n  \"longitude\": 90.4066\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/660e8400-e29b-41d4-a716-446655440001/start-delivery",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "660e8400-e29b-41d4-a716-446655440001", "start-delivery"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Delivery started\",\n  \"awb\": \"FX1234567890123\",\n  \"startedAt\": \"2025-10-29T10:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Complete Delivery",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"awb\": \"FX1234567890123\",\n  \"deliveryStatus\": \"DELIVERED\",\n  \"receiverName\": \"Md Rahim\",\n  \"podPhotoUrl\": \"https://storage.fastx.com/pod/123.jpg\",\n  \"signature\": \"base64_signature_data\",\n  \"codCollected\": 25000,\n  \"deliveryNotes\": \"Delivered successfully\",\n  \"latitude\": 23.7937,\n  \"longitude\": 90.4066\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/660e8400-e29b-41d4-a716-446655440001/complete-delivery",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "660e8400-e29b-41d4-a716-446655440001", "complete-delivery"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"Delivery completed successfully\",\n  \"awb\": \"FX1234567890123\",\n  \"status\": \"DELIVERED\",\n  \"deliveredAt\": \"2025-10-29T12:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Rider COD Collection",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/660e8400-e29b-41d4-a716-446655440001/cod-collection",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "660e8400-e29b-41d4-a716-446655440001", "cod-collection"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"riderId\": \"660e8400-e29b-41d4-a716-446655440001\",\n  \"riderName\": \"Rafiq Ahmed\",\n  \"totalCODCollected\": 150000,\n  \"totalDeliveries\": 6,\n  \"lastDeposit\": \"2025-10-27T15:00:00.000Z\",\n  \"pendingDeposit\": 150000\n}"
+            }
+          ]
+        },
+        {
+          "name": "Deposit COD",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 150000,\n  \"hubId\": \"990e8400-e29b-41d4-a716-446655440004\",\n  \"depositSlipUrl\": \"https://storage.fastx.com/deposit/456.jpg\",\n  \"notes\": \"COD deposit for today\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/riders/660e8400-e29b-41d4-a716-446655440001/deposit-cod",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "riders", "660e8400-e29b-41d4-a716-446655440001", "deposit-cod"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"message\": \"COD deposited successfully\",\n  \"depositId\": \"DEP202510290001\",\n  \"amount\": 150000,\n  \"depositedAt\": \"2025-10-29T15:00:00.000Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "8. Tracking Module",
+      "item": [
+        {
+          "name": "Track Shipment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tracking/FX1234567890123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tracking", "FX1234567890123"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"awb\": \"FX1234567890123\",\n  \"status\": \"OUT_FOR_DELIVERY\",\n  \"receiverName\": \"Md Rahim\",\n  \"receiverCity\": \"Dhaka\",\n  \"currentLocation\": {\n    \"hubName\": \"Mirpur Hub\",\n    \"latitude\": 23.7937,\n    \"longitude\": 90.4066\n  },\n  \"expectedDeliveryDate\": \"2025-10-29T18:00:00.000Z\",\n  \"rider\": {\n    \"name\": \"Rafiq Ahmed\",\n    \"phone\": \"+8801812345678\",\n    \"currentLocation\": {\n      \"latitude\": 23.7940,\n      \"longitude\": 90.4070\n    }\n  },\n  \"timeline\": [\n    {\n      \"status\": \"PENDING\",\n      \"timestamp\": \"2025-10-28T10:00:00.000Z\",\n      \"location\": \"Gulshan Hub\",\n      \"description\": \"Shipment created\"\n    },\n    {\n      \"status\": \"PICKED_UP\",\n      \"timestamp\": \"2025-10-28T12:00:00.000Z\",\n      \"location\": \"Gulshan Hub\",\n      \"description\": \"Picked up from merchant\"\n    },\n    {\n      \"status\": \"IN_TRANSIT\",\n      \"timestamp\": \"2025-10-28T14:00:00.000Z\",\n      \"location\": \"Mirpur Hub\",\n      \"description\": \"In transit to destination hub\"\n    },\n    {\n      \"status\": \"OUT_FOR_DELIVERY\",\n      \"timestamp\": \"2025-10-29T09:00:00.000Z\",\n      \"location\": \"Mirpur Hub\",\n      \"description\": \"Out for delivery\",\n      \"rider\": \"Rafiq Ahmed\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Live Location",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tracking/FX1234567890123/live",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tracking", "FX1234567890123", "live"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"awb\": \"FX1234567890123\",\n  \"rider\": {\n    \"id\": \"660e8400-e29b-41d4-a716-446655440001\",\n    \"name\": \"Rafiq Ahmed\",\n    \"phone\": \"+8801812345678\",\n    \"currentLocation\": {\n      \"latitude\": 23.7940,\n      \"longitude\": 90.4070,\n      \"accuracy\": 10,\n      \"updatedAt\": \"2025-10-29T10:30:00.000Z\"\n    }\n  },\n  \"deliveryAddress\": {\n    \"address\": \"Mirpur-10, Dhaka\",\n    \"latitude\": 23.7950,\n    \"longitude\": 90.4080\n  },\n  \"distanceRemaining\": 1.2,\n  \"estimatedArrival\": \"2025-10-29T11:00:00.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Track Multiple Shipments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"awbList\": [\"FX1234567890123\", \"FX1234567890124\", \"FX1234567890125\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tracking/bulk",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tracking", "bulk"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {},
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"results\": [\n    {\n      \"awb\": \"FX1234567890123\",\n      \"status\": \"OUT_FOR_DELIVERY\",\n      \"currentLocation\": \"Mirpur Hub\"\n    },\n    {\n      \"awb\": \"FX1234567890124\",\n      \"status\": \"DELIVERED\",\n      \"deliveredAt\": \"2025-10-28T14:00:00.000Z\"\n    },\n    {\n      \"awb\": \"FX1234567890125\",\n      \"status\": \"IN_TRANSIT\",\n      \"currentLocation\": \"Gulshan Hub\"\n    }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
