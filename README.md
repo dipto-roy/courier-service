@@ -14,6 +14,7 @@ courier-service/
 ## Tech Stack
 
 ### Backend
+
 - **Framework**: NestJS + TypeScript
 - **Database**: PostgreSQL + TypeORM
 - **Real-time**: Socket.IO (WebSocket)
@@ -21,6 +22,7 @@ courier-service/
 - **Caching**: Redis (optional)
 
 ### Frontend
+
 - **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
@@ -38,12 +40,14 @@ courier-service/
 ### Quick Start
 
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/dipto-roy/courier-service.git
 cd courier-service
 ```
 
 2. **Set up Backend**
+
 ```bash
 cd backend
 npm install
@@ -53,6 +57,7 @@ npm run start:dev
 ```
 
 3. **Set up Frontend** (in a new terminal)
+
 ```bash
 cd frontend
 npm install
@@ -102,6 +107,7 @@ git merge feature/your-feature-name
 ## Features
 
 ### Implemented ✅
+
 - User authentication (JWT-based)
 - Role-based access control (Admin, Customer, Rider, Hub)
 - Shipment creation and management
@@ -116,6 +122,7 @@ git merge feature/your-feature-name
 - Audit logging
 
 ### In Progress 🚧
+
 - Frontend web application
 - Advanced dynamic pricing with zones
 - Complete notification delivery (Email/SMS)
@@ -139,6 +146,7 @@ The backend provides 100+ REST API endpoints across 12 controllers:
 ## Environment Variables
 
 ### Backend (`backend/.env`)
+
 ```env
 # Database
 DB_HOST=localhost
@@ -157,6 +165,7 @@ REDIS_PORT=6379
 ```
 
 ### Frontend (`frontend/.env.local`)
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000
 NEXT_PUBLIC_SOCKET_URL=http://localhost:3000
@@ -165,6 +174,7 @@ NEXT_PUBLIC_SOCKET_URL=http://localhost:3000
 ## Running Tests
 
 ### Backend Tests
+
 ```bash
 cd backend
 npm test
@@ -174,15 +184,18 @@ npm run test:e2e
 ## Deployment
 
 ### Backend Deployment
+
 1. Build the application: `npm run build`
 2. Run migrations: `npm run migration:run`
 3. Start production server: `npm run start:prod`
 
 ### Frontend Deployment
+
 1. Build for production: `npm run build`
 2. Start production server: `npm start`
 
 Or deploy to Vercel:
+
 ```bash
 vercel --prod
 ```

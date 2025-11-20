@@ -51,12 +51,14 @@ frontend/
 ## Planned Features
 
 ### User Roles
+
 - **Customer**: Create shipments, track orders, manage pickups
 - **Rider**: View assigned deliveries, update GPS location, complete deliveries
 - **Hub Admin**: Manage manifests, sorting, inbound/outbound scans
 - **Admin**: User management, system configuration
 
 ### Core Pages (To Be Implemented)
+
 - [ ] Authentication (Login/Signup)
 - [ ] Dashboard (role-based)
 - [ ] Shipment creation & tracking
