@@ -1,0 +1,1567 @@
+[
+  {
+    "method": "GET",
+    "path": "/",
+    "description": "Health check endpoint",
+    "controller": "AppController",
+    "auth": "Public",
+    "requestBody": null,
+    "response": {
+      "message": "string",
+      "status": "string",
+      "timestamp": "string (ISO 8601)"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/health",
+    "description": "Application health status",
+    "controller": "AppController",
+    "auth": "Public",
+    "requestBody": null,
+    "response": {
+      "status": "string",
+      "uptime": "number",
+      "timestamp": "string (ISO 8601)",
+      "environment": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/signup",
+    "description": "User registration",
+    "controller": "AuthController",
+    "auth": "Public",
+    "requestBody": {
+      "name": "string",
+      "email": "string (email format)",
+      "phone": "string",
+      "password": "string (min 8 chars)",
+      "role": "string (enum: MERCHANT, RIDER, CUSTOMER, ADMIN, AGENT, HUB_STAFF, SUPPORT, FINANCE) - optional",
+      "city": "string - optional",
+      "area": "string - optional",
+      "address": "string - optional",
+      "merchantBusinessName": "string - optional"
+    },
+    "response": {
+      "user": "object",
+      "accessToken": "string",
+      "refreshToken": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/login",
+    "description": "User login",
+    "controller": "AuthController",
+    "auth": "Public",
+    "requestBody": {
+      "email": "string (email format)",
+      "password": "string"
+    },
+    "response": {
+      "user": "object",
+      "accessToken": "string",
+      "refreshToken": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/verify-otp",
+    "description": "Verify OTP code",
+    "controller": "AuthController",
+    "auth": "Public",
+    "requestBody": {
+      "email": "string",
+      "otp": "string"
+    },
+    "response": {
+      "success": "boolean",
+      "message": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/refresh",
+    "description": "Refresh access token",
+    "controller": "AuthController",
+    "auth": "Public",
+    "requestBody": {
+      "refreshToken": "string"
+    },
+    "response": {
+      "accessToken": "string",
+      "refreshToken": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/logout",
+    "description": "Logout user",
+    "controller": "AuthController",
+    "auth": "Bearer Token (JWT)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "message": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth/me",
+    "description": "Get current user profile",
+    "controller": "AuthController",
+    "auth": "Bearer Token (JWT)",
+    "requestBody": null,
+    "response": {
+      "user": "object"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/shipments",
+    "description": "Create a new shipment",
+    "controller": "ShipmentsController",
+    "auth": "Bearer Token (Roles: MERCHANT, ADMIN)",
+    "requestBody": {
+      "sender": {
+        "name": "string",
+        "phone": "string",
+        "email": "string - optional",
+        "city": "string",
+        "area": "string",
+        "address": "string",
+        "latitude": "number - optional",
+        "longitude": "number - optional"
+      },
+      "receiver": {
+        "name": "string",
+        "phone": "string",
+        "email": "string - optional",
+        "city": "string",
+        "area": "string",
+        "address": "string",
+        "latitude": "number - optional",
+        "longitude": "number - optional"
+      },
+      "deliveryType": "string (enum: NORMAL, EXPRESS)",
+      "weight": "number (0.1 - 50 kg)",
+      "productCategory": "string - optional",
+      "productDescription": "string - optional",
+      "declaredValue": "number - optional",
+      "paymentMethod": "string (enum: COD, PREPAID)",
+      "codAmount": "number - optional",
+      "specialInstructions": "string - optional",
+      "merchantInvoice": "string - optional"
+    },
+    "response": {
+      "id": "string (uuid)",
+      "awb": "string",
+      "status": "string",
+      "deliveryFee": "number",
+      "codFee": "number",
+      "totalAmount": "number",
+      "expectedDeliveryDate": "string (ISO 8601)"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/shipments",
+    "description": "Get all shipments with filters and pagination",
+    "controller": "ShipmentsController",
+    "auth": "Bearer Token (Roles: ADMIN, MERCHANT, SUPPORT, HUB_STAFF)",
+    "queryParams": {
+      "status": "string - optional",
+      "deliveryType": "string - optional",
+      "merchantId": "string - optional",
+      "search": "string - optional (AWB, phone, receiver name)",
+      "page": "number - optional (default: 1)",
+      "limit": "number - optional (default: 20)"
+    },
+    "response": {
+      "data": "array of shipments",
+      "pagination": {
+        "total": "number",
+        "page": "number",
+        "limit": "number",
+        "totalPages": "number"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/shipments/statistics",
+    "description": "Get shipment statistics",
+    "controller": "ShipmentsController",
+    "auth": "Bearer Token (Roles: ADMIN, MERCHANT, SUPPORT)",
+    "requestBody": null,
+    "response": {
+      "total": "number",
+      "byStatus": "object",
+      "byDeliveryType": "object",
+      "totalRevenue": "number",
+      "totalCOD": "number"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/shipments/by-status/:status",
+    "description": "Get shipments by status",
+    "controller": "ShipmentsController",
+    "auth": "Bearer Token (Roles: ADMIN, MERCHANT, SUPPORT, HUB_STAFF)",
+    "requestBody": null,
+    "response": {
+      "data": "array of shipments"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/shipments/track/:awb",
+    "description": "Track shipment by AWB (public endpoint)",
+    "controller": "ShipmentsController",
+    "auth": "Public",
+    "requestBody": null,
+    "response": {
+      "awb": "string",
+      "status": "string",
+      "currentLocation": "string",
+      "expectedDeliveryDate": "string",
+      "timeline": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/shipments/:id",
+    "description": "Get shipment by ID",
+    "controller": "ShipmentsController",
+    "auth": "Bearer Token (Roles: ADMIN, MERCHANT, SUPPORT, HUB_STAFF, RIDER)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "awb": "string",
+      "status": "string",
+      "sender": "object",
+      "receiver": "object",
+      "deliveryFee": "number",
+      "codAmount": "number",
+      "totalAmount": "number"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/shipments/:id",
+    "description": "Update shipment information",
+    "controller": "ShipmentsController",
+    "auth": "Bearer Token (Roles: MERCHANT, ADMIN)",
+    "requestBody": {
+      "receiver": "object - optional",
+      "weight": "number - optional",
+      "codAmount": "number - optional",
+      "specialInstructions": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "awb": "string",
+      "updated": "boolean"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/shipments/:id/status",
+    "description": "Update shipment status",
+    "controller": "ShipmentsController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF, AGENT, RIDER)",
+    "requestBody": {
+      "status": "string (enum)",
+      "notes": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "awb": "string",
+      "status": "string"
+    }
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/shipments/:id",
+    "description": "Delete shipment (only if PENDING)",
+    "controller": "ShipmentsController",
+    "auth": "Bearer Token (Roles: MERCHANT, ADMIN)",
+    "requestBody": null,
+    "response": "No content (204)"
+  },
+  {
+    "method": "POST",
+    "path": "/api/shipments/bulk-upload",
+    "description": "Bulk upload shipments from CSV",
+    "controller": "ShipmentsController",
+    "auth": "Bearer Token (Roles: MERCHANT, ADMIN)",
+    "requestBody": {
+      "csvData": "string (CSV format with header)"
+    },
+    "response": {
+      "totalRows": "number",
+      "successCount": "number",
+      "failedCount": "number",
+      "errors": "array",
+      "shipments": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/rider/manifests",
+    "description": "Get all manifests assigned to rider",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Role: RIDER)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "total": "number",
+      "manifests": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/rider/shipments",
+    "description": "Get all shipments directly assigned to rider",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Role: RIDER)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "total": "number",
+      "shipments": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/rider/shipments/:awb",
+    "description": "Get shipment details by AWB",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Role: RIDER)",
+    "requestBody": null,
+    "response": {
+      "shipment": "object"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/rider/generate-otp",
+    "description": "Generate OTP for shipment delivery",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Role: RIDER)",
+    "requestBody": {
+      "awb": "string"
+    },
+    "response": {
+      "success": "boolean",
+      "message": "string",
+      "awb": "string",
+      "otpGenerated": "boolean"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/rider/complete-delivery",
+    "description": "Complete delivery with OTP verification",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Role: RIDER)",
+    "requestBody": {
+      "awb": "string",
+      "otp": "string",
+      "codAmount": "number - optional",
+      "podImage": "string - optional",
+      "notes": "string - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "message": "string",
+      "awb": "string",
+      "deliveredAt": "string (ISO 8601)",
+      "codCollected": "number"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/rider/failed-delivery",
+    "description": "Record failed delivery attempt",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Role: RIDER)",
+    "requestBody": {
+      "awb": "string",
+      "reason": "string",
+      "notes": "string - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "message": "string",
+      "awb": "string",
+      "deliveryAttempts": "number",
+      "status": "string",
+      "autoRTO": "boolean"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/rider/mark-rto",
+    "description": "Mark shipment for RTO (Return to Origin)",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Role: RIDER)",
+    "requestBody": {
+      "awb": "string",
+      "reason": "string",
+      "notes": "string - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "message": "string",
+      "awb": "string",
+      "status": "string",
+      "rtoReason": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/rider/update-location",
+    "description": "Update rider live location",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Role: RIDER)",
+    "requestBody": {
+      "latitude": "number",
+      "longitude": "number",
+      "accuracy": "number - optional",
+      "speed": "number - optional",
+      "heading": "number - optional",
+      "batteryLevel": "number - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "message": "string",
+      "location": {
+        "latitude": "number",
+        "longitude": "number",
+        "timestamp": "string (ISO 8601)"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/rider/location-history",
+    "description": "Get rider location history",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Roles: RIDER, ADMIN, HUB_STAFF)",
+    "queryParams": {
+      "limit": "number - optional (default: 50)"
+    },
+    "response": {
+      "success": "boolean",
+      "total": "number",
+      "locations": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/rider/statistics",
+    "description": "Get rider statistics",
+    "controller": "RiderController",
+    "auth": "Bearer Token (Role: RIDER)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "statistics": {
+        "totalAssigned": "number",
+        "outForDelivery": "number",
+        "delivered": "number",
+        "failedDeliveries": "number",
+        "rtoShipments": "number",
+        "todayDeliveries": "number",
+        "totalCodCollected": "number",
+        "deliveryRate": "string (percentage)"
+      }
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/users",
+    "description": "Create a new user (Admin only)",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Role: ADMIN)",
+    "requestBody": {
+      "name": "string",
+      "email": "string",
+      "phone": "string",
+      "password": "string",
+      "role": "string (enum)",
+      "city": "string - optional",
+      "area": "string - optional",
+      "address": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "name": "string",
+      "email": "string",
+      "role": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/users",
+    "description": "Get all users with filters and pagination",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "queryParams": {
+      "role": "string - optional",
+      "search": "string - optional",
+      "page": "number - optional",
+      "limit": "number - optional"
+    },
+    "response": {
+      "data": "array of users",
+      "pagination": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/users/statistics",
+    "description": "Get user statistics (Admin only)",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Role: ADMIN)",
+    "requestBody": null,
+    "response": {
+      "total": "number",
+      "byRole": "object",
+      "active": "number",
+      "inactive": "number"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/users/by-role/:role",
+    "description": "Get users by role",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": null,
+    "response": {
+      "data": "array of users"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/users/me",
+    "description": "Get current user profile",
+    "controller": "UsersController",
+    "auth": "Bearer Token (All authenticated users)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "name": "string",
+      "email": "string",
+      "role": "string",
+      "walletBalance": "number"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/users/:id",
+    "description": "Get user by ID",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "name": "string",
+      "email": "string",
+      "role": "string"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/users/:id",
+    "description": "Update user information",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": {
+      "name": "string - optional",
+      "phone": "string - optional",
+      "city": "string - optional",
+      "area": "string - optional",
+      "address": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "updated": "boolean"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/users/:id/kyc",
+    "description": "Update KYC verification status",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE)",
+    "requestBody": {
+      "kycVerified": "boolean",
+      "kycNotes": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "kycVerified": "boolean"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/users/:id/wallet",
+    "description": "Update user wallet balance",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE)",
+    "requestBody": {
+      "amount": "number",
+      "operation": "string (enum: ADD, DEDUCT)",
+      "notes": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "walletBalance": "number"
+    }
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/users/:id",
+    "description": "Soft delete user (Admin only)",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Role: ADMIN)",
+    "requestBody": null,
+    "response": "No content (204)"
+  },
+  {
+    "method": "POST",
+    "path": "/api/users/:id/restore",
+    "description": "Restore soft deleted user (Admin only)",
+    "controller": "UsersController",
+    "auth": "Bearer Token (Role: ADMIN)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "restored": "boolean"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/hub/inbound-scan",
+    "description": "Inbound scanning - Receive shipments at hub",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "requestBody": {
+      "awbs": "array of strings",
+      "hubLocation": "string"
+    },
+    "response": {
+      "success": "boolean",
+      "scannedCount": "number",
+      "hubLocation": "string",
+      "scannedShipments": "array"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/hub/outbound-scan",
+    "description": "Outbound scanning - Dispatch shipments from hub",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "requestBody": {
+      "awbs": "array of strings",
+      "originHub": "string",
+      "destinationHub": "string - optional",
+      "riderId": "string - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "scannedCount": "number",
+      "originHub": "string",
+      "destinationHub": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/hub/sorting",
+    "description": "Sort shipments by destination",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "requestBody": {
+      "awbs": "array of strings",
+      "hubLocation": "string",
+      "destinationHub": "string"
+    },
+    "response": {
+      "success": "boolean",
+      "sortedCount": "number",
+      "hubLocation": "string",
+      "destinationHub": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/hub/manifests",
+    "description": "Create manifest for hub-to-hub transfer",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "requestBody": {
+      "originHub": "string",
+      "destinationHub": "string",
+      "awbs": "array of strings",
+      "notes": "string - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "manifest": {
+        "id": "string",
+        "manifestNumber": "string",
+        "originHub": "string",
+        "destinationHub": "string",
+        "totalShipments": "number",
+        "status": "string"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/hub/manifests",
+    "description": "Get all manifests with filters",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF, RIDER)",
+    "queryParams": {
+      "status": "string - optional",
+      "originHub": "string - optional",
+      "destinationHub": "string - optional",
+      "page": "number - optional",
+      "limit": "number - optional"
+    },
+    "response": {
+      "data": "array of manifests",
+      "pagination": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/hub/manifests/statistics",
+    "description": "Get manifest statistics",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "queryParams": {
+      "hubLocation": "string - optional"
+    },
+    "response": {
+      "total": "number",
+      "created": "number",
+      "inTransit": "number",
+      "received": "number",
+      "closed": "number"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/hub/manifests/:id",
+    "description": "Get manifest details by ID",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF, RIDER)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "manifestNumber": "string",
+      "originHub": "string",
+      "destinationHub": "string",
+      "shipments": "array",
+      "status": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/hub/manifests/:id/receive",
+    "description": "Receive manifest at destination hub",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "requestBody": {
+      "receivedAwbs": "array of strings",
+      "notes": "string - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "manifestNumber": "string",
+      "receivedCount": "number",
+      "expectedCount": "number",
+      "discrepancies": "object"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/hub/manifests/:id/close",
+    "description": "Close manifest",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "manifestNumber": "string",
+      "status": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/hub/inventory/:hubLocation",
+    "description": "Get hub inventory",
+    "controller": "HubController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "requestBody": null,
+    "response": {
+      "hubLocation": "string",
+      "statistics": {
+        "totalShipments": "number",
+        "byDestination": "object",
+        "byType": "object",
+        "codShipments": "number",
+        "totalCodAmount": "number"
+      },
+      "shipments": "array"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/notifications",
+    "description": "Send a notification",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": {
+      "userId": "string",
+      "type": "string (enum: email, sms, push)",
+      "title": "string",
+      "message": "string"
+    },
+    "response": {
+      "id": "string",
+      "userId": "string",
+      "type": "string",
+      "title": "string",
+      "isRead": "boolean",
+      "createdAt": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/notifications/email",
+    "description": "Send an email notification",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": {
+      "to": "string (email)",
+      "subject": "string",
+      "body": "string"
+    },
+    "response": {
+      "success": "boolean",
+      "message": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/notifications/sms",
+    "description": "Send an SMS notification",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": {
+      "phone": "string",
+      "message": "string"
+    },
+    "response": {
+      "success": "boolean",
+      "message": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/notifications/push",
+    "description": "Send a push notification",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": {
+      "userId": "string",
+      "title": "string",
+      "body": "string",
+      "data": "object - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "message": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/notifications/my-notifications",
+    "description": "Get current user notifications",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (All authenticated users)",
+    "queryParams": {
+      "isRead": "boolean - optional"
+    },
+    "response": {
+      "notifications": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/notifications/unread-count",
+    "description": "Get unread notification count",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (All authenticated users)",
+    "requestBody": null,
+    "response": {
+      "count": "number"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/notifications/:id/read",
+    "description": "Mark notification as read",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (All authenticated users)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "isRead": "boolean",
+      "readAt": "string"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/notifications/mark-all-read",
+    "description": "Mark all notifications as read",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (All authenticated users)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "message": "string"
+    }
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/notifications/:id",
+    "description": "Delete a notification",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (All authenticated users)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "message": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/notifications/users/:userId",
+    "description": "Get notifications for a specific user (Admin only)",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": null,
+    "response": {
+      "notifications": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/notifications/statistics",
+    "description": "Get notification statistics (Admin only)",
+    "controller": "NotificationsController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": null,
+    "response": {
+      "total": "number",
+      "sent": "number",
+      "failed": "number",
+      "unread": "number",
+      "byType": "object"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/payments/record-cod/:shipmentId",
+    "description": "Record COD collection",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, RIDER)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "transactionId": "string",
+      "type": "string",
+      "amount": "number",
+      "status": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/payments/record-delivery-fee/:shipmentId",
+    "description": "Record delivery fee",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "transactionId": "string",
+      "amount": "number"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/payments/initiate-payout",
+    "description": "Initiate payout to merchant",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE)",
+    "requestBody": {
+      "merchantId": "string",
+      "amount": "number",
+      "paymentMethod": "string",
+      "notes": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "transactionId": "string",
+      "status": "string",
+      "amount": "number"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/payments/complete-payout/:transactionId",
+    "description": "Complete a payout",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE)",
+    "requestBody": {
+      "referenceNumber": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "status": "string"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/payments/fail-payout/:transactionId",
+    "description": "Fail a payout",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE)",
+    "requestBody": {
+      "reason": "string"
+    },
+    "response": {
+      "id": "string",
+      "status": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/payments/transactions",
+    "description": "Get transactions with filters",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE, MERCHANT)",
+    "queryParams": {
+      "merchantId": "string - optional",
+      "type": "string - optional",
+      "status": "string - optional",
+      "page": "number - optional",
+      "limit": "number - optional"
+    },
+    "response": {
+      "transactions": "array",
+      "pagination": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/payments/transactions/:transactionId",
+    "description": "Get transaction by ID",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE, MERCHANT)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "transactionId": "string",
+      "type": "string",
+      "amount": "number",
+      "status": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/payments/pending-collections/:merchantId",
+    "description": "Get pending COD collections",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE, MERCHANT)",
+    "requestBody": null,
+    "response": {
+      "collections": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/payments/pending-balance/:merchantId",
+    "description": "Get pending balance for merchant",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE, MERCHANT)",
+    "requestBody": null,
+    "response": {
+      "pendingBalance": "number"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/payments/statistics/merchant/:merchantId",
+    "description": "Get merchant payment statistics",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE, MERCHANT)",
+    "requestBody": null,
+    "response": {
+      "walletBalance": "number",
+      "pendingBalance": "number",
+      "totalCodCollected": "number",
+      "totalPayouts": "number"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/payments/statistics/overall",
+    "description": "Get overall payment statistics",
+    "controller": "PaymentsController",
+    "auth": "Bearer Token (Roles: ADMIN, FINANCE)",
+    "requestBody": null,
+    "response": {
+      "totalCodCollected": "number",
+      "totalPayouts": "number",
+      "pendingPayouts": "number"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/pickups",
+    "description": "Create a new pickup request",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Roles: MERCHANT, ADMIN)",
+    "requestBody": {
+      "address": "string",
+      "city": "string",
+      "area": "string",
+      "phone": "string",
+      "itemCount": "number",
+      "scheduledDate": "string (ISO 8601)",
+      "notes": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "pickupNumber": "string",
+      "status": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/pickups",
+    "description": "Get all pickups with filters",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Roles: ADMIN, MERCHANT, AGENT, HUB_STAFF)",
+    "queryParams": {
+      "status": "string - optional",
+      "merchantId": "string - optional",
+      "agentId": "string - optional",
+      "page": "number - optional",
+      "limit": "number - optional"
+    },
+    "response": {
+      "data": "array of pickups",
+      "pagination": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/pickups/statistics",
+    "description": "Get pickup statistics",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Roles: ADMIN, MERCHANT, AGENT, HUB_STAFF)",
+    "requestBody": null,
+    "response": {
+      "total": "number",
+      "byStatus": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/pickups/today",
+    "description": "Get agent's assigned pickups for today",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Role: AGENT)",
+    "requestBody": null,
+    "response": {
+      "pickups": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/pickups/:id",
+    "description": "Get pickup by ID",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Roles: ADMIN, MERCHANT, AGENT, HUB_STAFF)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "pickupNumber": "string",
+      "status": "string",
+      "address": "string"
+    }
+  },
+  {
+    "method": "PATCH",
+    "path": "/api/pickups/:id",
+    "description": "Update pickup (only pending pickups)",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Roles: MERCHANT, ADMIN)",
+    "requestBody": {
+      "address": "string - optional",
+      "scheduledDate": "string - optional",
+      "notes": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "updated": "boolean"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/pickups/:id/assign",
+    "description": "Assign pickup to an agent",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Roles: ADMIN, HUB_STAFF)",
+    "requestBody": {
+      "agentId": "string"
+    },
+    "response": {
+      "id": "string",
+      "status": "string",
+      "assignedAgent": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/pickups/:id/start",
+    "description": "Start pickup (Agent)",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Role: AGENT)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "status": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/pickups/:id/complete",
+    "description": "Complete pickup with shipment scanning",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Role: AGENT)",
+    "requestBody": {
+      "awbs": "array of strings",
+      "notes": "string - optional"
+    },
+    "response": {
+      "id": "string",
+      "status": "string",
+      "completedAt": "string"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/pickups/:id/cancel",
+    "description": "Cancel pickup",
+    "controller": "PickupController",
+    "auth": "Bearer Token (Roles: MERCHANT, ADMIN)",
+    "requestBody": null,
+    "response": {
+      "id": "string",
+      "status": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/tracking/public/:awb",
+    "description": "Public shipment tracking by AWB",
+    "controller": "TrackingController",
+    "auth": "Public",
+    "queryParams": {
+      "phone": "string - optional (last 4 digits for verification)"
+    },
+    "response": {
+      "success": "boolean",
+      "tracking": {
+        "awb": "string",
+        "status": "string",
+        "currentLocation": "string",
+        "expectedDeliveryDate": "string",
+        "timeline": "array",
+        "riderLocation": "object"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/tracking/detailed/:awb",
+    "description": "Get detailed tracking information",
+    "controller": "TrackingController",
+    "auth": "Bearer Token (Roles: ADMIN, MERCHANT, HUB_STAFF, SUPPORT)",
+    "requestBody": null,
+    "response": {
+      "awb": "string",
+      "status": "string",
+      "timeline": "array",
+      "shipmentDetails": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/tracking/subscription/:awb",
+    "description": "Get Pusher subscription info for real-time updates",
+    "controller": "TrackingController",
+    "auth": "Public",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "subscription": {
+        "channel": "string",
+        "events": "array",
+        "pusherKey": "string"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/tracking/gateway-status",
+    "description": "Get WebSocket gateway status",
+    "controller": "TrackingController",
+    "auth": "Public",
+    "requestBody": null,
+    "response": {
+      "status": "string",
+      "namespace": "string",
+      "activeConnections": "number",
+      "subscriptions": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/tracking/active-subscriptions",
+    "description": "Get all active WebSocket subscriptions",
+    "controller": "TrackingController",
+    "auth": "Public",
+    "requestBody": null,
+    "response": {
+      "subscriptions": "array",
+      "timestamp": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/tracking/test-event/:awb",
+    "description": "Send test WebSocket event",
+    "controller": "TrackingController",
+    "auth": "Public",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "message": "string"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/tracking/monitor",
+    "description": "Get WebSocket monitoring data",
+    "controller": "TrackingController",
+    "auth": "Public",
+    "requestBody": null,
+    "response": {
+      "gateway": "object",
+      "recentActivity": "object",
+      "health": "object"
+    }
+  },
+  {
+    "method": "POST",
+    "path": "/api/audit/log",
+    "description": "Create audit log manually",
+    "controller": "AuditController",
+    "auth": "Bearer Token (Role: ADMIN)",
+    "requestBody": {
+      "userId": "string",
+      "entityType": "string",
+      "entityId": "string",
+      "action": "string",
+      "oldValues": "object - optional",
+      "newValues": "object - optional",
+      "description": "string - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "data": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/audit/logs",
+    "description": "Get audit logs with filtering",
+    "controller": "AuditController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "queryParams": {
+      "userId": "string - optional",
+      "entityType": "string - optional",
+      "entityId": "string - optional",
+      "action": "string - optional",
+      "startDate": "string - optional",
+      "endDate": "string - optional",
+      "page": "number - optional",
+      "limit": "number - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "data": "array",
+      "pagination": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/audit/logs/:id",
+    "description": "Get audit log by ID",
+    "controller": "AuditController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "data": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/audit/entity/:entityType/:entityId",
+    "description": "Get entity audit trail",
+    "controller": "AuditController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "entityType": "string",
+      "entityId": "string",
+      "data": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/audit/user/:userId",
+    "description": "Get user activity logs",
+    "controller": "AuditController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "queryParams": {
+      "limit": "number - optional (default: 50)"
+    },
+    "response": {
+      "success": "boolean",
+      "userId": "string",
+      "data": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/audit/recent",
+    "description": "Get recent audit logs",
+    "controller": "AuditController",
+    "auth": "Bearer Token (Role: ADMIN)",
+    "queryParams": {
+      "limit": "number - optional (default: 100)"
+    },
+    "response": {
+      "success": "boolean",
+      "data": "array"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/audit/statistics",
+    "description": "Get audit statistics",
+    "controller": "AuditController",
+    "auth": "Bearer Token (Role: ADMIN)",
+    "queryParams": {
+      "startDate": "string - optional",
+      "endDate": "string - optional"
+    },
+    "response": {
+      "success": "boolean",
+      "data": {
+        "total": "number",
+        "byEntityType": "object",
+        "byAction": "object",
+        "topUsers": "array"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/audit/statistics/user/:userId",
+    "description": "Get user audit statistics",
+    "controller": "AuditController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "userId": "string",
+      "data": "object"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/sla/statistics",
+    "description": "Get SLA violation statistics",
+    "controller": "SlaWatcherController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT, HUB_STAFF)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "data": {
+        "pickupSLA": "object",
+        "deliverySLA": "object",
+        "totalViolations": "number"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/sla/shipment/:shipmentId",
+    "description": "Check SLA status for specific shipment",
+    "controller": "SlaWatcherController",
+    "auth": "Bearer Token (Roles: ADMIN, SUPPORT, MERCHANT)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "data": {
+        "isViolated": "boolean",
+        "violations": "array",
+        "details": "object"
+      }
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/sla/queue/status",
+    "description": "Get SLA queue status",
+    "controller": "SlaWatcherController",
+    "auth": "Bearer Token (Role: ADMIN)",
+    "requestBody": null,
+    "response": {
+      "success": "boolean",
+      "data": {
+        "waiting": "number",
+        "active": "number",
+        "completed": "number",
+        "failed": "number"
+      }
+    }
+  }
+]

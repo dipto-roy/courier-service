@@ -1,0 +1,92 @@
+{
+  "timestamp": "2025-10-30T00:17:14.564Z",
+  "summary": {
+    "passed": 5,
+    "failed": 8,
+    "total": 13,
+    "percentage": "38.5"
+  },
+  "users": {
+    "merchant": {
+      "role": "merchant",
+      "name": "Test Merchant",
+      "email": "m1761783427688@test.com",
+      "phone": "01717044260",
+      "password": "Pass123!",
+      "city": "Dhaka",
+      "area": "Gulshan",
+      "address": "Gulshan-1",
+      "id": "421d720b-e200-4a82-a9f6-7bc686d95c71",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjFkNzIwYi1lMjAwLTRhODItYTlmNi03YmM2ODZkOTVjNzEiLCJlbWFpbCI6Im0xNzYxNzgzNDI3Njg4QHRlc3QuY29tIiwicm9sZSI6Im1lcmNoYW50IiwiaWF0IjoxNzYxNzgzNDI3LCJleHAiOjE3NjE3ODcwMjd9.XagfP2XLo26bG9OxHFjCXjX7i62ZH_fCVeintnIUfw0"
+    },
+    "customer": {
+      "role": "customer",
+      "name": "Test Customer",
+      "email": "c1761783427688@test.com",
+      "phone": "01554175744",
+      "password": "Pass123!",
+      "city": "Dhaka",
+      "area": "Dhanmondi",
+      "address": "Dhanmondi-3",
+      "id": "097a0702-cd72-4490-888f-77df5771951c",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOTdhMDcwMi1jZDcyLTQ0OTAtODg4Zi03N2RmNTc3MTk1MWMiLCJlbWFpbCI6ImMxNzYxNzgzNDI3Njg4QHRlc3QuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNzYxNzgzNDI4LCJleHAiOjE3NjE3ODcwMjh9.RKqe19J3QbnScz4IdwQ6Lz2acy_wp0dXKvnM729UXBo"
+    },
+    "rider": {
+      "role": "rider",
+      "name": "Test Rider",
+      "email": "r1761783427688@test.com",
+      "phone": "01336923399",
+      "password": "Pass123!",
+      "city": "Dhaka",
+      "area": "Gulshan",
+      "address": "Gulshan-2",
+      "id": "506a43c9-1c48-45d0-98d1-ad851f6c82e3",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDZhNDNjOS0xYzQ4LTQ1ZDAtOThkMS1hZDg1MWY2YzgyZTMiLCJlbWFpbCI6InIxNzYxNzgzNDI3Njg4QHRlc3QuY29tIiwicm9sZSI6InJpZGVyIiwiaWF0IjoxNzYxNzgzNDI4LCJleHAiOjE3NjE3ODcwMjh9.AZr2lKliaBQJHtN7v8cTaTXeQyKumqsE5hxZ9tio59Q"
+    },
+    "agent": {
+      "role": "agent",
+      "name": "Test Agent",
+      "email": "a1761783427688@test.com",
+      "phone": "01666390563",
+      "password": "Pass123!",
+      "city": "Dhaka",
+      "area": "Gulshan",
+      "address": "Gulshan Hub",
+      "id": "73f6291f-b4ce-4b77-9783-4d7dc9e66673",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3M2Y2MjkxZi1iNGNlLTRiNzctOTc4My00ZDdkYzllNjY2NzMiLCJlbWFpbCI6ImExNzYxNzgzNDI3Njg4QHRlc3QuY29tIiwicm9sZSI6ImFnZW50IiwiaWF0IjoxNzYxNzgzNDI4LCJleHAiOjE3NjE3ODcwMjh9.Ak4ARlSL9FqD8k1iSmxh46rt-1eu_x-i5Q2xzPuOKic"
+    }
+  },
+  "shipments": [],
+  "gpsUpdates": [],
+  "credentials": [
+    {
+      "role": "merchant",
+      "email": "m1761783427688@test.com",
+      "password": "Pass123!",
+      "phone": "01717044260"
+    },
+    {
+      "role": "customer",
+      "email": "c1761783427688@test.com",
+      "password": "Pass123!",
+      "phone": "01554175744"
+    },
+    {
+      "role": "rider",
+      "email": "r1761783427688@test.com",
+      "password": "Pass123!",
+      "phone": "01336923399"
+    },
+    {
+      "role": "agent",
+      "email": "a1761783427688@test.com",
+      "password": "Pass123!",
+      "phone": "01666390563"
+    }
+  ],
+  "testCoordinates": {
+    "verified": "23.7808875, 90.4161712",
+    "precision": "DECIMAL(10,7)",
+    "accuracy": "±1.1 cm"
+  }
+}

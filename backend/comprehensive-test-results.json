@@ -1,0 +1,72 @@
+{
+  "timestamp": "2025-10-30T00:11:35.310Z",
+  "summary": {
+    "totalTests": 9,
+    "passed": 1,
+    "failed": 8,
+    "usersCreated": 4,
+    "gpsUpdates": 0,
+    "shipmentsCreated": 0,
+    "wsEvents": 0
+  },
+  "users": {
+    "merchant": {
+      "role": "merchant",
+      "name": "ABC Electronics Test",
+      "email": "merchant-1761783089683@test.com",
+      "phone": "01717067790",
+      "password": "SecurePass123!",
+      "city": "Dhaka",
+      "area": "Gulshan",
+      "address": "ABC Warehouse, Gulshan-1"
+    },
+    "customer": {
+      "role": "customer",
+      "name": "John Customer Test",
+      "email": "customer-1761783089683@test.com",
+      "phone": "01552119164",
+      "password": "SecurePass123!",
+      "city": "Dhaka",
+      "area": "Dhanmondi",
+      "address": "House 10, Road 5, Dhanmondi-3"
+    },
+    "rider": {
+      "role": "rider",
+      "name": "Ahmed Rider Test",
+      "email": "rider-1761783089683@test.com",
+      "phone": "01339833744",
+      "password": "SecurePass123!",
+      "city": "Dhaka",
+      "area": "Gulshan",
+      "address": "Rider Base, Gulshan-2"
+    },
+    "agent": {
+      "role": "agent",
+      "name": "Pickup Agent Test",
+      "email": "agent-1761783089683@test.com",
+      "phone": "01667500711",
+      "password": "SecurePass123!",
+      "city": "Dhaka",
+      "area": "Gulshan",
+      "address": "Pickup Hub, Gulshan"
+    }
+  },
+  "shipments": [],
+  "gpsUpdates": [],
+  "wsEvents": [],
+  "errors": [
+    "Rider token not available. Skipping GPS test.",
+    "Merchant token not available. Skipping shipment test.",
+    "Gateway status failed: Unexpected token 'n', \"null\" is not valid JSON",
+    "Failed: 3/9",
+    "  1. Rider token not available. Skipping GPS test.",
+    "  2. Merchant token not available. Skipping shipment test.",
+    "  3. Gateway status failed: Unexpected token 'n', \"null\" is not valid JSON",
+    "  4. Failed: 3/9"
+  ],
+  "coordinates": {
+    "tested": "23.7808875, 90.4161712",
+    "precision": "DECIMAL(10,7)",
+    "accuracy": "±1.1 cm"
+  }
+}

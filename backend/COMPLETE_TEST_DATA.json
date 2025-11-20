@@ -1,0 +1,672 @@
+{
+  "testScenario": "FastX Courier - Complete Feature Test Data",
+  "generatedAt": "2025-10-30T06:00:00Z",
+  "testingPurpose": "Demonstrate all system features with realistic data",
+  
+  "users": {
+    "merchants": [
+      {
+        "name": "ABC Electronics Store",
+        "email": "abc.electronics@test.com",
+        "phone": "01712345001",
+        "password": "SecurePass123!",
+        "role": "merchant",
+        "city": "Dhaka",
+        "area": "Gulshan",
+        "address": "ABC Warehouse, Plot 15, Block G, Gulshan-1",
+        "merchantBusinessName": "ABC Electronics Ltd",
+        "merchantTradeLicense": "TRADE-2025-ABC-12345",
+        "expectedFeatures": [
+          "Create shipments",
+          "Bulk shipment upload",
+          "Request pickups",
+          "View COD wallet",
+          "Request payouts",
+          "Track all shipments",
+          "View analytics"
+        ]
+      },
+      {
+        "name": "Fashion Hub Bangladesh",
+        "email": "fashion.hub@test.com",
+        "phone": "01798765002",
+        "password": "SecurePass123!",
+        "role": "merchant",
+        "city": "Dhaka",
+        "area": "Dhanmondi",
+        "address": "Fashion Hub, Road 12, Dhanmondi-5",
+        "merchantBusinessName": "Fashion Hub BD",
+        "merchantTradeLicense": "TRADE-2025-FHB-67890",
+        "expectedFeatures": [
+          "High volume shipments",
+          "COD collection tracking",
+          "Payout management"
+        ]
+      },
+      {
+        "name": "GreenLife Organic",
+        "email": "greenlife@test.com",
+        "phone": "01645321003",
+        "password": "SecurePass123!",
+        "role": "merchant",
+        "city": "Dhaka",
+        "area": "Banani",
+        "address": "GreenLife Office, Road 5, Banani",
+        "merchantBusinessName": "GreenLife Organic BD",
+        "expectedFeatures": [
+          "Perishable goods delivery",
+          "Express delivery preference",
+          "Special handling instructions"
+        ]
+      }
+    ],
+    
+    "customers": [
+      {
+        "name": "John Customer",
+        "email": "john.customer@test.com",
+        "phone": "01556789001",
+        "password": "SecurePass123!",
+        "role": "customer",
+        "city": "Dhaka",
+        "area": "Dhanmondi",
+        "address": "House 10, Road 5, Dhanmondi-3",
+        "expectedFeatures": [
+          "Create personal shipments",
+          "Track packages",
+          "View history"
+        ]
+      },
+      {
+        "name": "Sarah Ahmed",
+        "email": "sarah.ahmed@test.com",
+        "phone": "01867890002",
+        "password": "SecurePass123!",
+        "role": "customer",
+        "city": "Dhaka",
+        "area": "Banani",
+        "address": "Flat 5A, Road 10, Banani",
+        "expectedFeatures": [
+          "Receive shipments",
+          "Provide delivery feedback"
+        ]
+      },
+      {
+        "name": "Karim Hassan",
+        "email": "karim.hassan@test.com",
+        "phone": "01978901003",
+        "password": "SecurePass123!",
+        "role": "customer",
+        "city": "Dhaka",
+        "area": "Mirpur",
+        "address": "House 25, Road 3, Mirpur-10",
+        "expectedFeatures": [
+          "Bulk receiving (business customer)",
+          "Regular shipments"
+        ]
+      }
+    ],
+    
+    "riders": [
+      {
+        "name": "Ahmed Rider",
+        "email": "ahmed.rider@test.com",
+        "phone": "01334567001",
+        "password": "SecurePass123!",
+        "role": "rider",
+        "city": "Dhaka",
+        "area": "Gulshan",
+        "address": "Rider Base, Gulshan-2",
+        "vehicleType": "Motorcycle",
+        "vehicleNumber": "DHA-GA-1234",
+        "expectedFeatures": [
+          "GPS location updates",
+          "View assigned manifests",
+          "Complete deliveries with OTP",
+          "Collect COD",
+          "Mark failed deliveries",
+          "Mark RTO"
+        ]
+      },
+      {
+        "name": "Fatima Rahman Rider",
+        "email": "fatima.rider@test.com",
+        "phone": "01445678002",
+        "password": "SecurePass123!",
+        "role": "rider",
+        "city": "Dhaka",
+        "area": "Dhanmondi",
+        "address": "Dhanmondi Rider Base, Road 15",
+        "vehicleType": "Motorcycle",
+        "vehicleNumber": "DHA-DA-5678",
+        "expectedFeatures": [
+          "Real-time tracking",
+          "Multi-stop deliveries",
+          "Route optimization"
+        ]
+      },
+      {
+        "name": "Karim Delivery",
+        "email": "karim.delivery@test.com",
+        "phone": "01556789003",
+        "password": "SecurePass123!",
+        "role": "rider",
+        "city": "Dhaka",
+        "area": "Banani",
+        "address": "Banani Hub, Road 5",
+        "vehicleType": "Van",
+        "vehicleNumber": "DHA-BA-9012",
+        "expectedFeatures": [
+          "Bulk delivery capacity",
+          "Commercial area specialist"
+        ]
+      }
+    ],
+    
+    "agents": [
+      {
+        "name": "Pickup Agent 1",
+        "email": "agent1@test.com",
+        "phone": "01667890001",
+        "password": "SecurePass123!",
+        "role": "agent",
+        "city": "Dhaka",
+        "area": "Gulshan",
+        "address": "Gulshan Pickup Hub",
+        "coverageAreas": ["Gulshan-1", "Gulshan-2", "Banani"],
+        "expectedFeatures": [
+          "View assigned pickups",
+          "Complete pickups",
+          "Scan shipments",
+          "Update pickup status"
+        ]
+      },
+      {
+        "name": "Pickup Agent 2",
+        "email": "agent2@test.com",
+        "phone": "01778901002",
+        "password": "SecurePass123!",
+        "role": "agent",
+        "city": "Dhaka",
+        "area": "Dhanmondi",
+        "address": "Dhanmondi Pickup Center",
+        "coverageAreas": ["Dhanmondi", "Lalmatia", "Mohammadpur"],
+        "expectedFeatures": [
+          "Merchant pickup coordination",
+          "Bulk pickup handling"
+        ]
+      }
+    ],
+    
+    "hubStaff": [
+      {
+        "name": "Hub Manager Gulshan",
+        "email": "hub.gulshan@test.com",
+        "phone": "01889012001",
+        "password": "SecurePass123!",
+        "role": "hub_staff",
+        "city": "Dhaka",
+        "area": "Gulshan",
+        "address": "FastX Central Hub, Gulshan",
+        "hubId": "HUB-GULSHAN-01",
+        "expectedFeatures": [
+          "Inbound/outbound scanning",
+          "Create manifests",
+          "Assign riders",
+          "Sort shipments",
+          "Track inventory",
+          "Generate reports"
+        ]
+      },
+      {
+        "name": "Hub Supervisor Dhanmondi",
+        "email": "hub.dhanmondi@test.com",
+        "phone": "01990123002",
+        "password": "SecurePass123!",
+        "role": "hub_staff",
+        "city": "Dhaka",
+        "area": "Dhanmondi",
+        "address": "FastX Hub, Dhanmondi",
+        "hubId": "HUB-DHANMONDI-01",
+        "expectedFeatures": [
+          "Hub operations management",
+          "Quality control",
+          "Rider coordination"
+        ]
+      }
+    ]
+  },
+  
+  "shipments": {
+    "description": "Test shipments covering all scenarios",
+    "scenarios": [
+      {
+        "scenario": "Express COD Delivery - Electronics",
+        "merchantEmail": "abc.electronics@test.com",
+        "data": {
+          "senderName": "ABC Electronics",
+          "senderPhone": "01712345001",
+          "senderAddress": "ABC Warehouse, Gulshan-1",
+          "senderCity": "Dhaka",
+          "senderArea": "Gulshan",
+          
+          "recipientName": "John Customer",
+          "recipientPhone": "01556789001",
+          "recipientAddress": "House 10, Road 5, Dhanmondi-3",
+          "recipientCity": "Dhaka",
+          "recipientArea": "Dhanmondi",
+          
+          "weight": 2.5,
+          "codAmount": 35000,
+          "productDescription": "Samsung Galaxy S24 - Mobile Phone",
+          "deliveryType": "express",
+          "packageValue": 85000,
+          "notes": "Handle with care - fragile electronics. Verify IMEI before delivery."
+        },
+        "expectedFlow": [
+          "PENDING_PICKUP → PICKED_UP → AT_HUB → OUT_FOR_DELIVERY → DELIVERED",
+          "GPS tracking active during delivery",
+          "OTP verification required",
+          "COD 35,000 BDT collected"
+        ]
+      },
+      {
+        "scenario": "Normal Delivery - Clothing",
+        "merchantEmail": "fashion.hub@test.com",
+        "data": {
+          "senderName": "Fashion Hub",
+          "senderPhone": "01798765002",
+          "senderAddress": "Fashion Hub, Dhanmondi-5",
+          "senderCity": "Dhaka",
+          "senderArea": "Dhanmondi",
+          
+          "recipientName": "Sarah Ahmed",
+          "recipientPhone": "01867890002",
+          "recipientAddress": "Flat 5A, Road 10, Banani",
+          "recipientCity": "Dhaka",
+          "recipientArea": "Banani",
+          
+          "weight": 0.8,
+          "codAmount": 1200,
+          "productDescription": "Designer T-Shirt - Size M",
+          "deliveryType": "normal",
+          "packageValue": 2000,
+          "notes": "Can be left with security if customer not available"
+        },
+        "expectedFlow": [
+          "Standard 72-hour delivery",
+          "Normal priority routing",
+          "Low value COD"
+        ]
+      },
+      {
+        "scenario": "Bulk Delivery - Office Supplies",
+        "merchantEmail": "greenlife@test.com",
+        "data": {
+          "senderName": "GreenLife Organic",
+          "senderPhone": "01645321003",
+          "senderAddress": "GreenLife Office, Banani",
+          "senderCity": "Dhaka",
+          "senderArea": "Banani",
+          
+          "recipientName": "Corporate Office XYZ",
+          "recipientPhone": "01978901003",
+          "recipientAddress": "Office Building, Motijheel",
+          "recipientCity": "Dhaka",
+          "recipientArea": "Motijheel",
+          
+          "weight": 15.0,
+          "codAmount": 8500,
+          "productDescription": "Organic Food Products - Bulk Order",
+          "deliveryType": "express",
+          "packageValue": 12000,
+          "notes": "Perishable items - deliver within 24 hours. Refrigeration required."
+        },
+        "expectedFlow": [
+          "Express handling required",
+          "Special vehicle (van) needed",
+          "Business hours delivery only"
+        ]
+      },
+      {
+        "scenario": "High Value Item - Laptop",
+        "merchantEmail": "abc.electronics@test.com",
+        "data": {
+          "senderName": "ABC Electronics",
+          "senderPhone": "01712345001",
+          "senderAddress": "ABC Warehouse, Gulshan-1",
+          "senderCity": "Dhaka",
+          "senderArea": "Gulshan",
+          
+          "recipientName": "Karim Hassan",
+          "recipientPhone": "01978901003",
+          "recipientAddress": "House 25, Road 3, Mirpur-10",
+          "recipientCity": "Dhaka",
+          "recipientArea": "Mirpur",
+          
+          "weight": 3.0,
+          "codAmount": 85000,
+          "productDescription": "Dell XPS 15 Laptop",
+          "deliveryType": "express",
+          "packageValue": 125000,
+          "notes": "High value item. Check serial number. Photo ID required. OTP mandatory."
+        },
+        "expectedFlow": [
+          "Extra security measures",
+          "Photo ID verification",
+          "Signature + OTP required",
+          "Insurance covered"
+        ]
+      },
+      {
+        "scenario": "Multiple Small Packages",
+        "merchantEmail": "fashion.hub@test.com",
+        "data": {
+          "senderName": "Fashion Hub",
+          "senderPhone": "01798765002",
+          "senderAddress": "Fashion Hub, Dhanmondi-5",
+          "senderCity": "Dhaka",
+          "senderArea": "Dhanmondi",
+          
+          "recipientName": "Various Customers in Uttara",
+          "recipientPhone": "01334567001",
+          "recipientAddress": "Uttara Sector 6, Multiple Addresses",
+          "recipientCity": "Dhaka",
+          "recipientArea": "Uttara",
+          
+          "weight": 0.3,
+          "codAmount": 450,
+          "productDescription": "Fashion Accessories",
+          "deliveryType": "normal",
+          "packageValue": 700,
+          "notes": "Part of bulk manifest. 10 packages in same area."
+        },
+        "expectedFlow": [
+          "Efficient route planning",
+          "Multiple stops in same area",
+          "Optimized delivery sequence"
+        ]
+      }
+    ]
+  },
+  
+  "gpsTrackingData": {
+    "description": "Real GPS coordinates for testing rider tracking",
+    "testRoute": {
+      "name": "Gulshan to Dhanmondi Delivery Route",
+      "startLocation": {
+        "name": "FastX Hub Gulshan",
+        "latitude": 23.8103590,
+        "longitude": 90.4125330,
+        "area": "Gulshan-1"
+      },
+      "waypoints": [
+        {
+          "sequence": 1,
+          "name": "Your Test Location",
+          "latitude": 23.7808875,
+          "longitude": 90.4161712,
+          "area": "Gulshan/Banani Border",
+          "action": "In transit",
+          "speed": 25,
+          "heading": 180
+        },
+        {
+          "sequence": 2,
+          "name": "Banani Crossing",
+          "latitude": 23.8068160,
+          "longitude": 90.3688270,
+          "area": "Banani",
+          "action": "Approaching delivery area",
+          "speed": 20,
+          "heading": 270
+        },
+        {
+          "sequence": 3,
+          "name": "Dhanmondi Approach",
+          "latitude": 23.7500000,
+          "longitude": 90.3650000,
+          "area": "Near Dhanmondi",
+          "action": "Entering delivery zone",
+          "speed": 15,
+          "heading": 200
+        },
+        {
+          "sequence": 4,
+          "name": "Delivery Location",
+          "latitude": 23.7449160,
+          "longitude": 90.3575580,
+          "area": "Dhanmondi-3",
+          "action": "Arrived at destination",
+          "speed": 0,
+          "heading": 0
+        }
+      ],
+      "endLocation": {
+        "name": "Customer Address Dhanmondi",
+        "latitude": 23.7449160,
+        "longitude": 90.3575580,
+        "area": "Dhanmondi-3"
+      },
+      "estimatedDistance": "8.5 km",
+      "estimatedTime": "25 minutes",
+      "updateFrequency": "Every 10-30 seconds"
+    },
+    
+    "multipleRiderLocations": [
+      {
+        "riderId": "rider-1",
+        "riderName": "Ahmed Rider",
+        "currentLocation": {
+          "latitude": 23.7808875,
+          "longitude": 90.4161712,
+          "area": "Gulshan",
+          "speed": 25,
+          "heading": 180,
+          "batteryLevel": 85,
+          "isOnline": true
+        },
+        "assignedShipments": 5,
+        "status": "IN_TRANSIT"
+      },
+      {
+        "riderId": "rider-2",
+        "riderName": "Fatima Rahman",
+        "currentLocation": {
+          "latitude": 23.7449160,
+          "longitude": 90.3575580,
+          "area": "Dhanmondi",
+          "speed": 0,
+          "heading": 0,
+          "batteryLevel": 92,
+          "isOnline": true
+        },
+        "assignedShipments": 3,
+        "status": "DELIVERING"
+      },
+      {
+        "riderId": "rider-3",
+        "riderName": "Karim Delivery",
+        "currentLocation": {
+          "latitude": 23.8141560,
+          "longitude": 90.3469220,
+          "area": "Mirpur",
+          "speed": 30,
+          "heading": 90,
+          "batteryLevel": 78,
+          "isOnline": true
+        },
+        "assignedShipments": 8,
+        "status": "IN_TRANSIT"
+      }
+    ]
+  },
+  
+  "pickupRequests": [
+    {
+      "merchantEmail": "abc.electronics@test.com",
+      "pickupDate": "2025-10-30",
+      "pickupTime": "14:00",
+      "pickupAddress": "ABC Warehouse, Gulshan-1",
+      "numberOfPackages": 15,
+      "estimatedWeight": "30 kg",
+      "notes": "Electronics items - handle with care",
+      "assignedAgent": "agent1@test.com"
+    },
+    {
+      "merchantEmail": "fashion.hub@test.com",
+      "pickupDate": "2025-10-30",
+      "pickupTime": "15:30",
+      "pickupAddress": "Fashion Hub, Dhanmondi-5",
+      "numberOfPackages": 25,
+      "estimatedWeight": "15 kg",
+      "notes": "Clothing items - regular handling",
+      "assignedAgent": "agent2@test.com"
+    }
+  ],
+  
+  "manifests": [
+    {
+      "manifestName": "Dhanmondi Route - Evening Delivery",
+      "manifestNumber": "MN20251030001",
+      "hubId": "HUB-GULSHAN-01",
+      "riderId": "rider-2",
+      "riderName": "Fatima Rahman",
+      "deliveryDate": "2025-10-30",
+      "area": "Dhanmondi",
+      "shipmentCount": 12,
+      "totalCODAmount": 45000,
+      "estimatedDistance": "15 km",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "manifestName": "Gulshan-Banani Express",
+      "manifestNumber": "MN20251030002",
+      "hubId": "HUB-GULSHAN-01",
+      "riderId": "rider-1",
+      "riderName": "Ahmed Rider",
+      "deliveryDate": "2025-10-30",
+      "area": "Gulshan-Banani",
+      "shipmentCount": 8,
+      "totalCODAmount": 125000,
+      "estimatedDistance": "10 km",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "manifestName": "Mirpur Bulk Delivery",
+      "manifestNumber": "MN20251030003",
+      "hubId": "HUB-DHANMONDI-01",
+      "riderId": "rider-3",
+      "riderName": "Karim Delivery",
+      "deliveryDate": "2025-10-30",
+      "area": "Mirpur",
+      "shipmentCount": 20,
+      "totalCODAmount": 85000,
+      "estimatedDistance": "25 km",
+      "status": "IN_PROGRESS"
+    }
+  ],
+  
+  "codTransactions": [
+    {
+      "shipmentAwb": "FX20251030000001",
+      "merchantEmail": "abc.electronics@test.com",
+      "codAmount": 35000,
+      "deliveryFee": 150,
+      "netAmount": 34850,
+      "collectionDate": "2025-10-30",
+      "settlementDate": "2025-11-06",
+      "status": "COLLECTED",
+      "settlementStatus": "PENDING_T7"
+    },
+    {
+      "shipmentAwb": "FX20251030000002",
+      "merchantEmail": "fashion.hub@test.com",
+      "codAmount": 1200,
+      "deliveryFee": 80,
+      "netAmount": 1120,
+      "collectionDate": "2025-10-29",
+      "settlementDate": "2025-11-05",
+      "status": "COLLECTED",
+      "settlementStatus": "PENDING_T7"
+    }
+  ],
+  
+  "websocketEvents": {
+    "description": "Real-time events that will be broadcast",
+    "events": [
+      {
+        "eventType": "location-update",
+        "awb": "FX20251030000001",
+        "riderId": "rider-1",
+        "location": {
+          "latitude": 23.7808875,
+          "longitude": 90.4161712,
+          "accuracy": 8,
+          "speed": 25,
+          "heading": 180,
+          "battery": 85
+        },
+        "eta": "2025-10-30T15:30:00Z",
+        "timestamp": "2025-10-30T15:15:00Z"
+      },
+      {
+        "eventType": "status-update",
+        "awb": "FX20251030000002",
+        "status": "OUT_FOR_DELIVERY",
+        "riderId": "rider-2",
+        "riderName": "Fatima Rahman",
+        "timestamp": "2025-10-30T14:00:00Z"
+      },
+      {
+        "eventType": "eta-update",
+        "awb": "FX20251030000001",
+        "oldEta": "2025-10-30T15:30:00Z",
+        "newEta": "2025-10-30T15:45:00Z",
+        "reason": "Traffic delay",
+        "timestamp": "2025-10-30T15:20:00Z"
+      }
+    ]
+  },
+  
+  "testInstructions": {
+    "step1": "Create users using POST /api/auth/signup for each role",
+    "step2": "Login users to get JWT tokens",
+    "step3": "Merchant creates shipments",
+    "step4": "Agent picks up shipments",
+    "step5": "Hub staff scans and creates manifests",
+    "step6": "Assign riders to manifests",
+    "step7": "Riders update GPS locations (use provided coordinates)",
+    "step8": "Customers track via WebSocket or REST API",
+    "step9": "Riders complete deliveries with OTP",
+    "step10": "Verify COD amounts in merchant wallet",
+    "step11": "Finance processes payouts after T+7"
+  },
+  
+  "apiEndpointsToTest": [
+    "POST /api/auth/signup (all roles)",
+    "POST /api/auth/login",
+    "GET /api/auth/me",
+    "POST /api/shipments (merchant)",
+    "GET /api/shipments (merchant)",
+    "GET /api/tracking/public/:awb",
+    "POST /api/rider/update-location (rider)",
+    "GET /api/rider/location-history (rider)",
+    "POST /api/rider/complete-delivery (rider)",
+    "GET /api/payments/wallet (merchant)",
+    "WebSocket: connect to /tracking namespace",
+    "WebSocket: emit 'subscribe-tracking'",
+    "WebSocket: listen to 'location-update'",
+    "GET /api/tracking/gateway-status"
+  ],
+  
+  "expectedResults": {
+    "usersCreated": 11,
+    "shipmentsCreated": 5,
+    "gpsUpdates": "Real-time tracking with ±1.1 cm precision",
+    "websocketConnections": "Active real-time updates",
+    "codCollections": "Merchant wallet updated",
+    "deliveries": "OTP-based completion",
+    "analytics": "Dashboard with statistics"
+  }
+}

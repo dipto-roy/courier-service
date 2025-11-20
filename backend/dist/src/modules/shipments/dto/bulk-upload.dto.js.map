@@ -1,0 +1,1 @@
+{"version":3,"file":"bulk-upload.dto.js","sourceRoot":"","sources":["../../../../../src/modules/shipments/dto/bulk-upload.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAAuD;AACvD,6CAA8C;AAE9C,MAAa,aAAa;IAOxB,IAAI,CAAM;CACX;AARD,sCAQC;AADC;IANC,IAAA,qBAAW,EAAC;QACX,IAAI,EAAE,QAAQ;QACd,MAAM,EAAE,QAAQ;QAChB,WAAW,EAAE,6BAA6B;KAC3C,CAAC;IACD,IAAA,4BAAU,GAAE;;2CACH"}

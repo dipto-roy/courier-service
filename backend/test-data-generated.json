@@ -1,0 +1,33 @@
+{
+  "users": {
+    "merchant": {
+      "message": "User created successfully. Please verify your account with OTP.",
+      "email": "merchant-1761782495502@fastx.test",
+      "phone": "01754270241",
+      "password": "SecurePass123!"
+    },
+    "customer": {
+      "message": "User created successfully. Please verify your account with OTP.",
+      "email": "customer-1761782495502@fastx.test",
+      "phone": "01759776647",
+      "password": "SecurePass123!"
+    },
+    "rider": {
+      "message": "User created successfully. Please verify your account with OTP.",
+      "email": "rider-1761782495502@fastx.test",
+      "phone": "01756397843",
+      "password": "SecurePass123!"
+    },
+    "agent": {
+      "message": "User created successfully. Please verify your account with OTP.",
+      "email": "agent-1761782495502@fastx.test",
+      "phone": "01732287807",
+      "password": "SecurePass123!"
+    },
+    "hubStaff": null
+  },
+  "tokens": {},
+  "shipments": [],
+  "manifests": [],
+  "pickups": []
+}

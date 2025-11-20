@@ -1,0 +1,36 @@
+import { Repository } from 'typeorm';
+import type { Queue } from 'bull';
+import { Notification } from '../../entities/notification.entity';
+import { SendNotificationDto, SendEmailDto, SendSmsDto, SendPushNotificationDto } from './dto';
+import { EmailService } from './email.service';
+import { SmsService } from './sms.service';
+import { PushService } from './push.service';
+export declare class NotificationsService {
+    private notificationRepository;
+    private notificationQueue;
+    private emailService;
+    private smsService;
+    private pushService;
+    private readonly logger;
+    constructor(notificationRepository: Repository<Notification>, notificationQueue: Queue, emailService: EmailService, smsService: SmsService, pushService: PushService);
+    sendNotification(sendNotificationDto: SendNotificationDto): Promise<Notification>;
+    processNotification(notificationId: string, dto: SendNotificationDto): Promise<void>;
+    sendEmail(emailDto: SendEmailDto): Promise<boolean>;
+    sendSms(smsDto: SendSmsDto): Promise<boolean>;
+    sendPushNotification(pushDto: SendPushNotificationDto): Promise<boolean>;
+    notifyShipmentCreated(userId: string, shipmentId: string, awb: string, data: any): Promise<void>;
+    notifyShipmentPickedUp(userId: string, shipmentId: string, awb: string, data: any): Promise<void>;
+    notifyOutForDelivery(userId: string, shipmentId: string, awb: string, riderName: string, riderPhone: string): Promise<void>;
+    notifyDelivered(userId: string, shipmentId: string, awb: string, deliveredAt: string): Promise<void>;
+    notifyDeliveryFailed(userId: string, shipmentId: string, awb: string, reason: string): Promise<void>;
+    getUserNotifications(userId: string, isRead?: boolean): Promise<Notification[]>;
+    markAsRead(notificationId: string, userId: string): Promise<Notification>;
+    markAllAsRead(userId: string): Promise<void>;
+    getUnreadCount(userId: string): Promise<number>;
+    deleteNotification(notificationId: string, userId: string): Promise<void>;
+    notifyPayoutInitiated(userId: string, amount: number, transactionId: string): Promise<void>;
+    notifyPayoutCompleted(userId: string, amount: number, transactionId: string, referenceNumber: string): Promise<void>;
+    notifyPickupAssignment(riderId: string, pickupId: string, address: string, itemCount: number): Promise<void>;
+    notifyManifestAssignment(riderId: string, manifestId: string, shipmentCount: number): Promise<void>;
+    getNotificationStats(userId?: string): Promise<any>;
+}
