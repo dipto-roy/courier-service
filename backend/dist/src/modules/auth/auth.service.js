@@ -20,14 +20,17 @@ const typeorm_2 = require("typeorm");
 const config_1 = require("@nestjs/config");
 const user_entity_1 = require("../../entities/user.entity");
 const utils_1 = require("../../common/utils");
+const email_service_1 = require("../notifications/email.service");
 let AuthService = class AuthService {
     userRepository;
     jwtService;
     configService;
-    constructor(userRepository, jwtService, configService) {
+    emailService;
+    constructor(userRepository, jwtService, configService, emailService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.configService = configService;
+        this.emailService = emailService;
     }
     async signup(signupDto) {
         const { email, phone, password, ...rest } = signupDto;
@@ -50,10 +53,28 @@ let AuthService = class AuthService {
             ...rest,
         });
         await this.userRepository.save(user);
+        try {
+            await this.emailService.sendEmail({
+                to: email,
+                subject: 'Verify Your FastX Courier Account',
+                template: 'otp-verification',
+                context: {
+                    userName: user.name,
+                    otp: otpCode,
+                    expiryMinutes: 5,
+                },
+            });
+        }
+        catch (error) {
+            console.error('Failed to send OTP email:', error.message);
+        }
+        const tokens = await this.generateTokens(user);
+        user.refreshToken = tokens.refreshToken;
+        await this.userRepository.save(user);
         return {
             message: 'User created successfully. Please verify your account with OTP.',
-            email: user.email,
-            phone: user.phone,
+            user: this.sanitizeUser(user),
+            ...tokens,
         };
     }
     async login(loginDto) {
@@ -75,6 +96,21 @@ let AuthService = class AuthService {
             user.otpCode = otpCode;
             user.otpExpiry = otpExpiry;
             await this.userRepository.save(user);
+            try {
+                await this.emailService.sendEmail({
+                    to: user.email,
+                    subject: 'Verify Your FastX Courier Account',
+                    template: 'otp-verification',
+                    context: {
+                        userName: user.name,
+                        otp: otpCode,
+                        expiryMinutes: 5,
+                    },
+                });
+            }
+            catch (error) {
+                console.error('Failed to send OTP email:', error.message);
+            }
             throw new common_1.BadRequestException('Account not verified. A new OTP has been sent.');
         }
         user.lastLogin = new Date();
@@ -116,6 +152,40 @@ let AuthService = class AuthService {
             message: 'Account verified successfully',
             user: this.sanitizeUser(user),
             ...tokens,
+        };
+    }
+    async resendOtp(email) {
+        const user = await this.userRepository.findOne({ where: { email } });
+        if (!user) {
+            throw new common_1.BadRequestException('User not found');
+        }
+        if (user.isVerified) {
+            throw new common_1.BadRequestException('Account already verified');
+        }
+        const otpCode = (0, utils_1.generateOTP)(6);
+        const otpExpiry = (0, utils_1.getOTPExpiry)(parseInt(this.configService.get('OTP_EXPIRATION') || '300'));
+        user.otpCode = otpCode;
+        user.otpExpiry = otpExpiry;
+        await this.userRepository.save(user);
+        try {
+            await this.emailService.sendEmail({
+                to: email,
+                subject: 'Verify Your FastX Courier Account',
+                template: 'otp-verification',
+                context: {
+                    userName: user.name,
+                    otp: otpCode,
+                    expiryMinutes: 5,
+                },
+            });
+        }
+        catch (error) {
+            console.error('Failed to send OTP email:', error.message);
+            throw new common_1.BadRequestException('Failed to send OTP. Please try again.');
+        }
+        return {
+            message: 'OTP sent successfully',
+            email: user.email,
         };
     }
     async refreshToken(refreshTokenDto) {
@@ -178,6 +248,7 @@ exports.AuthService = AuthService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         jwt_1.JwtService,
-        config_1.ConfigService])
+        config_1.ConfigService,
+        email_service_1.EmailService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

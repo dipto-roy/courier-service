@@ -1,15 +1,49 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app_module_1 = require("./app.module");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.setGlobalPrefix('api');
+    app.use((0, cookie_parser_1.default)());
     app.enableCors({
-        origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+        origin: (origin, callback) => {
+            const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+                'http://localhost:3000',
+                'http://localhost:3001',
+                'http://127.0.0.1:3000',
+                'http://127.0.0.1:3001',
+            ];
+            if (!origin)
+                return callback(null, true);
+            if (process.env.NODE_ENV === 'development') {
+                return callback(null, true);
+            }
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true);
+            }
+            else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: [
+            'Content-Type',
+            'Authorization',
+            'X-Requested-With',
+            'Accept',
+            'Origin',
+            'x-csrf-token',
+        ],
+        exposedHeaders: ['Set-Cookie'],
+        maxAge: 3600,
     });
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,

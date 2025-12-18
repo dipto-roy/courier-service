@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -18,9 +18,11 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { AuditModule } from './modules/audit/audit.module';
 import { CacheModule } from './modules/cache/cache.module';
 import { SlaWatcherModule } from './modules/sla-watcher/sla-watcher.module';
+import { CsrfModule } from './csrf/csrf.module';
 import { JwtAuthGuard } from './common/guards';
 import { HttpExceptionFilter } from './common/filters';
 import { LoggingInterceptor } from './common/interceptors';
+import { CsrfMiddleware } from './common/middleware/csrf.middleware';
 
 @Module({
   imports: [
@@ -71,6 +73,7 @@ import { LoggingInterceptor } from './common/interceptors';
     NotificationsModule,
     AuditModule,
     SlaWatcherModule,
+    CsrfModule,
   ],
   controllers: [AppController],
   providers: [
@@ -89,4 +92,8 @@ import { LoggingInterceptor } from './common/interceptors';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CsrfMiddleware).forRoutes('*');
+  }
+}
