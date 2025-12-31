@@ -4,8 +4,31 @@ import { Card } from '@/components/ui/card';
 import { useRiderStats } from '../hooks';
 import { formatCurrency } from '@/src/common/lib/utils';
 
+// Type for the stats data from the hook
+interface RiderStatsData {
+  totalDeliveries?: number;
+  completedDeliveries?: number;
+  pendingDeliveries?: number;
+  failedDeliveries?: number;
+  totalCOD?: number;
+  collectedCOD?: number;
+  pendingCOD?: number;
+  successRate?: number;
+  onTimeRate?: number;
+  totalDistance?: number;
+  averageDeliveryTime?: number;
+  // Backend fields
+  totalAssigned?: number;
+  delivered?: number;
+  outForDelivery?: number;
+  rtoShipments?: number;
+  todayDeliveries?: number;
+  totalCodCollected?: number;
+  deliveryRate?: string | number;
+}
+
 export function RiderDashboard() {
-  const { data: stats, isLoading } = useRiderStats();
+  const { data: rawStats, isLoading, error } = useRiderStats();
 
   if (isLoading) {
     return (
@@ -22,36 +45,56 @@ export function RiderDashboard() {
     );
   }
 
-  if (!stats) {
+  if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No statistics available</p>
+        <p className="text-red-500">Error loading statistics</p>
+        <p className="text-gray-500 text-sm mt-2">Please try again later</p>
       </div>
     );
   }
 
+  // Normalize stats data to handle both frontend and backend formats
+  const stats: RiderStatsData = rawStats || {};
+  
+  const normalizedStats = {
+    totalDeliveries: stats.totalDeliveries ?? stats.totalAssigned ?? 0,
+    completedDeliveries: stats.completedDeliveries ?? stats.delivered ?? 0,
+    pendingDeliveries: stats.pendingDeliveries ?? stats.outForDelivery ?? 0,
+    failedDeliveries: stats.failedDeliveries ?? 0,
+    totalCOD: stats.totalCOD ?? stats.totalCodCollected ?? 0,
+    collectedCOD: stats.collectedCOD ?? stats.totalCodCollected ?? 0,
+    pendingCOD: stats.pendingCOD ?? 0,
+    successRate: typeof stats.successRate === 'number' 
+      ? stats.successRate 
+      : (typeof stats.deliveryRate === 'string' ? parseFloat(stats.deliveryRate) : (stats.deliveryRate ?? 0)),
+    onTimeRate: stats.onTimeRate ?? (typeof stats.deliveryRate === 'string' ? parseFloat(stats.deliveryRate) : (stats.deliveryRate ?? 0)),
+    totalDistance: stats.totalDistance ?? 0,
+    averageDeliveryTime: stats.averageDeliveryTime ?? 0,
+  };
+
   const statCards = [
     {
       title: 'Total Deliveries',
-      value: stats.totalDeliveries,
+      value: normalizedStats.totalDeliveries,
       icon: '📦',
       color: 'bg-blue-500',
     },
     {
       title: 'Completed',
-      value: stats.completedDeliveries,
+      value: normalizedStats.completedDeliveries,
       icon: '✅',
       color: 'bg-green-500',
     },
     {
       title: 'Pending',
-      value: stats.pendingDeliveries,
+      value: normalizedStats.pendingDeliveries,
       icon: '⏱️',
       color: 'bg-yellow-500',
     },
     {
       title: 'Failed',
-      value: stats.failedDeliveries,
+      value: normalizedStats.failedDeliveries,
       icon: '❌',
       color: 'bg-red-500',
     },
@@ -89,19 +132,19 @@ export function RiderDashboard() {
             <div className="flex justify-between items-center pb-3 border-b">
               <span className="text-gray-600">Total COD</span>
               <span className="text-xl font-bold text-gray-900">
-                {formatCurrency(stats.totalCOD)}
+                {formatCurrency(normalizedStats.totalCOD)}
               </span>
             </div>
             <div className="flex justify-between items-center pb-3 border-b">
               <span className="text-gray-600">Collected</span>
               <span className="text-xl font-bold text-green-600">
-                {formatCurrency(stats.collectedCOD)}
+                {formatCurrency(normalizedStats.collectedCOD)}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Pending</span>
               <span className="text-xl font-bold text-yellow-600">
-                {formatCurrency(stats.pendingCOD)}
+                {formatCurrency(normalizedStats.pendingCOD)}
               </span>
             </div>
           </div>
@@ -117,13 +160,13 @@ export function RiderDashboard() {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-600">Success Rate</span>
                 <span className="text-sm font-semibold text-gray-900">
-                  {stats.successRate.toFixed(1)}%
+                  {normalizedStats.successRate.toFixed(1)}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-green-500 h-2 rounded-full transition-all"
-                  style={{ width: `${stats.successRate}%` }}
+                  style={{ width: `${Math.min(normalizedStats.successRate, 100)}%` }}
                 />
               </div>
             </div>
@@ -131,13 +174,13 @@ export function RiderDashboard() {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-600">On-Time Rate</span>
                 <span className="text-sm font-semibold text-gray-900">
-                  {stats.onTimeRate.toFixed(1)}%
+                  {normalizedStats.onTimeRate.toFixed(1)}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-blue-500 h-2 rounded-full transition-all"
-                  style={{ width: `${stats.onTimeRate}%` }}
+                  style={{ width: `${Math.min(normalizedStats.onTimeRate, 100)}%` }}
                 />
               </div>
             </div>
@@ -145,13 +188,13 @@ export function RiderDashboard() {
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Total Distance</span>
                 <span className="font-semibold text-gray-900">
-                  {stats.totalDistance.toFixed(1)} km
+                  {normalizedStats.totalDistance.toFixed(1)} km
                 </span>
               </div>
               <div className="flex justify-between items-center mt-2">
                 <span className="text-gray-600">Avg. Delivery Time</span>
                 <span className="font-semibold text-gray-900">
-                  {stats.averageDeliveryTime} min
+                  {normalizedStats.averageDeliveryTime} min
                 </span>
               </div>
             </div>

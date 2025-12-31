@@ -26,3 +26,12 @@ export function useShipmentByAwb(awb: string) {
     enabled: !!awb,
   });
 }
+
+export function useShipmentStatistics() {
+  return useQuery({
+    queryKey: ['shipments', 'statistics'],
+    queryFn: () => shipmentService.getStatistics(),
+    staleTime: 60000, // 1 minute
+    refetchInterval: 60000, // Refetch every minute
+  });
+}
