@@ -3,15 +3,47 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../../entities/user.entity';
 import { SignupDto, LoginDto, VerifyOtpDto, RefreshTokenDto } from './dto';
+import { EmailService } from '../notifications/email.service';
 export declare class AuthService {
     private readonly userRepository;
     private readonly jwtService;
     private readonly configService;
-    constructor(userRepository: Repository<User>, jwtService: JwtService, configService: ConfigService);
+    private readonly emailService;
+    constructor(userRepository: Repository<User>, jwtService: JwtService, configService: ConfigService, emailService: EmailService);
     signup(signupDto: SignupDto): Promise<{
+        accessToken: string;
+        refreshToken: string;
         message: string;
-        email: string;
-        phone: string;
+        user: {
+            id: string;
+            email: string;
+            name: string;
+            phone: string;
+            role: import("../../common/enums").UserRole;
+            isActive: boolean;
+            isVerified: boolean;
+            isKycVerified: boolean;
+            twoFaEnabled: boolean;
+            walletBalance: number;
+            address: string;
+            city: string;
+            area: string;
+            postalCode: string;
+            latitude: string;
+            longitude: string;
+            hubId: string;
+            merchantBusinessName: string;
+            merchantTradeLicense: string;
+            profileImage: string;
+            lastLogin: Date;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date;
+            shipments: import("../../entities").Shipment[];
+            pickups: import("../../entities").Pickup[];
+            riderLocations: import("../../entities").RiderLocation[];
+            transactions: import("../../entities").Transaction[];
+        };
     }>;
     login(loginDto: LoginDto): Promise<{
         accessToken: string;
@@ -81,6 +113,10 @@ export declare class AuthService {
             riderLocations: import("../../entities").RiderLocation[];
             transactions: import("../../entities").Transaction[];
         };
+    }>;
+    resendOtp(email: string): Promise<{
+        message: string;
+        email: string;
     }>;
     refreshToken(refreshTokenDto: RefreshTokenDto): Promise<{
         accessToken: string;

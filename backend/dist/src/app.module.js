@@ -27,10 +27,15 @@ const notifications_module_1 = require("./modules/notifications/notifications.mo
 const audit_module_1 = require("./modules/audit/audit.module");
 const cache_module_1 = require("./modules/cache/cache.module");
 const sla_watcher_module_1 = require("./modules/sla-watcher/sla-watcher.module");
+const csrf_module_1 = require("./csrf/csrf.module");
 const guards_1 = require("./common/guards");
 const filters_1 = require("./common/filters");
 const interceptors_1 = require("./common/interceptors");
+const csrf_middleware_1 = require("./common/middleware/csrf.middleware");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer.apply(csrf_middleware_1.CsrfMiddleware).forRoutes('*');
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
@@ -83,6 +88,7 @@ exports.AppModule = AppModule = __decorate([
             notifications_module_1.NotificationsModule,
             audit_module_1.AuditModule,
             sla_watcher_module_1.SlaWatcherModule,
+            csrf_module_1.CsrfModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

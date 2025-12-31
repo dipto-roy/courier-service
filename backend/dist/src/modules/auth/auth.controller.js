@@ -33,6 +33,9 @@ let AuthController = class AuthController {
     async verifyOtp(verifyOtpDto) {
         return this.authService.verifyOtp(verifyOtpDto);
     }
+    async resendOtp(body) {
+        return this.authService.resendOtp(body.email);
+    }
     async refreshToken(refreshTokenDto) {
         return this.authService.refreshToken(refreshTokenDto);
     }
@@ -79,6 +82,18 @@ __decorate([
     __metadata("design:paramtypes", [dto_1.VerifyOtpDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "verifyOtp", null);
+__decorate([
+    (0, decorators_1.Public)(),
+    (0, common_1.Post)('resend-otp'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({ summary: 'Resend OTP code' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'OTP sent successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User not found' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resendOtp", null);
 __decorate([
     (0, decorators_1.Public)(),
     (0, common_1.Post)('refresh'),

@@ -17,6 +17,7 @@ import {
   getOTPExpiry,
   isOTPValid,
 } from '../../common/utils';
+import { EmailService } from '../notifications/email.service';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,7 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
   ) {}
 
   async signup(signupDto: SignupDto) {
@@ -61,13 +63,34 @@ export class AuthService {
 
     await this.userRepository.save(user);
 
-    // TODO: Send OTP via email/SMS
-    // await this.notificationService.sendOTP(email, phone, otpCode);
+    // Send OTP via email
+    try {
+      await this.emailService.sendEmail({
+        to: email,
+        subject: 'Verify Your FastX Courier Account',
+        template: 'otp-verification',
+        context: {
+          userName: user.name,
+          otp: otpCode,
+          expiryMinutes: 5,
+        },
+      });
+    } catch (error) {
+      // Log error but don't fail registration
+      console.error('Failed to send OTP email:', error.message);
+    }
+
+    // Generate tokens (user can access app but needs to verify)
+    const tokens = await this.generateTokens(user);
+
+    // Save refresh token
+    user.refreshToken = tokens.refreshToken;
+    await this.userRepository.save(user);
 
     return {
       message: 'User created successfully. Please verify your account with OTP.',
-      email: user.email,
-      phone: user.phone,
+      user: this.sanitizeUser(user),
+      ...tokens,
     };
   }
 
@@ -105,8 +128,21 @@ export class AuthService {
       user.otpExpiry = otpExpiry;
       await this.userRepository.save(user);
 
-      // TODO: Send OTP
-      // await this.notificationService.sendOTP(user.email, user.phone, otpCode);
+      // Send OTP via email
+      try {
+        await this.emailService.sendEmail({
+          to: user.email,
+          subject: 'Verify Your FastX Courier Account',
+          template: 'otp-verification',
+          context: {
+            userName: user.name,
+            otp: otpCode,
+            expiryMinutes: 5,
+          },
+        });
+      } catch (error) {
+        console.error('Failed to send OTP email:', error.message);
+      }
 
       throw new BadRequestException(
         'Account not verified. A new OTP has been sent.',
@@ -172,6 +208,50 @@ export class AuthService {
       message: 'Account verified successfully',
       user: this.sanitizeUser(user),
       ...tokens,
+    };
+  }
+
+  async resendOtp(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (user.isVerified) {
+      throw new BadRequestException('Account already verified');
+    }
+
+    // Generate new OTP
+    const otpCode = generateOTP(6);
+    const otpExpiry = getOTPExpiry(
+      parseInt(this.configService.get('OTP_EXPIRATION') || '300'),
+    );
+
+    user.otpCode = otpCode;
+    user.otpExpiry = otpExpiry;
+    await this.userRepository.save(user);
+
+    // Send OTP via email
+    try {
+      await this.emailService.sendEmail({
+        to: email,
+        subject: 'Verify Your FastX Courier Account',
+        template: 'otp-verification',
+        context: {
+          userName: user.name,
+          otp: otpCode,
+          expiryMinutes: 5,
+        },
+      });
+    } catch (error) {
+      console.error('Failed to send OTP email:', error.message);
+      throw new BadRequestException('Failed to send OTP. Please try again.');
+    }
+
+    return {
+      message: 'OTP sent successfully',
+      email: user.email,
     };
   }
 
