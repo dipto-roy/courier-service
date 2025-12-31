@@ -97,8 +97,10 @@ export interface SignupRequest {
   phone: string;
   password: string;
   role: UserRole;
-  businessName?: string;
-  businessAddress?: string;
+  city?: string;
+  area?: string;
+  address?: string;
+  merchantBusinessName?: string;
 }
 
 export interface VerifyOTPRequest {
