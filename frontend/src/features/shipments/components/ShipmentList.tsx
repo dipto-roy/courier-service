@@ -25,7 +25,7 @@ export function ShipmentList({
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="h-48 bg-gray-100 animate-pulse rounded-lg"
+            className="h-48 bg-muted animate-pulse rounded-lg"
           />
         ))}
       </div>
@@ -35,8 +35,8 @@ export function ShipmentList({
   if (shipments.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 text-lg">No shipments found</p>
-        <p className="text-gray-400 text-sm mt-2">
+        <p className="text-muted-foreground text-lg">No shipments found</p>
+        <p className="text-muted-foreground/70 text-sm mt-2">
           Try adjusting your filters or create a new shipment
         </p>
       </div>

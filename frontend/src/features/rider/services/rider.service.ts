@@ -112,10 +112,32 @@ export const riderService = {
   /**
    * Get rider performance statistics
    * Backend: GET /rider/statistics
+   * Backend returns: { success, statistics: { totalAssigned, outForDelivery, delivered, failedDeliveries, rtoShipments, todayDeliveries, totalCodCollected, deliveryRate } }
    */
   async getStatistics() {
     const response = await apiClient.get('/rider/statistics');
-    return response.data;
+    const data = response.data;
+    
+    // Transform backend response to match frontend RiderStats interface
+    const stats = data.statistics || data;
+    
+    return {
+      date: new Date().toISOString().split('T')[0],
+      totalDeliveries: stats.totalAssigned || 0,
+      completedDeliveries: stats.delivered || 0,
+      failedDeliveries: stats.failedDeliveries || 0,
+      pendingDeliveries: stats.outForDelivery || 0,
+      totalCOD: stats.totalCodCollected || 0,
+      collectedCOD: stats.totalCodCollected || 0,
+      pendingCOD: 0,
+      totalDistance: 0,
+      averageDeliveryTime: 0,
+      successRate: parseFloat(stats.deliveryRate) || 0,
+      onTimeRate: parseFloat(stats.deliveryRate) || 0,
+      // Additional backend fields
+      rtoShipments: stats.rtoShipments || 0,
+      todayDeliveries: stats.todayDeliveries || 0,
+    };
   },
 
   /**

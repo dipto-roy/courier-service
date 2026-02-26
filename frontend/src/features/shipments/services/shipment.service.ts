@@ -174,4 +174,19 @@ export const shipmentService = {
     });
     return response.data;
   },
+
+  /**
+   * Get shipment statistics
+   * Backend: GET /shipments/statistics
+   */
+  async getStatistics(): Promise<{
+    total: number;
+    byStatus: Record<string, number>;
+    byDeliveryType: Record<string, number>;
+    totalRevenue: number;
+    totalCOD: number;
+  }> {
+    const response = await apiClient.get('/shipments/statistics');
+    return response.data;
+  },
 };

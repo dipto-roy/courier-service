@@ -10,7 +10,7 @@ export const locationSchema = z.object({
   timestamp: z.string(),
 });
 
-// Tracking event schema
+// Tracking event schema (matches backend timeline format)
 export const trackingEventSchema = z.object({
   id: z.number(),
   status: z.string(),
@@ -62,4 +62,51 @@ export interface TrackingMapData {
   deliveryLocation: LocationData;
   route: LocationData[];
   rider: RiderInfo | null;
+}
+
+// TrackingInfo interface matching backend response
+export interface TrackingInfo {
+  awb: string;
+  status: string;
+  currentLocation: string;
+  expectedDeliveryDate: string;
+  eta?: string;
+  receiverName: string;
+  receiverAddress: string;
+  receiverCity: string;
+  senderName: string;
+  senderCity: string;
+  deliveryArea?: string;
+  weight: number;
+  serviceType: string;
+  deliveryType?: string;
+  deliveryAttempts: number;
+  isRto: boolean;
+  codAmount: number;
+  createdAt: string;
+  deliveryLocation?: {
+    latitude: number;
+    longitude: number;
+  };
+  riderLocation?: {
+    latitude: number;
+    longitude: number;
+    accuracy?: number;
+    timestamp: string;
+    isOnline?: boolean;
+  };
+}
+
+// Location update type
+export interface LocationUpdate {
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+  timestamp: string;
+}
+
+// Tracking history response
+export interface TrackingHistoryResponse {
+  events: TrackingEvent[];
+  currentStatus: string;
 }

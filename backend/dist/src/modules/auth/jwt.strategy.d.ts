@@ -8,7 +8,9 @@ export declare class JwtStrategy extends JwtStrategy_base {
     private readonly configService;
     private readonly authService;
     constructor(configService: ConfigService, authService: AuthService);
-    validate(payload: any): Promise<{
+    validate(payload: {
+        sub: string;
+    }): Promise<{
         id: string;
         email: string;
         role: import("../../common/enums").UserRole;
