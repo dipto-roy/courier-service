@@ -88,7 +88,7 @@ export function ShipmentFilters({
                 <select
                   id="status"
                   {...register('status')}
-                  className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="">All Statuses</option>
                   {STATUS_OPTIONS.map((option) => (
@@ -105,7 +105,7 @@ export function ShipmentFilters({
                 <select
                   id="paymentMethod"
                   {...register('paymentMethod')}
-                  className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="">All</option>
                   <option value="PREPAID">Prepaid</option>
@@ -119,7 +119,7 @@ export function ShipmentFilters({
                 <select
                   id="serviceType"
                   {...register('serviceType')}
-                  className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="">All</option>
                   <option value="STANDARD">Standard</option>
@@ -146,7 +146,7 @@ export function ShipmentFilters({
                 <select
                   id="sortBy"
                   {...register('sortBy')}
-                  className="w-full h-10 rounded-md border border-gray-300 px-3 text-sm"
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="createdAt">Created Date</option>
                   <option value="updatedAt">Updated Date</option>

@@ -15,14 +15,14 @@ const STATUS_ICONS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: 'bg-gray-100 border-gray-300',
-  PICKED_UP: 'bg-blue-100 border-blue-300',
-  IN_TRANSIT: 'bg-yellow-100 border-yellow-300',
-  OUT_FOR_DELIVERY: 'bg-purple-100 border-purple-300',
-  DELIVERED: 'bg-green-100 border-green-300',
-  FAILED: 'bg-red-100 border-red-300',
-  RETURNED: 'bg-orange-100 border-orange-300',
-  CANCELLED: 'bg-gray-100 border-gray-300',
+  PENDING: 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600',
+  PICKED_UP: 'bg-blue-100 dark:bg-blue-900/50 border-blue-300 dark:border-blue-700',
+  IN_TRANSIT: 'bg-yellow-100 dark:bg-yellow-900/50 border-yellow-300 dark:border-yellow-700',
+  OUT_FOR_DELIVERY: 'bg-purple-100 dark:bg-purple-900/50 border-purple-300 dark:border-purple-700',
+  DELIVERED: 'bg-green-100 dark:bg-green-900/50 border-green-300 dark:border-green-700',
+  FAILED: 'bg-red-100 dark:bg-red-900/50 border-red-300 dark:border-red-700',
+  RETURNED: 'bg-orange-100 dark:bg-orange-900/50 border-orange-300 dark:border-orange-700',
+  CANCELLED: 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600',
 };
 
 interface StatusTimelineProps {
@@ -33,7 +33,7 @@ interface StatusTimelineProps {
 export function StatusTimeline({ events, currentStatus }: StatusTimelineProps) {
   if (!events || events.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-muted-foreground">
         No tracking events available
       </div>
     );
@@ -41,11 +41,11 @@ export function StatusTimeline({ events, currentStatus }: StatusTimelineProps) {
 
   return (
     <div className="space-y-4">
-      <h3 className="font-semibold text-lg">Tracking History</h3>
+      <h3 className="font-semibold text-lg text-foreground">Tracking History</h3>
       
       <div className="relative">
         {/* Timeline line */}
-        <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+        <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-border"></div>
 
         {/* Events */}
         <div className="space-y-6">
@@ -72,27 +72,27 @@ export function StatusTimeline({ events, currentStatus }: StatusTimelineProps) {
                 <div className="flex-1 pb-6">
                   <div
                     className={`
-                      rounded-lg border p-4 bg-white
-                      ${isCurrentStatus ? 'border-blue-300 shadow-md' : 'border-gray-200'}
+                      rounded-lg border p-4 bg-card
+                      ${isCurrentStatus ? 'border-blue-300 dark:border-blue-700 shadow-md' : 'border-border'}
                     `}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-semibold text-gray-900">
+                          <h4 className="font-semibold text-foreground">
                             {event.status.replace(/_/g, ' ')}
                           </h4>
                           {isCurrentStatus && (
-                            <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                            <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-full">
                               Current
                             </span>
                           )}
                         </div>
-                        <p className="text-gray-600 text-sm mb-2">
+                        <p className="text-muted-foreground text-sm mb-2">
                           {event.description}
                         </p>
                         {event.location && (
-                          <p className="text-gray-500 text-xs flex items-center gap-1">
+                          <p className="text-muted-foreground text-xs flex items-center gap-1">
                             <svg
                               className="w-4 h-4"
                               fill="none"
@@ -115,7 +115,7 @@ export function StatusTimeline({ events, currentStatus }: StatusTimelineProps) {
                             {event.location}
                           </p>
                         )}
-                        <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
+                        <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
                           {event.hubName && (
                             <span className="flex items-center gap-1">
                               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -142,7 +142,7 @@ export function StatusTimeline({ events, currentStatus }: StatusTimelineProps) {
                           )}
                         </div>
                       </div>
-                      <time className="text-xs text-gray-500 whitespace-nowrap">
+                      <time className="text-xs text-muted-foreground whitespace-nowrap">
                         {formatDateTime(event.timestamp)}
                       </time>
                     </div>

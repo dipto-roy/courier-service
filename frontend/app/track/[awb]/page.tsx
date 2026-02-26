@@ -52,10 +52,10 @@ export default function TrackingPage({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600 mx-auto" />
-          <p className="text-gray-600">Loading tracking information...</p>
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-muted border-t-primary mx-auto" />
+          <p className="text-muted-foreground">Loading tracking information...</p>
         </div>
       </div>
     );
@@ -63,11 +63,11 @@ export default function TrackingPage({
 
   if (error || !tracking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="max-w-md w-full p-8 text-center">
-          <div className="mb-4 w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+          <div className="mb-4 w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto">
             <svg
-              className="w-8 h-8 text-red-600"
+              className="w-8 h-8 text-red-600 dark:text-red-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -80,13 +80,13 @@ export default function TrackingPage({
               />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <h2 className="text-xl font-bold text-foreground mb-2">
             Shipment Not Found
           </h2>
-          <p className="text-gray-600 mb-6">
-            We couldn&apos;t find a shipment with AWB number: <strong>{awb}</strong>
+          <p className="text-muted-foreground mb-6">
+            We couldn&apos;t find a shipment with AWB number: <strong className="text-foreground">{awb}</strong>
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Please check the AWB number and try again.
           </p>
         </Card>
@@ -99,11 +99,11 @@ export default function TrackingPage({
   const deliveryLocation = tracking.deliveryLocation;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+      <div className="bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
               <Button 
                 variant="outline" 
@@ -126,10 +126,10 @@ export default function TrackingPage({
                 </svg>
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                   Track Shipment
                 </h1>
-                <p className="text-gray-600 mt-1">AWB: {awb}</p>
+                <p className="text-muted-foreground mt-1">AWB: {awb}</p>
               </div>
             </div>
             <Button variant="outline" onClick={handleShare}>
@@ -154,43 +154,43 @@ export default function TrackingPage({
           {isConnected && (
             <div className="mt-4 flex items-center gap-2 text-sm">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-green-600 font-medium">Live Tracking Active</span>
+              <span className="text-green-600 dark:text-green-400 font-medium">Live Tracking Active</span>
             </div>
           )}
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Left Column - Map and Details */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Shipment Info Card */}
-            <Card className="p-6">
-              <div className="flex items-start justify-between mb-4">
+            <Card className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-2">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h2 className="text-lg font-semibold text-foreground mb-2">
                     Shipment Details
                   </h2>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <StatusBadge status={tracking.status} />
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-muted-foreground">
                       Created {formatDateTime(tracking.createdAt)}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-600 mb-1">From</p>
-                  <p className="font-medium text-gray-900">{tracking.senderName}</p>
-                  <p className="text-gray-600">{tracking.senderCity}</p>
+                  <p className="text-muted-foreground mb-1">From</p>
+                  <p className="font-medium text-foreground">{tracking.senderName}</p>
+                  <p className="text-muted-foreground">{tracking.senderCity}</p>
                 </div>
                 <div>
-                  <p className="text-gray-600 mb-1">To</p>
-                  <p className="font-medium text-gray-900">{tracking.receiverName}</p>
-                  <p className="text-gray-600">{tracking.receiverCity}</p>
+                  <p className="text-muted-foreground mb-1">To</p>
+                  <p className="font-medium text-foreground">{tracking.receiverName}</p>
+                  <p className="text-muted-foreground">{tracking.receiverCity}</p>
                 </div>
               </div>
             </Card>
@@ -207,7 +207,7 @@ export default function TrackingPage({
 
             {/* Timeline */}
             {history && history.events && (
-              <Card className="p-6">
+              <Card className="p-4 sm:p-6">
                 <StatusTimeline
                   events={history.events}
                   currentStatus={tracking.status}
@@ -217,7 +217,7 @@ export default function TrackingPage({
           </div>
 
           {/* Right Column - ETA and Rider Info */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* ETA */}
             {etaData && (
               <ETADisplay
@@ -230,27 +230,27 @@ export default function TrackingPage({
             {rider && <RiderInfoCard rider={rider} />}
 
             {/* Additional Info Card */}
-            <Card className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">
+            <Card className="p-4 sm:p-6">
+              <h3 className="font-semibold text-foreground mb-4">
                 Shipment Information
               </h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Weight</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="text-muted-foreground">Weight</span>
+                  <span className="font-medium text-foreground">
                     {tracking.weight} kg
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Service Type</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="text-muted-foreground">Service Type</span>
+                  <span className="font-medium text-foreground">
                     {tracking.serviceType}
                   </span>
                 </div>
                 {tracking.codAmount > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">COD Amount</span>
-                    <span className="font-medium text-gray-900">
+                    <span className="text-muted-foreground">COD Amount</span>
+                    <span className="font-medium text-foreground">
                       ৳{tracking.codAmount.toFixed(2)}
                     </span>
                   </div>
@@ -259,11 +259,11 @@ export default function TrackingPage({
             </Card>
 
             {/* Help Card */}
-            <Card className="p-6 bg-blue-50 border-blue-200">
-              <h3 className="font-semibold text-blue-900 mb-2">
+            <Card className="p-4 sm:p-6 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
                 Need Help?
               </h3>
-              <p className="text-sm text-blue-700 mb-4">
+              <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
                 Contact our customer support for any queries about your shipment.
               </p>
               <Button variant="outline" className="w-full" size="sm">

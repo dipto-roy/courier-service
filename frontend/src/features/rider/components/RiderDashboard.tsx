@@ -3,6 +3,8 @@
 import { Card } from '@/components/ui/card';
 import { useRiderStats } from '../hooks';
 import { formatCurrency } from '@/src/common/lib/utils';
+import { RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Type for the stats data from the hook
 interface RiderStatsData {
@@ -28,16 +30,16 @@ interface RiderStatsData {
 }
 
 export function RiderDashboard() {
-  const { data: rawStats, isLoading, error } = useRiderStats();
+  const { data: rawStats, isLoading, error, refetch } = useRiderStats();
 
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {[...Array(4)].map((_, i) => (
-            <Card key={i} className="p-6 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-24 mb-2" />
-              <div className="h-8 bg-gray-200 rounded w-16" />
+            <Card key={i} className="p-4 sm:p-6 animate-pulse">
+              <div className="h-4 bg-muted rounded w-24 mb-2" />
+              <div className="h-8 bg-muted rounded w-16" />
             </Card>
           ))}
         </div>
@@ -48,8 +50,8 @@ export function RiderDashboard() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-500">Error loading statistics</p>
-        <p className="text-gray-500 text-sm mt-2">Please try again later</p>
+        <p className="text-red-500 dark:text-red-400">Error loading statistics</p>
+        <p className="text-muted-foreground text-sm mt-2">Please try again later</p>
       </div>
     );
   }
@@ -102,17 +104,29 @@ export function RiderDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Rider Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Manage your deliveries and track performance</p>
+        </div>
+        <Button onClick={() => refetch()} variant="outline" size="sm" className="w-fit">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Refresh
+        </Button>
+      </div>
+
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {statCards.map((stat) => (
-          <Card key={stat.title} className="p-6">
+          <Card key={stat.title} className="p-4 sm:p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
-                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">{stat.title}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{stat.value}</p>
               </div>
               <div
-                className={`w-12 h-12 ${stat.color} rounded-full flex items-center justify-center text-2xl`}
+                className={`w-10 h-10 sm:w-12 sm:h-12 ${stat.color} rounded-full flex items-center justify-center text-xl sm:text-2xl`}
               >
                 {stat.icon}
               </div>
@@ -122,28 +136,28 @@ export function RiderDashboard() {
       </div>
 
       {/* COD & Performance */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* COD Collection */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <Card className="p-4 sm:p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             COD Collection
           </h3>
           <div className="space-y-4">
-            <div className="flex justify-between items-center pb-3 border-b">
-              <span className="text-gray-600">Total COD</span>
-              <span className="text-xl font-bold text-gray-900">
+            <div className="flex justify-between items-center pb-3 border-b border-border">
+              <span className="text-muted-foreground">Total COD</span>
+              <span className="text-xl font-bold text-foreground">
                 {formatCurrency(normalizedStats.totalCOD)}
               </span>
             </div>
-            <div className="flex justify-between items-center pb-3 border-b">
-              <span className="text-gray-600">Collected</span>
-              <span className="text-xl font-bold text-green-600">
+            <div className="flex justify-between items-center pb-3 border-b border-border">
+              <span className="text-muted-foreground">Collected</span>
+              <span className="text-xl font-bold text-green-600 dark:text-green-400">
                 {formatCurrency(normalizedStats.collectedCOD)}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Pending</span>
-              <span className="text-xl font-bold text-yellow-600">
+              <span className="text-muted-foreground">Pending</span>
+              <span className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
                 {formatCurrency(normalizedStats.pendingCOD)}
               </span>
             </div>
@@ -151,19 +165,19 @@ export function RiderDashboard() {
         </Card>
 
         {/* Performance Metrics */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <Card className="p-4 sm:p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Performance
           </h3>
           <div className="space-y-4">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">Success Rate</span>
-                <span className="text-sm font-semibold text-gray-900">
+                <span className="text-sm text-muted-foreground">Success Rate</span>
+                <span className="text-sm font-semibold text-foreground">
                   {normalizedStats.successRate.toFixed(1)}%
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
                   className="bg-green-500 h-2 rounded-full transition-all"
                   style={{ width: `${Math.min(normalizedStats.successRate, 100)}%` }}
@@ -172,28 +186,28 @@ export function RiderDashboard() {
             </div>
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">On-Time Rate</span>
-                <span className="text-sm font-semibold text-gray-900">
+                <span className="text-sm text-muted-foreground">On-Time Rate</span>
+                <span className="text-sm font-semibold text-foreground">
                   {normalizedStats.onTimeRate.toFixed(1)}%
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div
                   className="bg-blue-500 h-2 rounded-full transition-all"
                   style={{ width: `${Math.min(normalizedStats.onTimeRate, 100)}%` }}
                 />
               </div>
             </div>
-            <div className="pt-3 border-t">
+            <div className="pt-3 border-t border-border">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total Distance</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-muted-foreground">Total Distance</span>
+                <span className="font-semibold text-foreground">
                   {normalizedStats.totalDistance.toFixed(1)} km
                 </span>
               </div>
               <div className="flex justify-between items-center mt-2">
-                <span className="text-gray-600">Avg. Delivery Time</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-muted-foreground">Avg. Delivery Time</span>
+                <span className="font-semibold text-foreground">
                   {normalizedStats.averageDeliveryTime} min
                 </span>
               </div>
