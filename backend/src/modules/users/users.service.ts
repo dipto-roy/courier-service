@@ -91,7 +91,7 @@ export class UsersService {
     // Apply search
     if (search) {
       queryBuilder.andWhere(
-        '(user.fullName ILIKE :search OR user.email ILIKE :search OR user.phone ILIKE :search)',
+        '(user.name ILIKE :search OR user.email ILIKE :search OR user.phone ILIKE :search)',
         { search: `%${search}%` },
       );
     }
