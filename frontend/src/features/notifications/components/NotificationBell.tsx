@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useNotifications, useUnreadCount } from '@/services/notifications/hooks';
+import { useNotifications, useUnreadCount } from '@/src/services/notifications/hooks';
 import { NotificationList } from './NotificationList';
 
 export function NotificationBell() {

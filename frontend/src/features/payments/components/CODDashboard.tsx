@@ -12,7 +12,7 @@ import {
   AlertCircle,
   ArrowUpRight,
 } from 'lucide-react';
-import { formatCurrency, formatDate } from '@/src/common/utils';
+import { formatCurrency, formatDate } from '@/src/common/lib/utils';
 
 interface CODDashboardProps {
   merchantId: string;

@@ -4,8 +4,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { Bell, Check, Mail, MessageSquare, Phone, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useMarkAsRead, useDeleteNotification } from '@/services/notifications/hooks';
-import type { Notification, NotificationType } from '@/services/notifications/types';
+import { useMarkAsRead, useDeleteNotification } from '@/src/services/notifications/hooks';
+import type { Notification, NotificationType } from '@/src/services/notifications/types';
 
 interface NotificationItemProps {
   notification: Notification;

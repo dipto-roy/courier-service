@@ -65,7 +65,7 @@ export class UsersController {
   }
 
   @Get('me')
-  @Roles(UserRole.ADMIN, UserRole.MERCHANT, UserRole.RIDER, UserRole.HUB_STAFF, UserRole.SUPPORT)
+  @Roles(UserRole.ADMIN, UserRole.MERCHANT, UserRole.RIDER, UserRole.HUB_STAFF, UserRole.SUPPORT, UserRole.CUSTOMER)
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Current user profile retrieved' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })

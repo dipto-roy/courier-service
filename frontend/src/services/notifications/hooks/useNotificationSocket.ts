@@ -1,10 +1,10 @@
 import { useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { socket } from '@/src/common/lib/socket';
-import type { Notification } from '../types';
+import { socketService } from '@/src/common/lib/socket';
+import type { Notification as AppNotification } from '../types';
 
 interface NotificationEventData {
-  notification: Notification;
+  notification: AppNotification;
   userId: string;
 }
 
@@ -56,24 +56,21 @@ export function useNotificationSocket() {
   );
 
   useEffect(() => {
-    // Connect socket
-    socket.connect();
-
-    // Subscribe to notification events
-    socket.on('notification:new', handleNewNotification);
-    socket.on('notification:read', handleNotificationRead);
-    socket.on('notification:deleted', handleNotificationDeleted);
+    // Subscribe to notification events (assumes socket is already connected by auth provider)
+    socketService.on('notification:new', handleNewNotification);
+    socketService.on('notification:read', handleNotificationRead);
+    socketService.on('notification:deleted', handleNotificationDeleted);
 
     // Cleanup
     return () => {
-      socket.off('notification:new', handleNewNotification);
-      socket.off('notification:read', handleNotificationRead);
-      socket.off('notification:deleted', handleNotificationDeleted);
+      socketService.off('notification:new', handleNewNotification);
+      socketService.off('notification:read', handleNotificationRead);
+      socketService.off('notification:deleted', handleNotificationDeleted);
     };
   }, [handleNewNotification, handleNotificationRead, handleNotificationDeleted]);
 
   return {
-    connected: socket.connected,
+    connected: socketService.isConnected(),
   };
 }
 

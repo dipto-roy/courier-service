@@ -1,1 +1,1 @@
-export * from '@/services/notifications/types';
+export * from '@/src/services/notifications/types';

@@ -171,7 +171,7 @@ export class PaymentsController {
   }
 
   @Get('transactions')
-  @Roles(UserRole.ADMIN, UserRole.FINANCE, UserRole.MERCHANT)
+  @Roles(UserRole.ADMIN, UserRole.FINANCE, UserRole.MERCHANT, UserRole.CUSTOMER)
   @ApiOperation({
     summary: 'Get transactions with filters',
     description: 'Retrieve transactions with pagination and filters. Merchants can only see their own transactions.',
@@ -210,7 +210,7 @@ export class PaymentsController {
   }
 
   @Get('transactions/:transactionId')
-  @Roles(UserRole.ADMIN, UserRole.FINANCE, UserRole.MERCHANT)
+  @Roles(UserRole.ADMIN, UserRole.FINANCE, UserRole.MERCHANT, UserRole.CUSTOMER)
   @ApiOperation({
     summary: 'Get transaction by ID',
     description: 'Retrieve detailed transaction information.',

@@ -55,6 +55,7 @@ export class ShipmentsController {
     UserRole.MERCHANT,
     UserRole.SUPPORT,
     UserRole.HUB_STAFF,
+    UserRole.CUSTOMER,
   )
   @ApiOperation({ summary: 'Get all shipments with filters and pagination' })
   @ApiResponse({ status: 200, description: 'Shipments retrieved successfully' })
@@ -66,7 +67,7 @@ export class ShipmentsController {
   }
 
   @Get('statistics')
-  @Roles(UserRole.ADMIN, UserRole.MERCHANT, UserRole.SUPPORT)
+  @Roles(UserRole.ADMIN, UserRole.MERCHANT, UserRole.SUPPORT, UserRole.CUSTOMER)
   @ApiOperation({ summary: 'Get shipment statistics' })
   @ApiResponse({
     status: 200,
@@ -82,6 +83,7 @@ export class ShipmentsController {
     UserRole.MERCHANT,
     UserRole.SUPPORT,
     UserRole.HUB_STAFF,
+    UserRole.CUSTOMER,
   )
   @ApiOperation({ summary: 'Get shipments by status' })
   @ApiResponse({ status: 200, description: 'Shipments retrieved successfully' })
@@ -108,6 +110,7 @@ export class ShipmentsController {
     UserRole.SUPPORT,
     UserRole.HUB_STAFF,
     UserRole.RIDER,
+    UserRole.CUSTOMER,
   )
   @ApiOperation({ summary: 'Get shipment by ID' })
   @ApiResponse({ status: 200, description: 'Shipment found' })

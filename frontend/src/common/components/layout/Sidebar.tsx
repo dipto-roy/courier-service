@@ -2,18 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuthStore } from '@/src/features/auth/stores';
+import { UserRole } from '@/src/common/types';
 import { cn } from '@/src/common/lib/utils';
 import {
   LayoutDashboard,
   Package,
-  MapPin,
   Truck,
   Building2,
-  Users,
   CreditCard,
   Bell,
   BarChart3,
-  Settings,
   LucideIcon,
 } from 'lucide-react';
 
@@ -21,19 +20,50 @@ interface NavItem {
   href: string;
   label: string;
   icon: LucideIcon;
+  roles?: UserRole[];
 }
 
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/shipments', label: 'Shipments', icon: Package },
-  { href: '/dashboard/tracking', label: 'Tracking', icon: MapPin },
-  { href: '/dashboard/rider', label: 'Rider', icon: Truck },
-  { href: '/dashboard/hub', label: 'Hub', icon: Building2 },
-  { href: '/dashboard/users', label: 'Users', icon: Users },
-  { href: '/dashboard/payments', label: 'Payments', icon: CreditCard },
-  { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
-  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+  {
+    href: '/dashboard/shipments',
+    label: 'Shipments',
+    icon: Package,
+    roles: [UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN],
+  },
+  {
+    href: '/dashboard/rider',
+    label: 'Rider',
+    icon: Truck,
+    roles: [UserRole.RIDER, UserRole.ADMIN],
+  },
+  {
+    href: '/dashboard/hub',
+    label: 'Hub',
+    icon: Building2,
+    roles: [UserRole.HUB_STAFF, UserRole.ADMIN],
+  },
+  // ❌ NOTE: /dashboard/users route does not exist - removed from sidebar
+  // Uncomment when the route is created
+  // { href: '/dashboard/users', label: 'Users', icon: Users, roles: [UserRole.ADMIN, UserRole.SUPPORT] },
+  {
+    href: '/dashboard/payments',
+    label: 'Payments',
+    icon: CreditCard,
+    roles: [UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN],
+  },
+  {
+    href: '/dashboard/notifications',
+    label: 'Notifications',
+    icon: Bell,
+    roles: [UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.RIDER, UserRole.ADMIN, UserRole.HUB_STAFF, UserRole.SUPPORT],
+  },
+  {
+    href: '/dashboard/analytics',
+    label: 'Analytics',
+    icon: BarChart3,
+    roles: [UserRole.MERCHANT, UserRole.ADMIN, UserRole.HUB_STAFF],
+  },
 ];
 
 interface SidebarProps {
@@ -43,6 +73,17 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const user = useAuthStore((state) => state.user);
+
+  // Filter navigation items based on user role
+  const filteredNavItems = navItems.filter((item) => {
+    // If no specific roles defined, show to everyone
+    if (!item.roles || item.roles.length === 0) {
+      return true;
+    }
+    // Show item only if user's role is in the allowed roles
+    return user?.role && item.roles.includes(user.role as UserRole);
+  });
 
   return (
     <>
@@ -64,7 +105,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
         <div className="flex h-full flex-col">
           {/* Navigation */}
           <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-            {navItems.map((item) => {
+            {filteredNavItems.map((item) => {
               const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
               const Icon = item.icon;
 

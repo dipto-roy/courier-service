@@ -55,7 +55,7 @@ export class SlaWatcherController {
   }
 
   @Get('shipment/:shipmentId')
-  @Roles(UserRole.ADMIN, UserRole.SUPPORT, UserRole.MERCHANT)
+  @Roles(UserRole.ADMIN, UserRole.SUPPORT, UserRole.MERCHANT, UserRole.CUSTOMER)
   @ApiOperation({
     summary: 'Check SLA status for specific shipment',
     description: 'Check if a specific shipment has any SLA violations and get detailed information.',

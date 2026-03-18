@@ -107,7 +107,7 @@ export class TrackingController {
 
   @Get('detailed/:awb')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.MERCHANT, UserRole.HUB_STAFF, UserRole.SUPPORT)
+  @Roles(UserRole.ADMIN, UserRole.MERCHANT, UserRole.HUB_STAFF, UserRole.SUPPORT, UserRole.CUSTOMER)
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get detailed tracking information',

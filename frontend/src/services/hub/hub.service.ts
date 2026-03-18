@@ -110,6 +110,43 @@ class HubService {
     const response = await apiClient.post(`/hub/manifests/${id}/receive`, data);
     return response.data;
   }
+
+  /**
+   * Close a received manifest
+   * @param id - Manifest UUID
+   */
+  async closeManifest(id: string): Promise<HubManifest> {
+    const response = await apiClient.patch<HubManifest>(`/hub/manifests/${id}/close`);
+    return response.data;
+  }
+
+  /**
+   * Get hub inventory with statistics
+   * @param hubLocation - Hub location name
+   */
+  async getInventory(hubLocation: string): Promise<{
+    hubLocation: string;
+    statistics: {
+      totalShipments: number;
+      byDestination: Record<string, number>;
+      byType: Record<string, number>;
+      codShipments: number;
+      totalCodAmount: number;
+    };
+    shipments: Array<{
+      awb: string;
+      merchantName: string;
+      deliveryArea: string;
+      nextHub: string;
+      weight: number;
+      codAmount: number;
+      deliveryType: string;
+      createdAt: string;
+    }>;
+  }> {
+    const response = await apiClient.get(`/hub/inventory/${encodeURIComponent(hubLocation)}`);
+    return response.data;
+  }
 }
 
 export const hubService = new HubService();

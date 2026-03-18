@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useInitiatePayout } from '@/src/services/payments';
-import { initiatePayoutSchema, type InitiatePayout, PaymentMethod } from '@/services/payments/types';
+import { initiatePayoutSchema, type InitiatePayout, PaymentMethod } from '@/src/services/payments/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle, DollarSign } from 'lucide-react';
-import { formatCurrency } from '@/src/common/utils';
+import { formatCurrency } from '@/src/common/lib/utils';
 
 interface PayoutFormProps {
   merchantId: string;
