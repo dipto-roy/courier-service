@@ -57,18 +57,21 @@ export const failedDeliverySchema = z.object({
 export const codCollectionSchema = z.object({
   amount: z.number().min(0, 'Amount must be positive'),
   paymentMethod: z.enum(['CASH', 'UPI', 'CARD', 'NET_BANKING']),
+  transactionId: z.string().optional(), // For non-cash payments
   notes: z.string().max(500).optional(),
 });
 
 // Delivery action schema (for OTP dialog)
 export const deliveryActionSchema = z.object({
-  awbNumber: z.string().min(1, 'AWB number is required'),
-  otpCode: z.string().length(6, 'OTP must be 6 digits'),
+  awbNumber: z.string().min(1, 'AWB number is required').optional(),
+  otp: z.string().length(6, 'OTP must be 6 digits').optional(),
+  otpCode: z.string().length(6, 'OTP must be 6 digits').optional(),
   receiverName: z.string().optional(),
   signatureUrl: z.string().optional(),
   podPhotoUrl: z.string().optional(),
   codAmountCollected: z.number().min(0).optional(),
   deliveryNote: z.string().max(500).optional(),
+  remarks: z.string().max(500).optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
 });

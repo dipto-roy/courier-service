@@ -96,7 +96,10 @@ export default function TrackingPage({
 
   // Use live location if available, otherwise use latest from locations
   const currentLocation = liveLocation || (locations && locations[0]) || null;
-  const deliveryLocation = tracking.deliveryLocation;
+  const deliveryLocation = tracking.deliveryLocation ? {
+    ...tracking.deliveryLocation,
+    timestamp: new Date().toISOString(),
+  } : null;
 
   return (
     <div className="min-h-screen bg-background">

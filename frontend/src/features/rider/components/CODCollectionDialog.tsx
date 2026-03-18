@@ -60,8 +60,10 @@ export function CODCollectionDialog({
   const onSubmit = async (data: z.infer<typeof codCollectionSchema>) => {
     try {
       await collectCOD.mutateAsync({
-        shipmentId: delivery.id,
-        data,
+        awbNumber: delivery.awb,
+        amount: data.amount,
+        paymentMethod: data.paymentMethod,
+        notes: data.notes,
       });
       onOpenChange(false);
       reset();
@@ -138,7 +140,7 @@ export function CODCollectionDialog({
             <Label htmlFor="remarks">Remarks (Optional)</Label>
             <Textarea
               id="remarks"
-              {...register('remarks')}
+              {...register('notes')}
               placeholder="Any additional notes..."
               rows={2}
             />
