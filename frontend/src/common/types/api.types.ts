@@ -184,14 +184,19 @@ export interface BulkShipmentRequest {
 }
 
 export interface ShipmentFilters {
-  status?: ShipmentStatus;
+  status?: ShipmentStatus | '';
   merchantId?: number;
   riderId?: number;
   awb?: string;
-  dateFrom?: string;
-  dateTo?: string;
+  search?: string | '';
+  dateFrom?: string | '';
+  dateTo?: string | '';
+  paymentMethod?: 'PREPAID' | 'COD' | '';
+  serviceType?: 'STANDARD' | 'EXPRESS' | 'SAME_DAY' | '';
   page?: number;
   limit?: number;
+  sortBy?: 'createdAt' | 'updatedAt' | 'deliveryFee' | 'status';
+  sortOrder?: 'asc' | 'desc';
 }
 
 // ==================== TRACKING TYPES ====================

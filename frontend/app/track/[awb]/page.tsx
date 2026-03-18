@@ -173,7 +173,7 @@ export default function TrackingPage({
                     Shipment Details
                   </h2>
                   <div className="flex flex-wrap items-center gap-3">
-                    <StatusBadge status={tracking.status} />
+                    <StatusBadge status={tracking.status as any} />
                     <span className="text-sm text-muted-foreground">
                       Created {formatDateTime(tracking.createdAt)}
                     </span>

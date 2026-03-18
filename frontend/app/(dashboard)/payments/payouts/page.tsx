@@ -21,8 +21,8 @@ import { CheckCircle, Clock, XCircle } from 'lucide-react';
 
 export default function PayoutsPage() {
   const { user } = useAuth();
-  const merchantId = user?.id || '';
-  
+  const merchantId = user?.id?.toString() || '';
+
   const { data: balanceData } = usePendingBalance(merchantId);
   const { data: payoutsData, isLoading } = useTransactions({
     type: TransactionType.COD_PAYOUT,
