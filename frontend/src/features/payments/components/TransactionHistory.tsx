@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTransactions } from '@/src/services/payments';
-import { TransactionType, PaymentStatus, PaymentMethod, type PaymentFilter } from '@/services/payments/types';
+import { TransactionType, PaymentStatus, PaymentMethod, type PaymentFilter } from '@/src/services/payments/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -23,7 +23,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Search, Filter, Download } from 'lucide-react';
-import { formatCurrency, formatDate } from '@/src/common/utils';
+import { formatCurrency, formatDate } from '@/src/common/lib/utils';
 
 export function TransactionHistory() {
   const [filters, setFilters] = useState<PaymentFilter>({

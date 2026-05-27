@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { hubService } from '../hub.service';
 import { queryKeys } from '../../../common/lib/queryClient';
 import {
@@ -86,5 +86,33 @@ export function useReceiveManifest() {
       queryClient.invalidateQueries({ queryKey: queryKeys.hub.manifests() });
       queryClient.invalidateQueries({ queryKey: queryKeys.hub.statistics() });
     },
+  });
+}
+
+/**
+ * Hook for closing a received manifest
+ */
+export function useCloseManifest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => hubService.closeManifest(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.hub.manifest(id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.hub.manifests() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.hub.statistics() });
+    },
+  });
+}
+
+/**
+ * Hook for getting hub inventory
+ */
+export function useHubInventory(hubLocation: string) {
+  return useQuery({
+    queryKey: [...queryKeys.hub.all, 'inventory', hubLocation] as const,
+    queryFn: () => hubService.getInventory(hubLocation),
+    enabled: !!hubLocation,
+    staleTime: 30000,
   });
 }

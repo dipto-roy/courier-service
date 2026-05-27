@@ -91,6 +91,7 @@ export class NotificationsController {
   // ==================== User Notification Management ====================
 
   @Get('my-notifications')
+  @Roles(UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN, UserRole.SUPPORT, UserRole.HUB_STAFF, UserRole.RIDER)
   @ApiOperation({ summary: 'Get current user notifications' })
   @ApiQuery({ name: 'isRead', required: false, type: Boolean, description: 'Filter by read status' })
   @ApiResponse({
@@ -115,6 +116,7 @@ export class NotificationsController {
   }
 
   @Get('unread-count')
+  @Roles(UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN, UserRole.SUPPORT, UserRole.HUB_STAFF, UserRole.RIDER)
   @ApiOperation({ summary: 'Get unread notification count' })
   @ApiResponse({
     status: 200,

@@ -18,7 +18,7 @@ export default function ShipmentsPage() {
   });
   const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
 
-  const { data, isLoading, error, refetch } = useShipments(filters);
+  const { data, isLoading, error, refetch } = useShipments(filters as any);
   const { mutate: exportShipments, isPending: isExporting } = useExportShipments();
 
   const handleFilterChange = (newFilters: ShipmentFiltersFormData) => {
@@ -106,7 +106,7 @@ export default function ShipmentsPage() {
           </div>
           <ShipmentList
             shipments={data.data}
-            currentPage={data.meta.currentPage}
+            currentPage={data.meta.page}
             totalPages={data.meta.totalPages}
             onPageChange={handlePageChange}
             isLoading={isLoading}

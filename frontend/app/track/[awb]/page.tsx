@@ -96,7 +96,10 @@ export default function TrackingPage({
 
   // Use live location if available, otherwise use latest from locations
   const currentLocation = liveLocation || (locations && locations[0]) || null;
-  const deliveryLocation = tracking.deliveryLocation;
+  const deliveryLocation = tracking.deliveryLocation ? {
+    ...tracking.deliveryLocation,
+    timestamp: new Date().toISOString(),
+  } : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -173,7 +176,7 @@ export default function TrackingPage({
                     Shipment Details
                   </h2>
                   <div className="flex flex-wrap items-center gap-3">
-                    <StatusBadge status={tracking.status} />
+                    <StatusBadge status={tracking.status as any} />
                     <span className="text-sm text-muted-foreground">
                       Created {formatDateTime(tracking.createdAt)}
                     </span>

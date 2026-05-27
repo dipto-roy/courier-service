@@ -99,10 +99,17 @@ git merge feature/your-feature-name
 
 ## Documentation
 
-- **Backend API**: See `backend/API_DOCUMENTATION.md` and `backend/API_ENDPOINTS.json`
-- **Frontend Guide**: See `frontend/README.md`
-- **GPS Tracking**: See `backend/GPS_TRACKING_GUIDE.md`
-- **Pricing System**: See `backend/DYNAMIC_PRICING_SYSTEM.md`
+### Core Documentation (Read These First!)
+
+- **[System Architecture](./docs/architecture.md)** - Complete system design, modules, database schema
+- **[API Reference](./docs/api.md)** - All 51 endpoints with examples, authentication, testing
+- **[Development Instructions](./.CLAUDE/instructions.md)** - Setup, workflow, authorization patterns, common issues
+
+### Additional Resources
+
+- **Swagger API Docs**: Available at `http://localhost:3001/api/docs` (development)
+- **Git Workflow**: See Development Instructions for branch and commit guidelines
+- **Debugging**: See Development Instructions for troubleshooting guide
 
 ## Features
 

@@ -129,7 +129,7 @@ __decorate([
 ], UsersController.prototype, "getUsersByRole", null);
 __decorate([
     (0, common_1.Get)('me'),
-    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.RIDER, enums_1.UserRole.HUB_STAFF, enums_1.UserRole.SUPPORT),
+    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.RIDER, enums_1.UserRole.HUB_STAFF, enums_1.UserRole.SUPPORT, enums_1.UserRole.CUSTOMER),
     (0, swagger_1.ApiOperation)({ summary: 'Get current user profile' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Current user profile retrieved' }),
     (0, swagger_1.ApiResponse)({ status: 401, description: 'Unauthorized' }),

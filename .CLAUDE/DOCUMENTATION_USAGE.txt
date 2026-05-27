@@ -1,0 +1,193 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    USING .CLAUDE, DOCS, SKILLS.MD
+═══════════════════════════════════════════════════════════════════════════════
+
+For debugging /dashboard/shipments with CUSTOMER role:
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ QUICK LOOKUP GUIDE                                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+ISSUE                              WHERE TO LOOK
+──────────────────────────────────────────────────────────────────────────────
+"Sidebar doesn't show link"      → .CLAUDE/instructions.md
+                                   Search: "Frontend Sidebar Navigation"
+
+"404 route not found"            → docs/architecture.md
+                                   Search: "Available Dashboard Routes" 
+
+"401/403 authorization error"    → .CLAUDE/instructions.md
+                                   Search: "Authorization Pattern (CRITICAL)"
+
+"Empty shipments list"           → docs/api.md
+                                   Search: "Section 12: Get All Shipments"
+
+"Wrong response format"          → docs/api.md + skills.md
+                                   Search for response structure
+
+"How to debug properly?"         → .CLAUDE/DEBUG_GUIDE.md
+                                   Complete step-by-step process
+
+"Full system analysis"           → .CLAUDE/DEBUG_SHIPMENTS.md
+                                   Complete verification report
+
+────────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ THE 3-FILE APPROACH                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    .CLAUDE/              docs/                  skills.md
+    (HOW)                 (WHAT)                 (PATTERNS)
+    ─────                 ────                   ─────────
+    instructions.md       architecture.md        Reusable
+    └─ Dev workflow       └─ System design       patterns
+    └─ Patterns           └─ Modules                 
+    └─ Common issues      └─ Routes              ├─ Authorization
+    └─ Auth rules         └─ Database            ├─ API responses
+                                                 ├─ Query builders
+    DEBUG_GUIDE.md        api.md                 └─ Error handling
+    └─ Debug steps        └─ 51 endpoints
+    └─ Verification       └─ Examples
+    └─ Checklist          └─ Response format
+
+────────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ EXAMPLE: "Customer sees 403 Forbidden error"                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Step 1: Go to .CLAUDE/instructions.md
+        └─ Read: "Authorization Pattern (CRITICAL)" section
+        └─ Find: Is @Roles(UserRole.CUSTOMER) in controller?
+
+Step 2: Go to docs/architecture.md
+        └─ Read: Shipments Module section
+        └─ Verify: System design and RLS logic
+
+Step 3: Go to skills.md
+        └─ Check: Authorization patterns used
+        └─ Verify: Row-level security pattern matching
+
+Step 4: If still unclear, go to .CLAUDE/DEBUG_GUIDE.md
+        └─ Follow: Step 4 in "Actual Debug Process"
+
+────────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ FILE RELATIONSHIPS                                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                    .CLAUDE/instructions.md
+                            ↓
+                    (Development Rules)
+                            ↓
+         ┌─────────────────────────────────┐
+         ↓                                   ↓
+    docs/architecture.md              docs/api.md
+    (System Design)                   (API Reference)
+         ↓                                   ↓
+    (Understand                       (Know exact
+     structure)                        endpoints)
+         ↓                                   ↓
+         └─────────────────────────────────┘
+                    ↓
+            skills.md (Patterns)
+                    ↓
+            (Implement correctly)
+
+────────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ READING ORDER FOR SPECIFIC ISSUES                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Authentication errors (401/403)
+  1. .CLAUDE/instructions.md → Authorization Pattern
+  2. skills.md → Authorization patterns
+  3. docs/api.md → Response format
+
+Route/404 errors
+  1. docs/architecture.md → Available Routes
+  2. .CLAUDE/instructions.md → Frontend Sidebar
+  3. .CLAUDE/DEBUG_GUIDE.md → Check 2
+
+Response format errors
+  1. docs/api.md → Shipment Endpoints section
+  2. skills.md → API response types
+  3. .CLAUDE/instructions.md → Common Issues
+
+Full system analysis
+  1. docs/architecture.md → Complete overview
+  2. .CLAUDE/instructions.md → Development rules
+  3. .CLAUDE/DEBUG_SHIPMENTS.md → Specific analysis
+
+────────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ KEY SECTIONS TO REMEMBER                                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+.CLAUDE/instructions.md
+  ✓ Lines 186-251: Authorization Pattern (CRITICAL!)
+  ✓ Lines 253-272: Frontend Sidebar Navigation
+  ✓ Lines 274+: Common Issues & Fixes
+  ✓ Lines 159-225: Implementation Pattern (RLS + RBAC)
+
+docs/architecture.md
+  ✓ Shipments Module (complete module definition)
+  ✓ Frontend Architecture (component structure)
+  ✓ Database Schema (entity relationships)
+
+docs/api.md
+  ✓ Section 12: Get All Shipments (GET /api/shipments)
+  ✓ Response format (data, meta, pagination)
+  ✓ Example curl commands
+
+skills.md
+  ✓ Authorization patterns
+  ✓ API response handling
+  ✓ Query builder patterns
+
+────────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ DEBUGGING SHORTCUTS                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+"Is CUSTOMER role authorized?"
+  → .CLAUDE/instructions.md:186-251
+
+"Does route exist?"
+  → docs/architecture.md + .CLAUDE/instructions.md
+
+"What's the response format?"
+  → docs/api.md section 12
+
+"How should RLS work?"
+  → .CLAUDE/instructions.md:213-227
+
+"What attributes does Shipment have?"
+  → docs/architecture.md Database Schema
+
+"How to test this endpoint?"
+  → docs/api.md + .CLAUDE/DEBUG_GUIDE.md
+
+────────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ REMEMBER: Use Interconnected Approach                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Don't go to just ONE file. Cross-reference:
+
+  Problem found in:          Check related info in:
+  ─────────────────          ──────────────────────
+  .CLAUDE/instructions       docs/architecture + docs/api + skills
+  docs/architecture          docs/api + .CLAUDE/instructions + skills
+  docs/api                   .CLAUDE/instructions + docs/architecture
+  skills                     docs/ + .CLAUDE/
+
+This ensures you have complete understanding!
+
+════════════════════════════════════════════════════════════════════════════════

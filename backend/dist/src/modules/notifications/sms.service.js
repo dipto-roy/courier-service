@@ -203,7 +203,7 @@ let SmsService = SmsService_1 = class SmsService {
         }
         catch (error) {
             this.logger.error('Bulk SMS failed:', error.message);
-            throw error;
+            throw new Error('Bulk SMS failed');
         }
     }
     async sendOtp(phone, otp) {

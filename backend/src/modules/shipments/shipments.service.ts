@@ -95,7 +95,9 @@ export class ShipmentsService {
       weight: createShipmentDto.weight,
       deliveryType: createShipmentDto.deliveryType,
       productDescription:
-        createShipmentDto.productDescription || createShipmentDto.productCategory || 'General',
+        createShipmentDto.productDescription ||
+        createShipmentDto.productCategory ||
+        'General',
       declaredValue: createShipmentDto.declaredValue,
       paymentMethod: createShipmentDto.paymentMethod,
       codAmount: createShipmentDto.codAmount || 0,
@@ -141,9 +143,12 @@ export class ShipmentsService {
 
     // If user is merchant, only show their shipments
     if (user.role === UserRole.MERCHANT) {
-      where.merchant = { id: user.id };
+      where.merchantId = user.id;
+    } else if (user.role === UserRole.CUSTOMER) {
+      // If user is customer, only show shipments where they are the customer
+      where.customerId = user.id;
     } else if (merchantId) {
-      where.merchant = { id: merchantId };
+      where.merchantId = merchantId;
     }
 
     if (awb) {
@@ -187,9 +192,13 @@ export class ShipmentsService {
 
     // Apply filters
     Object.keys(where).forEach((key) => {
-      if (key === 'merchant') {
+      if (key === 'merchantId') {
         queryBuilder.andWhere('shipment.merchantId = :merchantId', {
-          merchantId: (where[key] as any).id,
+          merchantId: where[key],
+        });
+      } else if (key === 'customerId') {
+        queryBuilder.andWhere('shipment.customerId = :customerId', {
+          customerId: where[key],
         });
       } else if (key === 'createdAt') {
         // Date range already handled
@@ -209,20 +218,16 @@ export class ShipmentsService {
     }
 
     // Get total count (cached for 30 seconds)
-    const totalItems = await queryBuilder.cache(
-      `shipments_count_${JSON.stringify(filterDto)}`,
-      30000,
-    ).getCount();
+    const totalItems = await queryBuilder
+      .cache(`shipments_count_${JSON.stringify(filterDto)}`, 30000)
+      .getCount();
 
     // Get paginated data with query result caching (1 minute)
     const data = await queryBuilder
       .orderBy('shipment.createdAt', 'DESC')
       .skip(skip)
       .take(limit)
-      .cache(
-        `shipments_${JSON.stringify(filterDto)}_page_${page}`,
-        60000,
-      )
+      .cache(`shipments_${JSON.stringify(filterDto)}_page_${page}`, 60000)
       .getMany();
 
     const totalPages = Math.ceil(totalItems / limit);
@@ -260,10 +265,11 @@ export class ShipmentsService {
     }
 
     // Check if user has access to this shipment
-    if (
-      user.role === UserRole.MERCHANT &&
-      shipment.merchant.id !== user.id
-    ) {
+    if (user.role === UserRole.MERCHANT && shipment.merchant.id !== user.id) {
+      throw new ForbiddenException('You do not have access to this shipment');
+    }
+
+    if (user.role === UserRole.CUSTOMER && shipment.customer?.id !== user.id) {
       throw new ForbiddenException('You do not have access to this shipment');
     }
 
@@ -307,33 +313,54 @@ export class ShipmentsService {
 
     // Update sender info
     if (updateShipmentDto.sender) {
-      if (updateShipmentDto.sender.name) shipment.senderName = updateShipmentDto.sender.name;
-      if (updateShipmentDto.sender.phone) shipment.senderPhone = updateShipmentDto.sender.phone;
-      if (updateShipmentDto.sender.city) shipment.senderCity = updateShipmentDto.sender.city;
-      if (updateShipmentDto.sender.area) shipment.senderArea = updateShipmentDto.sender.area;
-      if (updateShipmentDto.sender.address) shipment.senderAddress = updateShipmentDto.sender.address;
+      if (updateShipmentDto.sender.name)
+        shipment.senderName = updateShipmentDto.sender.name;
+      if (updateShipmentDto.sender.phone)
+        shipment.senderPhone = updateShipmentDto.sender.phone;
+      if (updateShipmentDto.sender.city)
+        shipment.senderCity = updateShipmentDto.sender.city;
+      if (updateShipmentDto.sender.area)
+        shipment.senderArea = updateShipmentDto.sender.area;
+      if (updateShipmentDto.sender.address)
+        shipment.senderAddress = updateShipmentDto.sender.address;
     }
 
     // Update receiver info
     if (updateShipmentDto.receiver) {
-      if (updateShipmentDto.receiver.name) shipment.receiverName = updateShipmentDto.receiver.name;
-      if (updateShipmentDto.receiver.phone) shipment.receiverPhone = updateShipmentDto.receiver.phone;
-      if (updateShipmentDto.receiver.city) shipment.receiverCity = updateShipmentDto.receiver.city;
-      if (updateShipmentDto.receiver.area) shipment.receiverArea = updateShipmentDto.receiver.area;
-      if (updateShipmentDto.receiver.address) shipment.receiverAddress = updateShipmentDto.receiver.address;
+      if (updateShipmentDto.receiver.name)
+        shipment.receiverName = updateShipmentDto.receiver.name;
+      if (updateShipmentDto.receiver.phone)
+        shipment.receiverPhone = updateShipmentDto.receiver.phone;
+      if (updateShipmentDto.receiver.city)
+        shipment.receiverCity = updateShipmentDto.receiver.city;
+      if (updateShipmentDto.receiver.area)
+        shipment.receiverArea = updateShipmentDto.receiver.area;
+      if (updateShipmentDto.receiver.address)
+        shipment.receiverAddress = updateShipmentDto.receiver.address;
       if (updateShipmentDto.receiver.latitude)
-        shipment.receiverLatitude = updateShipmentDto.receiver.latitude.toString();
+        shipment.receiverLatitude =
+          updateShipmentDto.receiver.latitude.toString();
       if (updateShipmentDto.receiver.longitude)
-        shipment.receiverLongitude = updateShipmentDto.receiver.longitude.toString();
+        shipment.receiverLongitude =
+          updateShipmentDto.receiver.longitude.toString();
     }
 
     // Update other fields
     if (updateShipmentDto.weight) shipment.weight = updateShipmentDto.weight;
-    if (updateShipmentDto.deliveryType) shipment.deliveryType = updateShipmentDto.deliveryType;
-    if (updateShipmentDto.productCategory || updateShipmentDto.productDescription)
-      shipment.productDescription = updateShipmentDto.productDescription || updateShipmentDto.productCategory || shipment.productDescription;
-    if (updateShipmentDto.declaredValue) shipment.declaredValue = updateShipmentDto.declaredValue;
-    if (updateShipmentDto.codAmount !== undefined) shipment.codAmount = updateShipmentDto.codAmount;
+    if (updateShipmentDto.deliveryType)
+      shipment.deliveryType = updateShipmentDto.deliveryType;
+    if (
+      updateShipmentDto.productCategory ||
+      updateShipmentDto.productDescription
+    )
+      shipment.productDescription =
+        updateShipmentDto.productDescription ||
+        updateShipmentDto.productCategory ||
+        shipment.productDescription;
+    if (updateShipmentDto.declaredValue)
+      shipment.declaredValue = updateShipmentDto.declaredValue;
+    if (updateShipmentDto.codAmount !== undefined)
+      shipment.codAmount = updateShipmentDto.codAmount;
     if (updateShipmentDto.specialInstructions)
       shipment.specialInstructions = updateShipmentDto.specialInstructions;
 
@@ -412,19 +439,13 @@ export class ShipmentsService {
     const where: FindOptionsWhere<Shipment> = {};
 
     if (user.role === UserRole.MERCHANT) {
-      where.merchant = { id: user.id };
+      where.merchantId = user.id;
+    } else if (user.role === UserRole.CUSTOMER) {
+      where.customerId = user.id;
     }
 
-    const totalShipments = await this.shipmentRepository.count({ where });
-    const pendingShipments = await this.shipmentRepository.count({
-      where: { ...where, status: ShipmentStatus.PENDING },
-    });
-    const inTransitShipments = await this.shipmentRepository.count({
-      where: { ...where, status: ShipmentStatus.IN_TRANSIT },
-    });
-    const deliveredShipments = await this.shipmentRepository.count({
-      where: { ...where, status: ShipmentStatus.DELIVERED },
-    });
+    // Count total shipments
+    const total = await this.shipmentRepository.count({ where });
 
     // Count by status
     const statusStats = await this.shipmentRepository
@@ -434,18 +455,61 @@ export class ShipmentsService {
       .where(
         user.role === UserRole.MERCHANT
           ? 'shipment.merchantId = :merchantId'
-          : '1=1',
-        { merchantId: user.id },
+          : user.role === UserRole.CUSTOMER
+            ? 'shipment.customerId = :customerId'
+            : '1=1',
+        user.role === UserRole.MERCHANT
+          ? { merchantId: user.id }
+          : user.role === UserRole.CUSTOMER
+            ? { customerId: user.id }
+            : {},
       )
       .groupBy('shipment.status')
       .getRawMany();
 
+    // Convert statusStats array to object: { PENDING: 5, DELIVERED: 10, ... }
+    const byStatus: Record<string, number> = {};
+    statusStats.forEach(stat => {
+      byStatus[stat.status] = parseInt(stat.count, 10);
+    });
+
+    // Count by delivery type (if MERCHANT)
+    let byDeliveryType: Record<string, number> = {};
+    if (user.role === UserRole.MERCHANT) {
+      const deliveryTypeStats = await this.shipmentRepository
+        .createQueryBuilder('shipment')
+        .select('shipment.deliveryType', 'deliveryType')
+        .addSelect('COUNT(*)', 'count')
+        .where('shipment.merchantId = :merchantId', { merchantId: user.id })
+        .groupBy('shipment.deliveryType')
+        .getRawMany();
+
+      deliveryTypeStats.forEach(stat => {
+        byDeliveryType[stat.deliveryType] = parseInt(stat.count, 10);
+      });
+    }
+
+    // Calculate revenue (if MERCHANT)
+    let totalRevenue = 0;
+    let totalCOD = 0;
+    if (user.role === UserRole.MERCHANT) {
+      const revenueData = await this.shipmentRepository
+        .createQueryBuilder('shipment')
+        .select('SUM(shipment.deliveryFee)', 'revenue')
+        .addSelect('SUM(shipment.codAmount)', 'codAmount')
+        .where('shipment.merchantId = :merchantId', { merchantId: user.id })
+        .getRawOne();
+
+      totalRevenue = parseInt(revenueData?.revenue || '0', 10);
+      totalCOD = parseInt(revenueData?.codAmount || '0', 10);
+    }
+
     return {
-      totalShipments,
-      pendingShipments,
-      inTransitShipments,
-      deliveredShipments,
-      statusStats,
+      total,
+      byStatus,
+      byDeliveryType,
+      totalRevenue,
+      totalCOD,
     };
   }
 
@@ -463,16 +527,20 @@ export class ShipmentsService {
 
     // Validate csvData
     if (!csvData || typeof csvData !== 'string') {
-      throw new BadRequestException('CSV data is required and must be a valid string');
+      throw new BadRequestException(
+        'CSV data is required and must be a valid string',
+      );
     }
 
     // Parse CSV data (simplified - in production use a proper CSV parser like papaparse)
     const rows = csvData.split('\n').filter((row) => row.trim());
-    
+
     if (rows.length < 2) {
-      throw new BadRequestException('CSV must contain at least a header row and one data row');
+      throw new BadRequestException(
+        'CSV must contain at least a header row and one data row',
+      );
     }
-    
+
     result.totalRows = rows.length - 1; // Exclude header
 
     // Skip header row

@@ -214,7 +214,7 @@ __decorate([
 ], PaymentsController.prototype, "failPayout", null);
 __decorate([
     (0, common_1.Get)('transactions'),
-    (0, roles_decorator_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.FINANCE, enums_1.UserRole.MERCHANT),
+    (0, roles_decorator_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.FINANCE, enums_1.UserRole.MERCHANT, enums_1.UserRole.CUSTOMER),
     (0, swagger_1.ApiOperation)({
         summary: 'Get transactions with filters',
         description: 'Retrieve transactions with pagination and filters. Merchants can only see their own transactions.',
@@ -251,7 +251,7 @@ __decorate([
 ], PaymentsController.prototype, "getTransactions", null);
 __decorate([
     (0, common_1.Get)('transactions/:transactionId'),
-    (0, roles_decorator_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.FINANCE, enums_1.UserRole.MERCHANT),
+    (0, roles_decorator_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.FINANCE, enums_1.UserRole.MERCHANT, enums_1.UserRole.CUSTOMER),
     (0, swagger_1.ApiOperation)({
         summary: 'Get transaction by ID',
         description: 'Retrieve detailed transaction information.',

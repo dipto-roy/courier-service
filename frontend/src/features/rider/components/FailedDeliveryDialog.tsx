@@ -64,8 +64,9 @@ export function FailedDeliveryDialog({
   const onSubmit = async (data: z.infer<typeof failedDeliverySchema>) => {
     try {
       await failDelivery.mutateAsync({
-        shipmentId: delivery.id,
-        data,
+        awbNumber: delivery.awb,
+        reason: data.reason,
+        notes: data.notes,
       });
       onSuccess?.();
       onOpenChange(false);
@@ -114,7 +115,7 @@ export function FailedDeliveryDialog({
             <Label htmlFor="remarks">Additional Details</Label>
             <Textarea
               id="remarks"
-              {...register('remarks')}
+              {...register('notes')}
               placeholder="Provide more details about why the delivery failed..."
               rows={4}
             />

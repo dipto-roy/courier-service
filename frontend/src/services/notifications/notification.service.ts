@@ -1,4 +1,4 @@
-import { apiClient } from '@/src/common/lib/apiClient';
+import apiClient from '@/src/common/lib/apiClient';
 import type {
   Notification,
   NotificationStatistics,

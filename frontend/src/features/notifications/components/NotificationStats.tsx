@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bell, Mail, MessageSquare, Phone, TrendingUp } from 'lucide-react';
-import { useNotificationStatistics } from '@/services/notifications/hooks';
+import { useNotificationStatistics } from '@/src/services/notifications/hooks';
 
 export function NotificationStats() {
   const { data: stats, isLoading } = useNotificationStatistics();

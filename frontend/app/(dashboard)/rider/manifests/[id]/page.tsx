@@ -65,8 +65,8 @@ export default function ManifestDetailPage({
           <Link href="/rider/manifests">
             <Button variant="outline">Back</Button>
           </Link>
-          <Badge className={statusColors[manifest.status]}>
-            {manifest.status.replace('_', ' ')}
+          <Badge className={statusColors[manifest.status as keyof typeof statusColors]}>
+            {manifest.status?.replace('_', ' ')}
           </Badge>
         </div>
       </div>
@@ -107,7 +107,7 @@ export default function ManifestDetailPage({
         <h2 className="text-lg font-semibold text-gray-900">Shipments</h2>
         {manifest.shipments && manifest.shipments.length > 0 ? (
           <div className="space-y-3">
-            {manifest.shipments.map((shipment) => (
+            {manifest.shipments.map((shipment: any) => (
               <Card key={shipment.id} className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>

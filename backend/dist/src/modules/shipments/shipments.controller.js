@@ -73,7 +73,7 @@ __decorate([
 ], ShipmentsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.SUPPORT, enums_1.UserRole.HUB_STAFF),
+    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.SUPPORT, enums_1.UserRole.HUB_STAFF, enums_1.UserRole.CUSTOMER),
     (0, swagger_1.ApiOperation)({ summary: 'Get all shipments with filters and pagination' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Shipments retrieved successfully' }),
     __param(0, (0, common_1.Query)()),
@@ -85,7 +85,7 @@ __decorate([
 ], ShipmentsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('statistics'),
-    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.SUPPORT),
+    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.SUPPORT, enums_1.UserRole.CUSTOMER),
     (0, swagger_1.ApiOperation)({ summary: 'Get shipment statistics' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
@@ -98,7 +98,7 @@ __decorate([
 ], ShipmentsController.prototype, "getStatistics", null);
 __decorate([
     (0, common_1.Get)('by-status/:status'),
-    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.SUPPORT, enums_1.UserRole.HUB_STAFF),
+    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.SUPPORT, enums_1.UserRole.HUB_STAFF, enums_1.UserRole.CUSTOMER),
     (0, swagger_1.ApiOperation)({ summary: 'Get shipments by status' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Shipments retrieved successfully' }),
     __param(0, (0, common_1.Param)('status')),
@@ -120,7 +120,7 @@ __decorate([
 ], ShipmentsController.prototype, "trackByAWB", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.SUPPORT, enums_1.UserRole.HUB_STAFF, enums_1.UserRole.RIDER),
+    (0, decorators_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.MERCHANT, enums_1.UserRole.SUPPORT, enums_1.UserRole.HUB_STAFF, enums_1.UserRole.RIDER, enums_1.UserRole.CUSTOMER),
     (0, swagger_1.ApiOperation)({ summary: 'Get shipment by ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Shipment found' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Shipment not found' }),

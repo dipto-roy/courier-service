@@ -13,7 +13,7 @@ import {
 
 export default function CODPage() {
   const { user } = useAuth();
-  const [selectedMerchant, setSelectedMerchant] = useState(user?.id || '');
+  const [selectedMerchant, setSelectedMerchant] = useState(user?.id?.toString() || '');
 
   // TODO: Fetch merchants list for admin view
   const isAdmin = user?.role === 'admin' || user?.role === 'finance';
@@ -35,7 +35,7 @@ export default function CODPage() {
                 <SelectValue placeholder="Select Merchant" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={user?.id || ''}>Current User</SelectItem>
+                <SelectItem value={user?.id?.toString() || ''}>Current User</SelectItem>
                 {/* TODO: Add merchant list */}
               </SelectContent>
             </Select>

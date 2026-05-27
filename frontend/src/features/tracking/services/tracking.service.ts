@@ -217,4 +217,85 @@ export const trackingService = {
       return { eta: '', distance: 0 };
     }
   },
+
+  /**
+   * Get detailed tracking information (requires auth)
+   * Backend: GET /tracking/detailed/:awb
+   */
+  async getDetailedTracking(awb: string) {
+    const response = await apiClient.get(`/tracking/detailed/${awb}`);
+    return response.data;
+  },
+
+  /**
+   * Get WebSocket gateway status
+   * Backend: GET /tracking/gateway-status
+   */
+  async getGatewayStatus(): Promise<{
+    status: string;
+    namespace: string;
+    activeConnections: number;
+    activeSubscriptions: number;
+    subscriptions: Array<{ awb: string; connections: number }>;
+    serverRunning: boolean;
+  }> {
+    const response = await apiClient.get('/tracking/gateway-status');
+    return response.data;
+  },
+
+  /**
+   * Get active WebSocket subscriptions
+   * Backend: GET /tracking/active-subscriptions
+   */
+  async getActiveSubscriptions(): Promise<{
+    subscriptions: Array<{ awb: string; connections: number }>;
+    timestamp: string;
+  }> {
+    const response = await apiClient.get('/tracking/active-subscriptions');
+    return response.data;
+  },
+
+  /**
+   * Get WebSocket monitoring data
+   * Backend: GET /tracking/monitor
+   */
+  async getMonitoringData(): Promise<{
+    gateway: {
+      status: string;
+      namespace: string;
+      activeConnections: number;
+      activeSubscriptions: number;
+      subscriptions: Array<{ awb: string; connections: number }>;
+      serverRunning: boolean;
+    };
+    recentActivity: {
+      activeTracking: number;
+      totalSubscribers: number;
+    };
+    health: {
+      websocket: string;
+      namespace: string;
+      timestamp: string;
+    };
+  }> {
+    const response = await apiClient.get('/tracking/monitor');
+    return response.data;
+  },
+
+  /**
+   * Get subscription info for real-time updates
+   * Backend: GET /tracking/subscription/:awb
+   */
+  async getSubscriptionInfo(awb: string): Promise<{
+    success: boolean;
+    subscription: {
+      channel: string;
+      events: string[];
+      pusherKey: string;
+      pusherCluster: string;
+    };
+  }> {
+    const response = await apiClient.get(`/tracking/subscription/${awb}`);
+    return response.data;
+  },
 };

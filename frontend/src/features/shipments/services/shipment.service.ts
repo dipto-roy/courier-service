@@ -43,7 +43,7 @@ export const shipmentService = {
    * Get shipment by AWB number
    */
   async getShipmentByAwb(awb: string): Promise<Shipment> {
-    const response = await apiClient.get<Shipment>(`/shipments/awb/${awb}`);
+    const response = await apiClient.get<Shipment>(`/shipments/track/${awb}`);
     return response.data;
   },
 
@@ -81,12 +81,12 @@ export const shipmentService = {
    */
   async bulkCreateShipments(data: BulkShipmentRequest): Promise<{
     success: Shipment[];
-    failed: Array<{ row: number; error: string; data: BulkShipmentRequest[number] }>;
+    failed: Array<{ row: number; error: string; data: CreateShipmentRequest }>;
   }> {
     const response = await apiClient.post<{
       success: Shipment[];
-      failed: Array<{ row: number; error: string; data: BulkShipmentRequest[number] }>;
-    }>('/shipments/bulk', data);
+      failed: Array<{ row: number; error: string; data: CreateShipmentRequest }>;
+    }>('/shipments/bulk-upload', data);
     return response.data;
   },
 

@@ -51,7 +51,7 @@ export function OTPDialog({
 
   const handleGenerateOTP = async () => {
     try {
-      const result = await generateOTP.mutateAsync(delivery.id);
+      const result = await generateOTP.mutateAsync(delivery.awb);
       setGeneratedOTP(result.otp);
     } catch (error) {
       console.error('Failed to generate OTP:', error);
@@ -61,8 +61,14 @@ export function OTPDialog({
   const onSubmit = async (data: z.infer<typeof deliveryActionSchema>) => {
     try {
       await completeDelivery.mutateAsync({
-        shipmentId: delivery.id,
-        data,
+        awbNumber: delivery.awb,
+        otpCode: data.otp || data.otpCode || '',
+        signatureUrl: data.signatureUrl,
+        podPhotoUrl: data.podPhotoUrl,
+        codAmountCollected: data.codAmountCollected,
+        deliveryNote: data.remarks || data.deliveryNote,
+        latitude: data.latitude,
+        longitude: data.longitude,
       });
       onSuccess?.();
       onOpenChange(false);

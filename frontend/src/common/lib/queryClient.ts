@@ -91,7 +91,7 @@ export const queryKeys = {
     list: (filters: Record<string, any>) =>
       [...queryKeys.users.lists(), filters] as const,
     details: () => [...queryKeys.users.all, 'detail'] as const,
-    detail: (id: number) => [...queryKeys.users.details(), id] as const,
+    detail: (id: string | number) => [...queryKeys.users.details(), id] as const,
   },
   // Payments
   payments: {
@@ -116,5 +116,34 @@ export const queryKeys = {
     all: ['notifications'] as const,
     unread: () => [...queryKeys.notifications.all, 'unread'] as const,
     count: () => [...queryKeys.notifications.all, 'count'] as const,
+  },
+  // Pickups
+  pickups: {
+    all: ['pickups'] as const,
+    lists: () => [...queryKeys.pickups.all, 'list'] as const,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    list: (filters?: Record<string, any>) =>
+      [...queryKeys.pickups.lists(), filters] as const,
+    details: () => [...queryKeys.pickups.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.pickups.details(), id] as const,
+    statistics: () => [...queryKeys.pickups.all, 'statistics'] as const,
+    today: () => [...queryKeys.pickups.all, 'today'] as const,
+  },
+  // Audit
+  audit: {
+    all: ['audit'] as const,
+    logs: (filters?: Record<string, unknown>) =>
+      [...queryKeys.audit.all, 'logs', filters] as const,
+    log: (id: string) => [...queryKeys.audit.all, 'log', id] as const,
+    statistics: () => [...queryKeys.audit.all, 'statistics'] as const,
+    recent: () => [...queryKeys.audit.all, 'recent'] as const,
+  },
+  // SLA
+  sla: {
+    all: ['sla'] as const,
+    statistics: () => [...queryKeys.sla.all, 'statistics'] as const,
+    shipment: (shipmentId: string) =>
+      [...queryKeys.sla.all, 'shipment', shipmentId] as const,
+    queueStatus: () => [...queryKeys.sla.all, 'queue-status'] as const,
   },
 } as const;

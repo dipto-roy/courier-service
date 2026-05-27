@@ -262,7 +262,7 @@ export class SmsService {
       return true;
     } catch (error) {
       this.logger.error('Bulk SMS failed:', error.message);
-      throw error;
+      throw new Error('Bulk SMS failed');
     }
   }
 

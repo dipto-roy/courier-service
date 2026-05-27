@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { PayoutForm } from '@/src/features/payments/components';
 import { useTransactions, usePendingBalance } from '@/src/services/payments';
-import { useAuth } from '@/src/common/hooks/useAuth';
+import { useAuth } from '@/src/features/auth/hooks/useAuth';
 import { TransactionType, PaymentStatus } from '@/src/services/payments/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,13 +16,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { formatCurrency, formatDate } from '@/src/common/utils';
+import { formatCurrency, formatDate } from '@/src/common/lib/utils';
 import { CheckCircle, Clock, XCircle } from 'lucide-react';
 
 export default function PayoutsPage() {
   const { user } = useAuth();
-  const merchantId = user?.id || '';
-  
+  const merchantId = user?.id?.toString() || '';
+
   const { data: balanceData } = usePendingBalance(merchantId);
   const { data: payoutsData, isLoading } = useTransactions({
     type: TransactionType.COD_PAYOUT,

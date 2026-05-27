@@ -17,11 +17,11 @@ export declare class ShipmentsService {
     updateStatus(id: string, updateStatusDto: UpdateStatusDto, user: User): Promise<Shipment>;
     remove(id: string, user: User): Promise<void>;
     getStatistics(user: User): Promise<{
-        totalShipments: number;
-        pendingShipments: number;
-        inTransitShipments: number;
-        deliveredShipments: number;
-        statusStats: any[];
+        total: number;
+        byStatus: Record<string, number>;
+        byDeliveryType: Record<string, number>;
+        totalRevenue: number;
+        totalCOD: number;
     }>;
     bulkUpload(csvData: string, merchant: User): Promise<BulkUploadResult>;
 }

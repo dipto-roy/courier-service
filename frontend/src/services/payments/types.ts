@@ -63,6 +63,7 @@ export const paymentFilterSchema = z.object({
   type: z.nativeEnum(TransactionType).optional(),
   status: z.nativeEnum(PaymentStatus).optional(),
   paymentMethod: z.nativeEnum(PaymentMethod).optional(),
+  search: z.string().optional(), // Search by transaction ID or reference
   startDate: z.string().optional(), // ISO 8601
   endDate: z.string().optional(), // ISO 8601
   page: z.number().min(1).optional(),

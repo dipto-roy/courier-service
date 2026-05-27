@@ -74,7 +74,7 @@ let UsersService = class UsersService {
             queryBuilder.andWhere(`user.${key} = :${key}`, { [key]: where[key] });
         });
         if (search) {
-            queryBuilder.andWhere('(user.fullName ILIKE :search OR user.email ILIKE :search OR user.phone ILIKE :search)', { search: `%${search}%` });
+            queryBuilder.andWhere('(user.name ILIKE :search OR user.email ILIKE :search OR user.phone ILIKE :search)', { search: `%${search}%` });
         }
         const totalItems = await queryBuilder.getCount();
         const data = await queryBuilder

@@ -175,6 +175,7 @@ __decorate([
 ], NotificationsController.prototype, "sendPushNotification", null);
 __decorate([
     (0, common_1.Get)('my-notifications'),
+    (0, roles_decorator_1.Roles)(enums_1.UserRole.CUSTOMER, enums_1.UserRole.MERCHANT, enums_1.UserRole.ADMIN, enums_1.UserRole.SUPPORT, enums_1.UserRole.HUB_STAFF, enums_1.UserRole.RIDER),
     (0, swagger_1.ApiOperation)({ summary: 'Get current user notifications' }),
     (0, swagger_1.ApiQuery)({ name: 'isRead', required: false, type: Boolean, description: 'Filter by read status' }),
     (0, swagger_1.ApiResponse)({
@@ -201,6 +202,7 @@ __decorate([
 ], NotificationsController.prototype, "getMyNotifications", null);
 __decorate([
     (0, common_1.Get)('unread-count'),
+    (0, roles_decorator_1.Roles)(enums_1.UserRole.CUSTOMER, enums_1.UserRole.MERCHANT, enums_1.UserRole.ADMIN, enums_1.UserRole.SUPPORT, enums_1.UserRole.HUB_STAFF, enums_1.UserRole.RIDER),
     (0, swagger_1.ApiOperation)({ summary: 'Get unread notification count' }),
     (0, swagger_1.ApiResponse)({
         status: 200,

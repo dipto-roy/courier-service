@@ -3,9 +3,9 @@
 import { CheckCheck, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useMarkAllAsRead } from '@/services/notifications/hooks';
+import { useMarkAllAsRead } from '@/src/services/notifications/hooks';
 import { NotificationItem } from './NotificationItem';
-import type { Notification } from '@/services/notifications/types';
+import type { Notification } from '@/src/services/notifications/types';
 
 interface NotificationListProps {
   notifications: Notification[];
