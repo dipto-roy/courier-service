@@ -82,7 +82,7 @@ __decorate([
 ], SlaWatcherController.prototype, "getSLAStatistics", null);
 __decorate([
     (0, common_1.Get)('shipment/:shipmentId'),
-    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN, user_role_enum_1.UserRole.SUPPORT, user_role_enum_1.UserRole.MERCHANT),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN, user_role_enum_1.UserRole.SUPPORT, user_role_enum_1.UserRole.MERCHANT, user_role_enum_1.UserRole.CUSTOMER),
     (0, swagger_1.ApiOperation)({
         summary: 'Check SLA status for specific shipment',
         description: 'Check if a specific shipment has any SLA violations and get detailed information.',

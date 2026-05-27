@@ -7,11 +7,11 @@ export declare class ShipmentsController {
     create(createShipmentDto: CreateShipmentDto, user: User): Promise<import("../../entities").Shipment>;
     findAll(filterDto: FilterShipmentDto, user: User): Promise<import("../../common/dto").PaginatedResponseDto<import("../../entities").Shipment>>;
     getStatistics(user: User): Promise<{
-        totalShipments: number;
-        pendingShipments: number;
-        inTransitShipments: number;
-        deliveredShipments: number;
-        statusStats: any[];
+        total: number;
+        byStatus: Record<string, number>;
+        byDeliveryType: Record<string, number>;
+        totalRevenue: number;
+        totalCOD: number;
     }>;
     getShipmentsByStatus(status: string, user: User): Promise<import("../../common/dto").PaginatedResponseDto<import("../../entities").Shipment>>;
     trackByAWB(awb: string): Promise<import("../../entities").Shipment>;
