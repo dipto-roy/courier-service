@@ -28,6 +28,7 @@ const audit_module_1 = require("./modules/audit/audit.module");
 const cache_module_1 = require("./modules/cache/cache.module");
 const sla_watcher_module_1 = require("./modules/sla-watcher/sla-watcher.module");
 const csrf_module_1 = require("./csrf/csrf.module");
+const health_module_1 = require("./modules/health/health.module");
 const guards_1 = require("./common/guards");
 const filters_1 = require("./common/filters");
 const interceptors_1 = require("./common/interceptors");
@@ -76,6 +77,7 @@ exports.AppModule = AppModule = __decorate([
                 }),
                 inject: [config_1.ConfigService],
             }),
+            health_module_1.HealthModule,
             cache_module_1.CacheModule,
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
@@ -93,6 +95,10 @@ exports.AppModule = AppModule = __decorate([
         controllers: [app_controller_1.AppController],
         providers: [
             app_service_1.AppService,
+            {
+                provide: core_1.APP_GUARD,
+                useClass: throttler_1.ThrottlerGuard,
+            },
             {
                 provide: core_1.APP_GUARD,
                 useClass: guards_1.JwtAuthGuard,

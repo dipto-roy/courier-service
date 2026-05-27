@@ -1,7 +1,7 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bull';
 import { APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
@@ -19,6 +19,7 @@ import { AuditModule } from './modules/audit/audit.module';
 import { CacheModule } from './modules/cache/cache.module';
 import { SlaWatcherModule } from './modules/sla-watcher/sla-watcher.module';
 import { CsrfModule } from './csrf/csrf.module';
+import { HealthModule } from './modules/health/health.module';
 import { JwtAuthGuard } from './common/guards';
 import { HttpExceptionFilter } from './common/filters';
 import { LoggingInterceptor } from './common/interceptors';
@@ -61,6 +62,7 @@ import { CsrfMiddleware } from './common/middleware/csrf.middleware';
       }),
       inject: [ConfigService],
     }),
+    HealthModule,
     CacheModule,
     AuthModule,
     UsersModule,
@@ -78,6 +80,10 @@ import { CsrfMiddleware } from './common/middleware/csrf.middleware';
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
