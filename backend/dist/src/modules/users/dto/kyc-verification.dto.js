@@ -24,7 +24,10 @@ __decorate([
     __metadata("design:type", Boolean)
 ], KYCVerificationDto.prototype, "isKYCVerified", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'KYC documents verified successfully', description: 'Verification remarks' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'KYC documents verified successfully',
+        description: 'Verification remarks',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)

@@ -50,7 +50,9 @@ export class AdminService {
       users: {
         total: totalUsers,
         active: activeUsers,
-        byRole: Object.fromEntries(usersByRole.map((r) => [r.role, parseInt(r.count, 10)])),
+        byRole: Object.fromEntries(
+          usersByRole.map((r) => [r.role, parseInt(r.count, 10)]),
+        ),
       },
       shipments: {
         total: totalShipments,
@@ -67,7 +69,9 @@ export class AdminService {
   }
 
   async assignRole(userId: string, dto: AssignRoleDto) {
-    return this.usersService.update(userId, { role: dto.role } as UpdateUserDto);
+    return this.usersService.update(userId, {
+      role: dto.role,
+    } as UpdateUserDto);
   }
 
   async deleteUser(userId: string) {

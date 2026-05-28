@@ -98,8 +98,14 @@ __decorate([
             },
         },
     }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Shipment not found' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Invalid shipment status or payment method' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.NOT_FOUND,
+        description: 'Shipment not found',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Invalid shipment status or payment method',
+    }),
     __param(0, (0, common_1.Param)('shipmentId')),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -122,7 +128,10 @@ __decorate([
         status: common_1.HttpStatus.CREATED,
         description: 'Delivery fee recorded successfully',
     }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Shipment not found' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.NOT_FOUND,
+        description: 'Shipment not found',
+    }),
     __param(0, (0, common_1.Param)('shipmentId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -157,8 +166,14 @@ __decorate([
             },
         },
     }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Merchant not found' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Insufficient balance' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.NOT_FOUND,
+        description: 'Merchant not found',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Insufficient balance',
+    }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -181,8 +196,14 @@ __decorate([
         status: common_1.HttpStatus.OK,
         description: 'Payout completed successfully',
     }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Transaction not found' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Invalid transaction type or status' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.NOT_FOUND,
+        description: 'Transaction not found',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Invalid transaction type or status',
+    }),
     __param(0, (0, common_1.Param)('transactionId')),
     __param(1, (0, common_1.Body)('referenceNumber')),
     __metadata("design:type", Function),
@@ -205,7 +226,10 @@ __decorate([
         status: common_1.HttpStatus.OK,
         description: 'Payout marked as failed and balance reversed',
     }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Transaction not found' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.NOT_FOUND,
+        description: 'Transaction not found',
+    }),
     __param(0, (0, common_1.Param)('transactionId')),
     __param(1, (0, common_1.Body)('reason')),
     __metadata("design:type", Function),
@@ -265,7 +289,10 @@ __decorate([
         status: common_1.HttpStatus.OK,
         description: 'Transaction details',
     }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Transaction not found' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.NOT_FOUND,
+        description: 'Transaction not found',
+    }),
     __param(0, (0, common_1.Param)('transactionId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -320,7 +347,7 @@ __decorate([
         description: 'Pending balance calculated',
         schema: {
             example: {
-                pendingBalance: 15750.50,
+                pendingBalance: 15750.5,
             },
         },
     }),
@@ -347,7 +374,7 @@ __decorate([
         schema: {
             example: {
                 walletBalance: 5000,
-                pendingBalance: 15750.50,
+                pendingBalance: 15750.5,
                 totalCodCollected: 150000,
                 totalCodTransactions: 250,
                 totalDeliveryFees: 7500,
@@ -357,7 +384,10 @@ __decorate([
             },
         },
     }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Merchant not found' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.NOT_FOUND,
+        description: 'Merchant not found',
+    }),
     __param(0, (0, common_1.Param)('merchantId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

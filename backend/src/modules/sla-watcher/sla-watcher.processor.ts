@@ -1,4 +1,10 @@
-import { Processor, Process, OnQueueActive, OnQueueCompleted, OnQueueFailed } from '@nestjs/bull';
+import {
+  Processor,
+  Process,
+  OnQueueActive,
+  OnQueueCompleted,
+  OnQueueFailed,
+} from '@nestjs/bull';
 import type { Job } from 'bull';
 import { Logger } from '@nestjs/common';
 import { AuditService } from '../audit/audit.service';
@@ -32,17 +38,28 @@ export class SlaWatcherProcessor {
       // - Create ticket in support system
       // - Escalate to operations team
       // - Update merchant dashboard
-      
+
       return { success: true, shipmentId, awb };
     } catch (error) {
-      this.logger.error(`Error processing pickup SLA violation for ${awb}:`, error.message);
+      this.logger.error(
+        `Error processing pickup SLA violation for ${awb}:`,
+        error.message,
+      );
       throw error;
     }
   }
 
   @Process('delivery-sla-violation')
   async handleDeliverySLAViolation(job: Job) {
-    const { shipmentId, awb, merchantId, riderId, status, violationType, slaHours } = job.data;
+    const {
+      shipmentId,
+      awb,
+      merchantId,
+      riderId,
+      status,
+      violationType,
+      slaHours,
+    } = job.data;
 
     this.logger.warn(`Processing delivery SLA violation for shipment ${awb}`);
 
@@ -63,17 +80,21 @@ export class SlaWatcherProcessor {
       // - Auto-escalate to supervisor
       // - Create high-priority ticket
       // - Send alert to operations dashboard
-      
+
       return { success: true, shipmentId, awb };
     } catch (error) {
-      this.logger.error(`Error processing delivery SLA violation for ${awb}:`, error.message);
+      this.logger.error(
+        `Error processing delivery SLA violation for ${awb}:`,
+        error.message,
+      );
       throw error;
     }
   }
 
   @Process('intransit-sla-violation')
   async handleInTransitSLAViolation(job: Job) {
-    const { shipmentId, awb, merchantId, violationType, lastUpdate, slaHours } = job.data;
+    const { shipmentId, awb, merchantId, violationType, lastUpdate, slaHours } =
+      job.data;
 
     this.logger.warn(`Processing in-transit SLA violation for shipment ${awb}`);
 
@@ -94,10 +115,13 @@ export class SlaWatcherProcessor {
       // - Request status update from hub
       // - Check GPS tracking
       // - Alert operations team
-      
+
       return { success: true, shipmentId, awb };
     } catch (error) {
-      this.logger.error(`Error processing in-transit SLA violation for ${awb}:`, error.message);
+      this.logger.error(
+        `Error processing in-transit SLA violation for ${awb}:`,
+        error.message,
+      );
       throw error;
     }
   }
@@ -114,6 +138,8 @@ export class SlaWatcherProcessor {
 
   @OnQueueFailed()
   onFailed(job: Job, error: Error) {
-    this.logger.error(`Failed job ${job.id} of type ${job.name}: ${error.message}`);
+    this.logger.error(
+      `Failed job ${job.id} of type ${job.name}: ${error.message}`,
+    );
   }
 }

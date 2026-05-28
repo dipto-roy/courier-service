@@ -7,7 +7,12 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiConsumes,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { diskStorage, memoryStorage } from 'multer';
 import { extname } from 'path';
 import { UploadService } from './upload.service';
@@ -41,7 +46,10 @@ export class UploadController {
       storage: csvStorage,
       fileFilter: (_req, file, cb) => {
         if (!file.originalname.match(/\.(csv)$/i)) {
-          return cb(new BadRequestException('Only CSV files are allowed'), false);
+          return cb(
+            new BadRequestException('Only CSV files are allowed'),
+            false,
+          );
         }
         cb(null, true);
       },

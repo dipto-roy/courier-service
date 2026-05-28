@@ -1,14 +1,29 @@
-import { IsBoolean, IsEmail, IsEnum, IsNumber, IsOptional, IsString, Min, MinLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+  MinLength,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '../../../common/enums';
 
 export class UpdateUserDto {
-  @ApiPropertyOptional({ example: 'John Doe', description: 'Full name of the user' })
+  @ApiPropertyOptional({
+    example: 'John Doe',
+    description: 'Full name of the user',
+  })
   @IsString()
   @IsOptional()
   fullName?: string;
 
-  @ApiPropertyOptional({ example: 'john.doe@example.com', description: 'Email address' })
+  @ApiPropertyOptional({
+    example: 'john.doe@example.com',
+    description: 'Email address',
+  })
   @IsEmail()
   @IsOptional()
   email?: string;
@@ -18,13 +33,20 @@ export class UpdateUserDto {
   @IsOptional()
   phone?: string;
 
-  @ApiPropertyOptional({ example: 'Password@123', description: 'User password (min 6 characters)' })
+  @ApiPropertyOptional({
+    example: 'Password@123',
+    description: 'User password (min 6 characters)',
+  })
   @IsString()
   @MinLength(6)
   @IsOptional()
   password?: string;
 
-  @ApiPropertyOptional({ enum: UserRole, example: UserRole.MERCHANT, description: 'User role' })
+  @ApiPropertyOptional({
+    enum: UserRole,
+    example: UserRole.MERCHANT,
+    description: 'User role',
+  })
   @IsEnum(UserRole)
   @IsOptional()
   role?: UserRole;
@@ -39,27 +61,42 @@ export class UpdateUserDto {
   @IsOptional()
   area?: string;
 
-  @ApiPropertyOptional({ example: 'House 12, Road 5', description: 'Detailed address' })
+  @ApiPropertyOptional({
+    example: 'House 12, Road 5',
+    description: 'Detailed address',
+  })
   @IsString()
   @IsOptional()
   address?: string;
 
-  @ApiPropertyOptional({ example: 'ABC Company Ltd.', description: 'Company name (for Merchant)' })
+  @ApiPropertyOptional({
+    example: 'ABC Company Ltd.',
+    description: 'Company name (for Merchant)',
+  })
   @IsString()
   @IsOptional()
   companyName?: string;
 
-  @ApiPropertyOptional({ example: 'www.abccompany.com', description: 'Business website' })
+  @ApiPropertyOptional({
+    example: 'www.abccompany.com',
+    description: 'Business website',
+  })
   @IsString()
   @IsOptional()
   businessWebsite?: string;
 
-  @ApiPropertyOptional({ example: true, description: 'Email verification status' })
+  @ApiPropertyOptional({
+    example: true,
+    description: 'Email verification status',
+  })
   @IsBoolean()
   @IsOptional()
   isEmailVerified?: boolean;
 
-  @ApiPropertyOptional({ example: true, description: 'Phone verification status' })
+  @ApiPropertyOptional({
+    example: true,
+    description: 'Phone verification status',
+  })
   @IsBoolean()
   @IsOptional()
   isPhoneVerified?: boolean;

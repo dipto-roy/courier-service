@@ -17,7 +17,10 @@ class GenerateOTPDto {
 }
 exports.GenerateOTPDto = GenerateOTPDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Shipment AWB number', example: 'FX20250128000001' }),
+    (0, swagger_1.ApiProperty)({
+        description: 'Shipment AWB number',
+        example: 'FX20250128000001',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)

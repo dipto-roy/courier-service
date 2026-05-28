@@ -89,7 +89,11 @@ let TrackingGateway = class TrackingGateway {
             }
         }
         this.logger.log(`Client ${client.id} unsubscribed from ${awb}`);
-        return { success: true, awb, message: `Successfully unsubscribed from ${awb}` };
+        return {
+            success: true,
+            awb,
+            message: `Successfully unsubscribed from ${awb}`,
+        };
     }
     async handleGetTracking(data, client) {
         const { awb } = data;

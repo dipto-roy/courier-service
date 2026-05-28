@@ -19,7 +19,7 @@ interface SLAConfig {
 @Injectable()
 export class SlaWatcherService {
   private readonly logger = new Logger(SlaWatcherService.name);
-  
+
   private readonly slaConfig: SLAConfig = {
     pickupSLA: 24, // 24 hours for pickup
     deliverySLA: 72, // 72 hours for delivery (3 days)
@@ -78,7 +78,9 @@ export class SlaWatcherService {
       }
     }
 
-    this.logger.log(`Checked ${shipments.length} shipments for pickup SLA violations`);
+    this.logger.log(
+      `Checked ${shipments.length} shipments for pickup SLA violations`,
+    );
   }
 
   private async handlePickupSLAViolation(shipment: Shipment) {
@@ -145,7 +147,9 @@ export class SlaWatcherService {
       }
     }
 
-    this.logger.log(`Checked ${shipments.length} shipments for delivery SLA violations`);
+    this.logger.log(
+      `Checked ${shipments.length} shipments for delivery SLA violations`,
+    );
   }
 
   private async handleDeliverySLAViolation(shipment: Shipment) {
@@ -239,7 +243,9 @@ export class SlaWatcherService {
       }
     }
 
-    this.logger.log(`Checked ${shipments.length} shipments for in-transit SLA violations`);
+    this.logger.log(
+      `Checked ${shipments.length} shipments for in-transit SLA violations`,
+    );
   }
 
   private async handleInTransitSLAViolation(shipment: Shipment) {
@@ -286,18 +292,28 @@ export class SlaWatcherService {
     // Check pickup SLA
     if (shipment.status === ShipmentStatus.PENDING) {
       const pickupDeadline = new Date(shipment.createdAt);
-      pickupDeadline.setHours(pickupDeadline.getHours() + this.slaConfig.pickupSLA);
-      
+      pickupDeadline.setHours(
+        pickupDeadline.getHours() + this.slaConfig.pickupSLA,
+      );
+
       if (now > pickupDeadline) {
         violations.push('Pickup SLA exceeded');
       }
     }
 
     // Check delivery SLA
-    if ([ShipmentStatus.PICKED_UP, ShipmentStatus.IN_TRANSIT, ShipmentStatus.OUT_FOR_DELIVERY].includes(shipment.status)) {
+    if (
+      [
+        ShipmentStatus.PICKED_UP,
+        ShipmentStatus.IN_TRANSIT,
+        ShipmentStatus.OUT_FOR_DELIVERY,
+      ].includes(shipment.status)
+    ) {
       const deliveryDeadline = new Date(shipment.createdAt);
-      deliveryDeadline.setHours(deliveryDeadline.getHours() + this.slaConfig.deliverySLA);
-      
+      deliveryDeadline.setHours(
+        deliveryDeadline.getHours() + this.slaConfig.deliverySLA,
+      );
+
       if (now > deliveryDeadline) {
         violations.push('Delivery SLA exceeded');
       }
@@ -306,8 +322,10 @@ export class SlaWatcherService {
     // Check in-transit SLA
     if (shipment.status === ShipmentStatus.IN_TRANSIT) {
       const transitDeadline = new Date(shipment.updatedAt);
-      transitDeadline.setHours(transitDeadline.getHours() + this.slaConfig.inTransitSLA);
-      
+      transitDeadline.setHours(
+        transitDeadline.getHours() + this.slaConfig.inTransitSLA,
+      );
+
       if (now > transitDeadline) {
         violations.push('In-transit update SLA exceeded');
       }
@@ -330,13 +348,15 @@ export class SlaWatcherService {
 
   async getSLAStatistics(): Promise<any> {
     const now = new Date();
-    
+
     // Get counts for each violation type
     const pickupSlaTime = new Date();
     pickupSlaTime.setHours(pickupSlaTime.getHours() - this.slaConfig.pickupSLA);
 
     const deliverySlaTime = new Date();
-    deliverySlaTime.setHours(deliverySlaTime.getHours() - this.slaConfig.deliverySLA);
+    deliverySlaTime.setHours(
+      deliverySlaTime.getHours() - this.slaConfig.deliverySLA,
+    );
 
     const [pickupViolations, deliveryViolations] = await Promise.all([
       this.shipmentRepository.count({

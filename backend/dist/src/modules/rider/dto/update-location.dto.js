@@ -34,20 +34,29 @@ __decorate([
     __metadata("design:type", Number)
 ], UpdateLocationDto.prototype, "longitude", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Location accuracy in meters', example: 10.5 }),
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Location accuracy in meters',
+        example: 10.5,
+    }),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], UpdateLocationDto.prototype, "accuracy", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Speed in meters per second', example: 15.2 }),
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Speed in meters per second',
+        example: 15.2,
+    }),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], UpdateLocationDto.prototype, "speed", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Heading/direction in degrees (0-360)', example: 270 }),
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Heading/direction in degrees (0-360)',
+        example: 270,
+    }),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.Min)(0),
@@ -55,7 +64,10 @@ __decorate([
     __metadata("design:type", Number)
 ], UpdateLocationDto.prototype, "heading", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Battery level percentage (0-100)', example: 85 }),
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Battery level percentage (0-100)',
+        example: 85,
+    }),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.Min)(0),
@@ -63,7 +75,10 @@ __decorate([
     __metadata("design:type", Number)
 ], UpdateLocationDto.prototype, "batteryLevel", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Current shipment AWB being delivered', example: 'FX20250128000001' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Current shipment AWB being delivered',
+        example: 'FX20250128000001',
+    }),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateLocationDto.prototype, "shipmentAwb", void 0);

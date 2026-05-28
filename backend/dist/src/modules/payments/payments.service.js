@@ -207,7 +207,9 @@ let PaymentsService = class PaymentsService {
             queryBuilder.andWhere('transaction.status = :status', { status });
         }
         if (paymentMethod) {
-            queryBuilder.andWhere('transaction.paymentMethod = :paymentMethod', { paymentMethod });
+            queryBuilder.andWhere('transaction.paymentMethod = :paymentMethod', {
+                paymentMethod,
+            });
         }
         if (startDate && endDate) {
             queryBuilder.andWhere('transaction.createdAt BETWEEN :startDate AND :endDate', {
@@ -216,7 +218,9 @@ let PaymentsService = class PaymentsService {
             });
         }
         else if (startDate) {
-            queryBuilder.andWhere('transaction.createdAt >= :startDate', { startDate });
+            queryBuilder.andWhere('transaction.createdAt >= :startDate', {
+                startDate,
+            });
         }
         else if (endDate) {
             queryBuilder.andWhere('transaction.createdAt <= :endDate', { endDate });
@@ -272,8 +276,12 @@ let PaymentsService = class PaymentsService {
             .createQueryBuilder('transaction')
             .select('SUM(transaction.netAmount)', 'total')
             .where('transaction.userId = :merchantId', { merchantId })
-            .andWhere('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_COLLECTION })
-            .andWhere('transaction.status = :status', { status: enums_1.PaymentStatus.COMPLETED })
+            .andWhere('transaction.type = :type', {
+            type: transaction_entity_1.TransactionType.COD_COLLECTION,
+        })
+            .andWhere('transaction.status = :status', {
+            status: enums_1.PaymentStatus.COMPLETED,
+        })
             .andWhere('transaction.createdAt <= :sevenDaysAgo', { sevenDaysAgo })
             .getRawOne();
         const totalCollections = parseFloat(result?.total || '0');
@@ -281,7 +289,9 @@ let PaymentsService = class PaymentsService {
             .createQueryBuilder('transaction')
             .select('SUM(transaction.amount)', 'total')
             .where('transaction.userId = :merchantId', { merchantId })
-            .andWhere('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_PAYOUT })
+            .andWhere('transaction.type = :type', {
+            type: transaction_entity_1.TransactionType.COD_PAYOUT,
+        })
             .andWhere('transaction.status IN (:...statuses)', {
             statuses: [enums_1.PaymentStatus.COMPLETED, enums_1.PaymentStatus.PROCESSING],
         })
@@ -301,22 +311,32 @@ let PaymentsService = class PaymentsService {
             .select('SUM(transaction.amount)', 'total')
             .addSelect('COUNT(*)', 'count')
             .where('transaction.userId = :merchantId', { merchantId })
-            .andWhere('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_COLLECTION })
-            .andWhere('transaction.status = :status', { status: enums_1.PaymentStatus.COMPLETED })
+            .andWhere('transaction.type = :type', {
+            type: transaction_entity_1.TransactionType.COD_COLLECTION,
+        })
+            .andWhere('transaction.status = :status', {
+            status: enums_1.PaymentStatus.COMPLETED,
+        })
             .getRawOne();
         const feesResult = await this.transactionRepository
             .createQueryBuilder('transaction')
             .select('SUM(transaction.fee)', 'total')
             .where('transaction.userId = :merchantId', { merchantId })
-            .andWhere('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_COLLECTION })
+            .andWhere('transaction.type = :type', {
+            type: transaction_entity_1.TransactionType.COD_COLLECTION,
+        })
             .getRawOne();
         const payoutsResult = await this.transactionRepository
             .createQueryBuilder('transaction')
             .select('SUM(transaction.amount)', 'total')
             .addSelect('COUNT(*)', 'count')
             .where('transaction.userId = :merchantId', { merchantId })
-            .andWhere('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_PAYOUT })
-            .andWhere('transaction.status = :status', { status: enums_1.PaymentStatus.COMPLETED })
+            .andWhere('transaction.type = :type', {
+            type: transaction_entity_1.TransactionType.COD_PAYOUT,
+        })
+            .andWhere('transaction.status = :status', {
+            status: enums_1.PaymentStatus.COMPLETED,
+        })
             .getRawOne();
         const pendingBalance = await this.calculatePendingBalance(merchantId);
         const startOfMonth = new Date();
@@ -326,8 +346,12 @@ let PaymentsService = class PaymentsService {
             .createQueryBuilder('transaction')
             .select('SUM(transaction.netAmount)', 'total')
             .where('transaction.userId = :merchantId', { merchantId })
-            .andWhere('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_COLLECTION })
-            .andWhere('transaction.status = :status', { status: enums_1.PaymentStatus.COMPLETED })
+            .andWhere('transaction.type = :type', {
+            type: transaction_entity_1.TransactionType.COD_COLLECTION,
+        })
+            .andWhere('transaction.status = :status', {
+            status: enums_1.PaymentStatus.COMPLETED,
+        })
             .andWhere('transaction.createdAt >= :startOfMonth', { startOfMonth })
             .getRawOne();
         return {
@@ -346,30 +370,42 @@ let PaymentsService = class PaymentsService {
             .createQueryBuilder('transaction')
             .select('SUM(transaction.amount)', 'total')
             .addSelect('COUNT(*)', 'count')
-            .where('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_COLLECTION })
-            .andWhere('transaction.status = :status', { status: enums_1.PaymentStatus.COMPLETED })
+            .where('transaction.type = :type', {
+            type: transaction_entity_1.TransactionType.COD_COLLECTION,
+        })
+            .andWhere('transaction.status = :status', {
+            status: enums_1.PaymentStatus.COMPLETED,
+        })
             .getRawOne();
         const payoutsResult = await this.transactionRepository
             .createQueryBuilder('transaction')
             .select('SUM(transaction.amount)', 'total')
             .addSelect('COUNT(*)', 'count')
             .where('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_PAYOUT })
-            .andWhere('transaction.status = :status', { status: enums_1.PaymentStatus.COMPLETED })
+            .andWhere('transaction.status = :status', {
+            status: enums_1.PaymentStatus.COMPLETED,
+        })
             .getRawOne();
         const pendingPayoutsResult = await this.transactionRepository
             .createQueryBuilder('transaction')
             .select('SUM(transaction.amount)', 'total')
             .addSelect('COUNT(*)', 'count')
             .where('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_PAYOUT })
-            .andWhere('transaction.status = :status', { status: enums_1.PaymentStatus.PROCESSING })
+            .andWhere('transaction.status = :status', {
+            status: enums_1.PaymentStatus.PROCESSING,
+        })
             .getRawOne();
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
         const todayResult = await this.transactionRepository
             .createQueryBuilder('transaction')
             .select('SUM(transaction.amount)', 'total')
-            .where('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_COLLECTION })
-            .andWhere('transaction.status = :status', { status: enums_1.PaymentStatus.COMPLETED })
+            .where('transaction.type = :type', {
+            type: transaction_entity_1.TransactionType.COD_COLLECTION,
+        })
+            .andWhere('transaction.status = :status', {
+            status: enums_1.PaymentStatus.COMPLETED,
+        })
             .andWhere('transaction.createdAt >= :startOfDay', { startOfDay })
             .getRawOne();
         const startOfMonth = new Date();
@@ -378,8 +414,12 @@ let PaymentsService = class PaymentsService {
         const monthResult = await this.transactionRepository
             .createQueryBuilder('transaction')
             .select('SUM(transaction.amount)', 'total')
-            .where('transaction.type = :type', { type: transaction_entity_1.TransactionType.COD_COLLECTION })
-            .andWhere('transaction.status = :status', { status: enums_1.PaymentStatus.COMPLETED })
+            .where('transaction.type = :type', {
+            type: transaction_entity_1.TransactionType.COD_COLLECTION,
+        })
+            .andWhere('transaction.status = :status', {
+            status: enums_1.PaymentStatus.COMPLETED,
+        })
             .andWhere('transaction.createdAt >= :startOfMonth', { startOfMonth })
             .getRawOne();
         return {

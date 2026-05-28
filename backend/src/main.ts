@@ -22,15 +22,15 @@ async function bootstrap() {
         'http://127.0.0.1:3000',
         'http://127.0.0.1:3001',
       ];
-      
+
       // Allow requests with no origin (mobile apps, Postman, etc.)
       if (!origin) return callback(null, true);
-      
+
       // Allow wildcard in development
       if (process.env.NODE_ENV === 'development') {
         return callback(null, true);
       }
-      
+
       // Check if origin is allowed
       if (allowedOrigins.includes(origin)) {
         callback(null, true);

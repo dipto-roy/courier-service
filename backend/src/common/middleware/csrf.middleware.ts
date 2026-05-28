@@ -7,7 +7,8 @@ export class CsrfMiddleware implements NestMiddleware {
   private readonly secret: string;
 
   constructor() {
-    this.secret = process.env.CSRF_SECRET || 'super-secret-csrf-key-change-in-production';
+    this.secret =
+      process.env.CSRF_SECRET || 'super-secret-csrf-key-change-in-production';
   }
 
   use(req: Request, res: Response, next: NextFunction) {
@@ -44,7 +45,7 @@ export class CsrfMiddleware implements NestMiddleware {
   generateToken(req: Request, res: Response): string {
     // Generate a random token
     const token = crypto.randomBytes(32).toString('hex');
-    
+
     // Set cookie with the token
     res.cookie('x-csrf-token', token, {
       httpOnly: true,

@@ -55,7 +55,7 @@ describe('WsJwtGuard', () => {
     const ctx = makeContext(client);
 
     expect(guard.canActivate(ctx)).toBe(true);
-    expect((client as any).user).toEqual(payload);
+    expect(client.user).toEqual(payload);
   });
 
   it('returns true for valid token in query params', () => {
@@ -76,7 +76,10 @@ describe('WsJwtGuard', () => {
     const ctx = makeContext(client);
 
     guard.canActivate(ctx);
-    expect(jwtService.verify).toHaveBeenCalledWith('auth.token', expect.any(Object));
+    expect(jwtService.verify).toHaveBeenCalledWith(
+      'auth.token',
+      expect.any(Object),
+    );
   });
 
   it('throws UnauthorizedException when no token provided', () => {

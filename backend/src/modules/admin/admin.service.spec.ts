@@ -39,7 +39,9 @@ describe('AdminService', () => {
   };
   let shipmentRepository: { count: jest.Mock };
   let transactionRepository: { createQueryBuilder: jest.Mock };
-  let usersService: jest.Mocked<Pick<UsersService, 'findAll' | 'update' | 'remove' | 'restore'>>;
+  let usersService: jest.Mocked<
+    Pick<UsersService, 'findAll' | 'update' | 'remove' | 'restore'>
+  >;
 
   beforeEach(async () => {
     userRepository = {
@@ -57,7 +59,9 @@ describe('AdminService', () => {
 
     usersService = {
       findAll: jest.fn().mockResolvedValue({ data: [mockUser], total: 1 }),
-      update: jest.fn().mockResolvedValue({ ...mockUser, role: UserRole.FINANCE }),
+      update: jest
+        .fn()
+        .mockResolvedValue({ ...mockUser, role: UserRole.FINANCE }),
       remove: jest.fn().mockResolvedValue(undefined),
       restore: jest.fn().mockResolvedValue(mockUser),
     };
@@ -67,7 +71,10 @@ describe('AdminService', () => {
         AdminService,
         { provide: getRepositoryToken(User), useValue: userRepository },
         { provide: getRepositoryToken(Shipment), useValue: shipmentRepository },
-        { provide: getRepositoryToken(Transaction), useValue: transactionRepository },
+        {
+          provide: getRepositoryToken(Transaction),
+          useValue: transactionRepository,
+        },
         { provide: UsersService, useValue: usersService },
       ],
     }).compile();
@@ -108,7 +115,9 @@ describe('AdminService', () => {
     it('assigns new role to user', async () => {
       const dto: AssignRoleDto = { role: UserRole.FINANCE };
       const result = await service.assignRole('user-uuid-1', dto);
-      expect(usersService.update).toHaveBeenCalledWith('user-uuid-1', { role: UserRole.FINANCE });
+      expect(usersService.update).toHaveBeenCalledWith('user-uuid-1', {
+        role: UserRole.FINANCE,
+      });
       expect(result?.role).toBe(UserRole.FINANCE);
     });
   });

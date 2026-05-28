@@ -10,9 +10,21 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
-import { SendNotificationDto, SendEmailDto, SendSmsDto, SendPushNotificationDto } from './dto';
+import {
+  SendNotificationDto,
+  SendEmailDto,
+  SendSmsDto,
+  SendPushNotificationDto,
+} from './dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -55,7 +67,9 @@ export class NotificationsController {
   @ApiResponse({
     status: 201,
     description: 'Email queued successfully',
-    schema: { example: { success: true, message: 'Email queued for delivery' } },
+    schema: {
+      example: { success: true, message: 'Email queued for delivery' },
+    },
   })
   async sendEmail(@Body() sendEmailDto: SendEmailDto) {
     await this.notificationsService.sendEmail(sendEmailDto);
@@ -81,7 +95,12 @@ export class NotificationsController {
   @ApiResponse({
     status: 201,
     description: 'Push notification queued successfully',
-    schema: { example: { success: true, message: 'Push notification queued for delivery' } },
+    schema: {
+      example: {
+        success: true,
+        message: 'Push notification queued for delivery',
+      },
+    },
   })
   async sendPushNotification(@Body() sendPushDto: SendPushNotificationDto) {
     await this.notificationsService.sendPushNotification(sendPushDto);
@@ -91,9 +110,21 @@ export class NotificationsController {
   // ==================== User Notification Management ====================
 
   @Get('my-notifications')
-  @Roles(UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN, UserRole.SUPPORT, UserRole.HUB_STAFF, UserRole.RIDER)
+  @Roles(
+    UserRole.CUSTOMER,
+    UserRole.MERCHANT,
+    UserRole.ADMIN,
+    UserRole.SUPPORT,
+    UserRole.HUB_STAFF,
+    UserRole.RIDER,
+  )
   @ApiOperation({ summary: 'Get current user notifications' })
-  @ApiQuery({ name: 'isRead', required: false, type: Boolean, description: 'Filter by read status' })
+  @ApiQuery({
+    name: 'isRead',
+    required: false,
+    type: Boolean,
+    description: 'Filter by read status',
+  })
   @ApiResponse({
     status: 200,
     description: 'User notifications retrieved',
@@ -112,11 +143,21 @@ export class NotificationsController {
   })
   async getMyNotifications(@Request() req, @Query('isRead') isRead?: string) {
     const isReadBoolean = isRead !== undefined ? isRead === 'true' : undefined;
-    return this.notificationsService.getUserNotifications(req.user.userId, isReadBoolean);
+    return this.notificationsService.getUserNotifications(
+      req.user.userId,
+      isReadBoolean,
+    );
   }
 
   @Get('unread-count')
-  @Roles(UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN, UserRole.SUPPORT, UserRole.HUB_STAFF, UserRole.RIDER)
+  @Roles(
+    UserRole.CUSTOMER,
+    UserRole.MERCHANT,
+    UserRole.ADMIN,
+    UserRole.SUPPORT,
+    UserRole.HUB_STAFF,
+    UserRole.RIDER,
+  )
   @ApiOperation({ summary: 'Get unread notification count' })
   @ApiResponse({
     status: 200,
@@ -124,7 +165,9 @@ export class NotificationsController {
     schema: { example: { count: 5 } },
   })
   async getUnreadCount(@Request() req) {
-    const count = await this.notificationsService.getUnreadCount(req.user.userId);
+    const count = await this.notificationsService.getUnreadCount(
+      req.user.userId,
+    );
     return { count };
   }
 
@@ -151,7 +194,9 @@ export class NotificationsController {
   @ApiResponse({
     status: 200,
     description: 'All notifications marked as read',
-    schema: { example: { success: true, message: 'All notifications marked as read' } },
+    schema: {
+      example: { success: true, message: 'All notifications marked as read' },
+    },
   })
   async markAllAsRead(@Request() req) {
     await this.notificationsService.markAllAsRead(req.user.userId);
@@ -175,7 +220,9 @@ export class NotificationsController {
 
   @Get('users/:userId')
   @Roles(UserRole.ADMIN, UserRole.SUPPORT)
-  @ApiOperation({ summary: 'Get notifications for a specific user (Admin only)' })
+  @ApiOperation({
+    summary: 'Get notifications for a specific user (Admin only)',
+  })
   @ApiParam({ name: 'userId', description: 'User ID' })
   @ApiResponse({
     status: 200,
@@ -211,7 +258,9 @@ export class NotificationsController {
 
   @Get('statistics/user/:userId')
   @Roles(UserRole.ADMIN, UserRole.SUPPORT)
-  @ApiOperation({ summary: 'Get notification statistics for a user (Admin only)' })
+  @ApiOperation({
+    summary: 'Get notification statistics for a user (Admin only)',
+  })
   @ApiParam({ name: 'userId', description: 'User ID' })
   @ApiResponse({
     status: 200,
@@ -232,7 +281,13 @@ export class NotificationsController {
     schema: { example: { success: true } },
   })
   async notifyShipmentCreated(
-    @Body() body: { userId: string; shipmentId: string; awb: string; data: any },
+    @Body()
+    body: {
+      userId: string;
+      shipmentId: string;
+      awb: string;
+      data: any;
+    },
   ) {
     await this.notificationsService.notifyShipmentCreated(
       body.userId,
@@ -251,7 +306,13 @@ export class NotificationsController {
     description: 'Notifications sent',
   })
   async notifyShipmentPickedUp(
-    @Body() body: { userId: string; shipmentId: string; awb: string; data: any },
+    @Body()
+    body: {
+      userId: string;
+      shipmentId: string;
+      awb: string;
+      data: any;
+    },
   ) {
     await this.notificationsService.notifyShipmentPickedUp(
       body.userId,
@@ -297,7 +358,13 @@ export class NotificationsController {
     description: 'Notifications sent',
   })
   async notifyDelivered(
-    @Body() body: { userId: string; shipmentId: string; awb: string; deliveredAt: string },
+    @Body()
+    body: {
+      userId: string;
+      shipmentId: string;
+      awb: string;
+      deliveredAt: string;
+    },
   ) {
     await this.notificationsService.notifyDelivered(
       body.userId,
@@ -316,7 +383,13 @@ export class NotificationsController {
     description: 'Notifications sent',
   })
   async notifyDeliveryFailed(
-    @Body() body: { userId: string; shipmentId: string; awb: string; reason: string },
+    @Body()
+    body: {
+      userId: string;
+      shipmentId: string;
+      awb: string;
+      reason: string;
+    },
   ) {
     await this.notificationsService.notifyDeliveryFailed(
       body.userId,
@@ -337,7 +410,13 @@ export class NotificationsController {
     description: 'Notification sent',
   })
   async notifyPickupAssignment(
-    @Body() body: { riderId: string; pickupId: string; address: string; itemCount: number },
+    @Body()
+    body: {
+      riderId: string;
+      pickupId: string;
+      address: string;
+      itemCount: number;
+    },
   ) {
     await this.notificationsService.notifyPickupAssignment(
       body.riderId,
@@ -356,7 +435,12 @@ export class NotificationsController {
     description: 'Notification sent',
   })
   async notifyManifestAssignment(
-    @Body() body: { riderId: string; manifestId: string; shipmentCount: number },
+    @Body()
+    body: {
+      riderId: string;
+      manifestId: string;
+      shipmentCount: number;
+    },
   ) {
     await this.notificationsService.notifyManifestAssignment(
       body.riderId,
@@ -394,7 +478,13 @@ export class NotificationsController {
     description: 'Notification sent',
   })
   async notifyPayoutCompleted(
-    @Body() body: { userId: string; amount: number; transactionId: string; referenceNumber: string },
+    @Body()
+    body: {
+      userId: string;
+      amount: number;
+      transactionId: string;
+      referenceNumber: string;
+    },
   ) {
     await this.notificationsService.notifyPayoutCompleted(
       body.userId,

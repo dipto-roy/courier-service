@@ -117,13 +117,15 @@ let RiderService = class RiderService {
             relations: ['merchant'],
         });
         if (customerShipment?.receiverPhone) {
-            this.notificationsService.sendNotification({
+            this.notificationsService
+                .sendNotification({
                 userId: customerShipment.merchantId,
                 shipmentId: customerShipment.id,
                 type: enums_1.NotificationType.SMS,
                 title: 'Delivery OTP',
                 message: `Your delivery OTP for shipment ${awbNumber} is: ${otp}. Do not share this with anyone.`,
-            }).catch(() => undefined);
+            })
+                .catch(() => undefined);
         }
         return {
             success: true,
@@ -153,7 +155,8 @@ let RiderService = class RiderService {
         if (shipment.otpCode !== otpCode) {
             throw new common_1.BadRequestException('Invalid OTP code');
         }
-        if (shipment.paymentMethod === enums_1.PaymentMethod.COD && shipment.codAmount > 0) {
+        if (shipment.paymentMethod === enums_1.PaymentMethod.COD &&
+            shipment.codAmount > 0) {
             if (!codAmountCollected) {
                 throw new common_1.BadRequestException('COD amount must be collected');
             }
@@ -163,7 +166,10 @@ let RiderService = class RiderService {
         }
         shipment.status = enums_1.ShipmentStatus.DELIVERED;
         shipment.actualDeliveryDate = new Date();
-        shipment.paymentStatus = shipment.paymentMethod === enums_1.PaymentMethod.COD ? enums_1.PaymentStatus.COLLECTED : shipment.paymentStatus;
+        shipment.paymentStatus =
+            shipment.paymentMethod === enums_1.PaymentMethod.COD
+                ? enums_1.PaymentStatus.COLLECTED
+                : shipment.paymentStatus;
         if (signatureUrl) {
             shipment.signatureUrl = signatureUrl;
         }
@@ -186,13 +192,15 @@ let RiderService = class RiderService {
             where: { awb: awbNumber },
         });
         if (deliveredShipment) {
-            this.notificationsService.sendNotification({
+            this.notificationsService
+                .sendNotification({
                 userId: deliveredShipment.merchantId,
                 shipmentId: deliveredShipment.id,
                 type: enums_1.NotificationType.EMAIL,
                 title: 'Shipment Delivered',
                 message: `Shipment ${awbNumber} has been successfully delivered.`,
-            }).catch(() => undefined);
+            })
+                .catch(() => undefined);
         }
         return {
             success: true,
@@ -238,13 +246,15 @@ let RiderService = class RiderService {
             where: { awb: awbNumber },
         });
         if (failedShipment) {
-            this.notificationsService.sendNotification({
+            this.notificationsService
+                .sendNotification({
                 userId: failedShipment.merchantId,
                 shipmentId: failedShipment.id,
                 type: enums_1.NotificationType.EMAIL,
                 title: 'Delivery Attempt Failed',
                 message: `Delivery attempt for shipment ${awbNumber} was unsuccessful.`,
-            }).catch(() => undefined);
+            })
+                .catch(() => undefined);
         }
         return {
             success: true,
@@ -274,13 +284,15 @@ let RiderService = class RiderService {
             where: { awb: awbNumber },
         });
         if (rtoShipment) {
-            this.notificationsService.sendNotification({
+            this.notificationsService
+                .sendNotification({
                 userId: rtoShipment.merchantId,
                 shipmentId: rtoShipment.id,
                 type: enums_1.NotificationType.EMAIL,
                 title: 'RTO Initiated',
                 message: `Shipment ${awbNumber} has been marked for Return to Origin (RTO). Reason: ${reason}.`,
-            }).catch(() => undefined);
+            })
+                .catch(() => undefined);
         }
         return {
             success: true,
@@ -394,7 +406,9 @@ let RiderService = class RiderService {
             .andWhere('shipment.status = :status', {
             status: enums_1.ShipmentStatus.DELIVERED,
         })
-            .andWhere('shipment.paymentMethod = :method', { method: enums_1.PaymentMethod.COD })
+            .andWhere('shipment.paymentMethod = :method', {
+            method: enums_1.PaymentMethod.COD,
+        })
             .getRawOne();
         const totalCodCollected = parseFloat(codResult?.totalCod || '0');
         const today = new Date();

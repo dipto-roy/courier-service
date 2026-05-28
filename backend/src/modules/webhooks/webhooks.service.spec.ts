@@ -24,29 +24,42 @@ describe('WebhooksService', () => {
 
     it('passes with valid HMAC signature', () => {
       const signature = sign(payload, secret);
-      expect(() => service.verifyHmac(payload, signature, secret)).not.toThrow();
+      expect(() =>
+        service.verifyHmac(payload, signature, secret),
+      ).not.toThrow();
     });
 
     it('throws UnauthorizedException for tampered payload', () => {
       const signature = sign(payload, secret);
       expect(() =>
-        service.verifyHmac('{"event":"payment.completed","amount":9999}', signature, secret),
+        service.verifyHmac(
+          '{"event":"payment.completed","amount":9999}',
+          signature,
+          secret,
+        ),
       ).toThrow(UnauthorizedException);
     });
 
     it('throws UnauthorizedException for wrong secret', () => {
       const signature = sign(payload, 'wrong-secret');
-      expect(() => service.verifyHmac(payload, signature, secret)).toThrow(UnauthorizedException);
+      expect(() => service.verifyHmac(payload, signature, secret)).toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('throws UnauthorizedException for empty signature', () => {
-      expect(() => service.verifyHmac(payload, '', secret)).toThrow(UnauthorizedException);
+      expect(() => service.verifyHmac(payload, '', secret)).toThrow(
+        UnauthorizedException,
+      );
     });
   });
 
   describe('handlePaymentCallback', () => {
     it('returns received: true', () => {
-      const result = service.handlePaymentCallback({ event: 'payment.completed', amount: 1500 });
+      const result = service.handlePaymentCallback({
+        event: 'payment.completed',
+        amount: 1500,
+      });
       expect(result).toEqual({ received: true });
     });
 
@@ -58,7 +71,10 @@ describe('WebhooksService', () => {
 
   describe('handleCourierCallback', () => {
     it('returns received: true', () => {
-      const result = service.handleCourierCallback({ event: 'shipment.delivered', awb: 'FX001' });
+      const result = service.handleCourierCallback({
+        event: 'shipment.delivered',
+        awb: 'FX001',
+      });
       expect(result).toEqual({ received: true });
     });
   });

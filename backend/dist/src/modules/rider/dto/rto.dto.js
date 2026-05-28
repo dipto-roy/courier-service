@@ -30,7 +30,10 @@ class RTODto {
 }
 exports.RTODto = RTODto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Shipment AWB number', example: 'FX20250128000001' }),
+    (0, swagger_1.ApiProperty)({
+        description: 'Shipment AWB number',
+        example: 'FX20250128000001',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
@@ -39,14 +42,17 @@ __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'Reason for RTO',
         enum: RTOReason,
-        example: RTOReason.MULTIPLE_FAILED_ATTEMPTS
+        example: RTOReason.MULTIPLE_FAILED_ATTEMPTS,
     }),
     (0, class_validator_1.IsEnum)(RTOReason),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], RTODto.prototype, "reason", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Additional notes about the RTO', example: 'Customer refused to accept after 3 delivery attempts' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Additional notes about the RTO',
+        example: 'Customer refused to accept after 3 delivery attempts',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.MaxLength)(500),

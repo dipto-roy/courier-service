@@ -324,7 +324,10 @@ __decorate([
         status: 200,
         description: 'Manifest closed successfully',
     }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Can only close received manifests' }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'Can only close received manifests',
+    }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),

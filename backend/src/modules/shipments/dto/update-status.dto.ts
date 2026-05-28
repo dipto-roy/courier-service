@@ -20,7 +20,10 @@ export class UpdateStatusDto {
   @IsOptional()
   remarks?: string;
 
-  @ApiPropertyOptional({ example: 'Dhaka Hub', description: 'Current location' })
+  @ApiPropertyOptional({
+    example: 'Dhaka Hub',
+    description: 'Current location',
+  })
   @IsString()
   @IsOptional()
   location?: string;

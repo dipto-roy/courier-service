@@ -3,11 +3,11 @@ import * as bcrypt from 'bcrypt';
 
 /**
  * Seed Initial Data Migration
- * 
+ *
  * This migration seeds the database with essential initial data:
  * - System Admin user
  * - Test users for different roles (for development)
- * 
+ *
  * Note: This should only be run once during initial setup.
  */
 export class SeedInitialData1761770940616 implements MigrationInterface {
@@ -87,7 +87,9 @@ export class SeedInitialData1761770940616 implements MigrationInterface {
           )
         `);
 
-        console.log('✅ Test merchant created: merchant@fastx.com / Merchant@123');
+        console.log(
+          '✅ Test merchant created: merchant@fastx.com / Merchant@123',
+        );
       }
 
       // Create test rider

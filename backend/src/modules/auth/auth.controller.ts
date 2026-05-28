@@ -7,7 +7,12 @@ import {
   UseGuards,
   Get,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignupDto, LoginDto, VerifyOtpDto, RefreshTokenDto } from './dto';
 import { Public, CurrentUser } from '../../common/decorators';

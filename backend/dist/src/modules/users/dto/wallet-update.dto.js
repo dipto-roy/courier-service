@@ -24,7 +24,11 @@ class WalletUpdateDto {
 }
 exports.WalletUpdateDto = WalletUpdateDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ enum: WalletOperationType, example: WalletOperationType.CREDIT, description: 'Operation type' }),
+    (0, swagger_1.ApiProperty)({
+        enum: WalletOperationType,
+        example: WalletOperationType.CREDIT,
+        description: 'Operation type',
+    }),
     (0, class_validator_1.IsEnum)(WalletOperationType),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
@@ -37,7 +41,10 @@ __decorate([
     __metadata("design:type", Number)
 ], WalletUpdateDto.prototype, "amount", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'Payment for delivery charges', description: 'Transaction remarks' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'Payment for delivery charges',
+        description: 'Transaction remarks',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)

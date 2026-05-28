@@ -120,7 +120,10 @@ export class RiderController {
     description: 'Returns shipment details',
   })
   @ApiResponse({ status: 404, description: 'Shipment not found' })
-  @ApiResponse({ status: 403, description: 'Shipment not assigned to this rider' })
+  @ApiResponse({
+    status: 403,
+    description: 'Shipment not assigned to this rider',
+  })
   async getShipmentDetails(@Param('awb') awb: string, @Request() req) {
     return this.riderService.getShipmentDetails(awb, req.user);
   }
@@ -129,7 +132,8 @@ export class RiderController {
   @Roles(UserRole.RIDER)
   @ApiOperation({
     summary: 'Generate OTP for shipment delivery',
-    description: 'Generates a 6-digit OTP and sends it to the customer for delivery verification',
+    description:
+      'Generates a 6-digit OTP and sends it to the customer for delivery verification',
   })
   @ApiResponse({
     status: 200,
@@ -144,7 +148,10 @@ export class RiderController {
     },
   })
   @ApiResponse({ status: 404, description: 'Shipment not found' })
-  @ApiResponse({ status: 403, description: 'Shipment not assigned to this rider' })
+  @ApiResponse({
+    status: 403,
+    description: 'Shipment not assigned to this rider',
+  })
   async generateOTP(@Body() generateOTPDto: GenerateOTPDto, @Request() req) {
     return this.riderService.generateOTP(generateOTPDto, req.user);
   }
@@ -169,10 +176,19 @@ export class RiderController {
       },
     },
   })
-  @ApiResponse({ status: 400, description: 'Invalid OTP or COD amount mismatch' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid OTP or COD amount mismatch',
+  })
   @ApiResponse({ status: 404, description: 'Shipment not found' })
-  @ApiResponse({ status: 403, description: 'Shipment not assigned to this rider' })
-  async completeDelivery(@Body() deliveryAttemptDto: DeliveryAttemptDto, @Request() req) {
+  @ApiResponse({
+    status: 403,
+    description: 'Shipment not assigned to this rider',
+  })
+  async completeDelivery(
+    @Body() deliveryAttemptDto: DeliveryAttemptDto,
+    @Request() req,
+  ) {
     return this.riderService.completeDelivery(deliveryAttemptDto, req.user);
   }
 
@@ -198,8 +214,14 @@ export class RiderController {
     },
   })
   @ApiResponse({ status: 404, description: 'Shipment not found' })
-  @ApiResponse({ status: 403, description: 'Shipment not assigned to this rider' })
-  async recordFailedDelivery(@Body() failedDeliveryDto: FailedDeliveryDto, @Request() req) {
+  @ApiResponse({
+    status: 403,
+    description: 'Shipment not assigned to this rider',
+  })
+  async recordFailedDelivery(
+    @Body() failedDeliveryDto: FailedDeliveryDto,
+    @Request() req,
+  ) {
     return this.riderService.recordFailedDelivery(failedDeliveryDto, req.user);
   }
 
@@ -207,7 +229,8 @@ export class RiderController {
   @Roles(UserRole.RIDER)
   @ApiOperation({
     summary: 'Mark shipment for RTO (Return to Origin)',
-    description: 'Initiates RTO process for a shipment that cannot be delivered',
+    description:
+      'Initiates RTO process for a shipment that cannot be delivered',
   })
   @ApiResponse({
     status: 200,
@@ -223,7 +246,10 @@ export class RiderController {
     },
   })
   @ApiResponse({ status: 404, description: 'Shipment not found' })
-  @ApiResponse({ status: 403, description: 'Shipment not assigned to this rider' })
+  @ApiResponse({
+    status: 403,
+    description: 'Shipment not assigned to this rider',
+  })
   async markRTO(@Body() rtoDto: RTODto, @Request() req) {
     return this.riderService.markRTO(rtoDto, req.user);
   }
@@ -249,14 +275,22 @@ export class RiderController {
       },
     },
   })
-  async updateLocation(@Body() updateLocationDto: UpdateLocationDto, @Request() req) {
+  async updateLocation(
+    @Body() updateLocationDto: UpdateLocationDto,
+    @Request() req,
+  ) {
     return this.riderService.updateLocation(updateLocationDto, req.user);
   }
 
   @Get('location-history')
   @Roles(UserRole.RIDER, UserRole.ADMIN, UserRole.HUB_STAFF)
   @ApiOperation({ summary: 'Get rider location history' })
-  @ApiQuery({ name: 'limit', required: false, description: 'Number of records to return', example: 50 })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of records to return',
+    example: 50,
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns location history',

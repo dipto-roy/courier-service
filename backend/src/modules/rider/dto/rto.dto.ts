@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsOptional, MaxLength, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  MaxLength,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export enum RTOReason {
@@ -13,21 +19,27 @@ export enum RTOReason {
 }
 
 export class RTODto {
-  @ApiProperty({ description: 'Shipment AWB number', example: 'FX20250128000001' })
+  @ApiProperty({
+    description: 'Shipment AWB number',
+    example: 'FX20250128000001',
+  })
   @IsString()
   @IsNotEmpty()
   awbNumber: string;
 
-  @ApiProperty({ 
-    description: 'Reason for RTO', 
+  @ApiProperty({
+    description: 'Reason for RTO',
     enum: RTOReason,
-    example: RTOReason.MULTIPLE_FAILED_ATTEMPTS 
+    example: RTOReason.MULTIPLE_FAILED_ATTEMPTS,
   })
   @IsEnum(RTOReason)
   @IsNotEmpty()
   reason: RTOReason;
 
-  @ApiPropertyOptional({ description: 'Additional notes about the RTO', example: 'Customer refused to accept after 3 delivery attempts' })
+  @ApiPropertyOptional({
+    description: 'Additional notes about the RTO',
+    example: 'Customer refused to accept after 3 delivery attempts',
+  })
   @IsString()
   @IsOptional()
   @MaxLength(500)

@@ -10,7 +10,12 @@ import { Shipment } from '../../entities/shipment.entity';
 import { Manifest } from '../../entities/manifest.entity';
 import { RiderLocation } from '../../entities/rider-location.entity';
 import { User } from '../../entities/user.entity';
-import { ShipmentStatus, PaymentMethod, PaymentStatus, NotificationType } from '../../common/enums';
+import {
+  ShipmentStatus,
+  PaymentMethod,
+  PaymentStatus,
+  NotificationType,
+} from '../../common/enums';
 import {
   DeliveryAttemptDto,
   FailedDeliveryDto,
@@ -73,7 +78,7 @@ export class RiderService {
    */
   async getMyShipments(riderId: string) {
     const shipments = await this.shipmentRepository.find({
-      where: { 
+      where: {
         riderId,
         status: ShipmentStatus.OUT_FOR_DELIVERY,
       },
@@ -143,13 +148,15 @@ export class RiderService {
     });
 
     if (customerShipment?.receiverPhone) {
-      this.notificationsService.sendNotification({
-        userId: customerShipment.merchantId,
-        shipmentId: customerShipment.id,
-        type: NotificationType.SMS,
-        title: 'Delivery OTP',
-        message: `Your delivery OTP for shipment ${awbNumber} is: ${otp}. Do not share this with anyone.`,
-      }).catch(() => undefined);
+      this.notificationsService
+        .sendNotification({
+          userId: customerShipment.merchantId,
+          shipmentId: customerShipment.id,
+          type: NotificationType.SMS,
+          title: 'Delivery OTP',
+          message: `Your delivery OTP for shipment ${awbNumber} is: ${otp}. Do not share this with anyone.`,
+        })
+        .catch(() => undefined);
     }
 
     return {
@@ -206,7 +213,10 @@ export class RiderService {
     }
 
     // Verify COD amount if applicable
-    if (shipment.paymentMethod === PaymentMethod.COD && shipment.codAmount > 0) {
+    if (
+      shipment.paymentMethod === PaymentMethod.COD &&
+      shipment.codAmount > 0
+    ) {
       if (!codAmountCollected) {
         throw new BadRequestException('COD amount must be collected');
       }
@@ -220,8 +230,11 @@ export class RiderService {
     // Update shipment
     shipment.status = ShipmentStatus.DELIVERED;
     shipment.actualDeliveryDate = new Date();
-    shipment.paymentStatus = shipment.paymentMethod === PaymentMethod.COD ? PaymentStatus.COLLECTED : shipment.paymentStatus;
-    
+    shipment.paymentStatus =
+      shipment.paymentMethod === PaymentMethod.COD
+        ? PaymentStatus.COLLECTED
+        : shipment.paymentStatus;
+
     if (signatureUrl) {
       shipment.signatureUrl = signatureUrl;
     }
@@ -251,13 +264,15 @@ export class RiderService {
       where: { awb: awbNumber },
     });
     if (deliveredShipment) {
-      this.notificationsService.sendNotification({
-        userId: deliveredShipment.merchantId,
-        shipmentId: deliveredShipment.id,
-        type: NotificationType.EMAIL,
-        title: 'Shipment Delivered',
-        message: `Shipment ${awbNumber} has been successfully delivered.`,
-      }).catch(() => undefined);
+      this.notificationsService
+        .sendNotification({
+          userId: deliveredShipment.merchantId,
+          shipmentId: deliveredShipment.id,
+          type: NotificationType.EMAIL,
+          title: 'Shipment Delivered',
+          message: `Shipment ${awbNumber} has been successfully delivered.`,
+        })
+        .catch(() => undefined);
     }
 
     return {
@@ -272,7 +287,10 @@ export class RiderService {
   /**
    * Record failed delivery attempt
    */
-  async recordFailedDelivery(failedDeliveryDto: FailedDeliveryDto, rider: User) {
+  async recordFailedDelivery(
+    failedDeliveryDto: FailedDeliveryDto,
+    rider: User,
+  ) {
     const { awbNumber, reason, notes, photoUrl, latitude, longitude } =
       failedDeliveryDto;
 
@@ -328,13 +346,15 @@ export class RiderService {
       where: { awb: awbNumber },
     });
     if (failedShipment) {
-      this.notificationsService.sendNotification({
-        userId: failedShipment.merchantId,
-        shipmentId: failedShipment.id,
-        type: NotificationType.EMAIL,
-        title: 'Delivery Attempt Failed',
-        message: `Delivery attempt for shipment ${awbNumber} was unsuccessful.`,
-      }).catch(() => undefined);
+      this.notificationsService
+        .sendNotification({
+          userId: failedShipment.merchantId,
+          shipmentId: failedShipment.id,
+          type: NotificationType.EMAIL,
+          title: 'Delivery Attempt Failed',
+          message: `Delivery attempt for shipment ${awbNumber} was unsuccessful.`,
+        })
+        .catch(() => undefined);
     }
 
     return {
@@ -377,13 +397,15 @@ export class RiderService {
       where: { awb: awbNumber },
     });
     if (rtoShipment) {
-      this.notificationsService.sendNotification({
-        userId: rtoShipment.merchantId,
-        shipmentId: rtoShipment.id,
-        type: NotificationType.EMAIL,
-        title: 'RTO Initiated',
-        message: `Shipment ${awbNumber} has been marked for Return to Origin (RTO). Reason: ${reason}.`,
-      }).catch(() => undefined);
+      this.notificationsService
+        .sendNotification({
+          userId: rtoShipment.merchantId,
+          shipmentId: rtoShipment.id,
+          type: NotificationType.EMAIL,
+          title: 'RTO Initiated',
+          message: `Shipment ${awbNumber} has been marked for Return to Origin (RTO). Reason: ${reason}.`,
+        })
+        .catch(() => undefined);
     }
 
     return {
@@ -427,7 +449,7 @@ export class RiderService {
     location.riderId = rider.id;
     location.latitude = latitude;
     location.longitude = longitude;
-    
+
     if (accuracy !== undefined) {
       location.accuracy = accuracy;
     }
@@ -536,7 +558,9 @@ export class RiderService {
       .andWhere('shipment.status = :status', {
         status: ShipmentStatus.DELIVERED,
       })
-      .andWhere('shipment.paymentMethod = :method', { method: PaymentMethod.COD })
+      .andWhere('shipment.paymentMethod = :method', {
+        method: PaymentMethod.COD,
+      })
       .getRawOne();
 
     const totalCodCollected = parseFloat(codResult?.totalCod || '0');

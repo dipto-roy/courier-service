@@ -19,7 +19,9 @@ export class FinanceService {
   async getReport(filter: ReportFilterDto) {
     const { period, startDate, endDate } = filter;
     const end = endDate ? new Date(endDate) : new Date();
-    const start = startDate ? new Date(startDate) : this.periodStart(period ?? ReportPeriod.DAILY, end);
+    const start = startDate
+      ? new Date(startDate)
+      : this.periodStart(period ?? ReportPeriod.DAILY, end);
 
     const rows = await this.transactionRepository.find({
       where: { createdAt: Between(start, end) },
@@ -47,11 +49,16 @@ export class FinanceService {
   }
 
   async getPendingPayouts() {
-    return this.paymentsService.getTransactions({ status: PaymentStatus.PENDING } as PaymentFilterDto);
+    return this.paymentsService.getTransactions({
+      status: PaymentStatus.PENDING,
+    } as PaymentFilterDto);
   }
 
   async approvePayout(transactionId: string, dto: ApprovePayoutDto) {
-    return this.paymentsService.completePayout(transactionId, dto.referenceNumber);
+    return this.paymentsService.completePayout(
+      transactionId,
+      dto.referenceNumber,
+    );
   }
 
   async rejectPayout(transactionId: string, reason: string) {

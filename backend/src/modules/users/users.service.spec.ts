@@ -40,7 +40,9 @@ const qbMock = {
   select: jest.fn().mockReturnThis(),
   addSelect: jest.fn().mockReturnThis(),
   groupBy: jest.fn().mockReturnThis(),
-  getRawMany: jest.fn().mockResolvedValue([{ role: UserRole.CUSTOMER, count: '1' }]),
+  getRawMany: jest
+    .fn()
+    .mockResolvedValue([{ role: UserRole.CUSTOMER, count: '1' }]),
 };
 
 describe('UsersService', () => {
@@ -91,8 +93,13 @@ describe('UsersService', () => {
     });
 
     it('throws ConflictException when email exists', async () => {
-      userRepository.findOne.mockResolvedValueOnce({ ...mockUser, email: dto.email });
-      await expect(service.create(dto as any)).rejects.toThrow(ConflictException);
+      userRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        email: dto.email,
+      });
+      await expect(service.create(dto as any)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -114,7 +121,9 @@ describe('UsersService', () => {
 
     it('throws NotFoundException when user not found', async () => {
       userRepository.findOne.mockResolvedValueOnce(null);
-      await expect(service.findOne('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -141,7 +150,9 @@ describe('UsersService', () => {
 
     it('throws NotFoundException when user not found', async () => {
       userRepository.findOne.mockResolvedValueOnce(null);
-      await expect(service.update('non-existent', {} as any)).rejects.toThrow(NotFoundException);
+      await expect(service.update('non-existent', {} as any)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -154,7 +165,9 @@ describe('UsersService', () => {
 
     it('throws NotFoundException when user not found', async () => {
       userRepository.findOne.mockResolvedValueOnce(null);
-      await expect(service.remove('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.remove('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -170,7 +183,9 @@ describe('UsersService', () => {
 
     it('throws NotFoundException when user not found', async () => {
       qbMock.getOne.mockResolvedValueOnce(null);
-      await expect(service.restore('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.restore('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

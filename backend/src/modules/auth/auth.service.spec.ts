@@ -78,7 +78,9 @@ describe('AuthService', () => {
     (utils.hashPassword as jest.Mock).mockResolvedValue('hashed-password');
     (utils.comparePassword as jest.Mock).mockResolvedValue(true);
     (utils.generateOTP as jest.Mock).mockReturnValue('123456');
-    (utils.getOTPExpiry as jest.Mock).mockReturnValue(new Date(Date.now() + 300_000));
+    (utils.getOTPExpiry as jest.Mock).mockReturnValue(
+      new Date(Date.now() + 300_000),
+    );
     (utils.isOTPValid as jest.Mock).mockReturnValue(true);
 
     const module: TestingModule = await Test.createTestingModule({
@@ -112,7 +114,9 @@ describe('AuthService', () => {
 
     it('throws ConflictException when email already exists', async () => {
       userRepository.findOne.mockResolvedValueOnce(mockUser);
-      await expect(service.signup(signupDto as any)).rejects.toThrow(ConflictException);
+      await expect(service.signup(signupDto as any)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -128,23 +132,37 @@ describe('AuthService', () => {
 
     it('throws UnauthorizedException for non-existent user', async () => {
       userRepository.findOne.mockResolvedValueOnce(null);
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('throws UnauthorizedException for wrong password', async () => {
       userRepository.findOne.mockResolvedValueOnce(mockUser);
       (utils.comparePassword as jest.Mock).mockResolvedValueOnce(false);
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('throws UnauthorizedException for inactive user', async () => {
-      userRepository.findOne.mockResolvedValueOnce({ ...mockUser, isActive: false });
-      await expect(service.login(loginDto)).rejects.toThrow(UnauthorizedException);
+      userRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        isActive: false,
+      });
+      await expect(service.login(loginDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('throws BadRequestException for unverified user and sends new OTP', async () => {
-      userRepository.findOne.mockResolvedValueOnce({ ...mockUser, isVerified: false });
-      await expect(service.login(loginDto)).rejects.toThrow(BadRequestException);
+      userRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        isVerified: false,
+      });
+      await expect(service.login(loginDto)).rejects.toThrow(
+        BadRequestException,
+      );
       expect(emailService.sendEmail).toHaveBeenCalled();
     });
   });

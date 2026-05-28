@@ -36,9 +36,11 @@ export class UploadService {
         columns: true,
         skip_empty_lines: true,
         trim: true,
-      }) as Record<string, string>[];
+      });
     } catch (err) {
-      throw new BadRequestException(`CSV parse error: ${(err as Error).message}`);
+      throw new BadRequestException(
+        `CSV parse error: ${(err as Error).message}`,
+      );
     }
 
     if (rows.length === 0) {
@@ -51,7 +53,9 @@ export class UploadService {
 
     const missing = REQUIRED_COLUMNS.filter((col) => !(col in rows[0]));
     if (missing.length > 0) {
-      throw new BadRequestException(`Missing required columns: ${missing.join(', ')}`);
+      throw new BadRequestException(
+        `Missing required columns: ${missing.join(', ')}`,
+      );
     }
 
     this.logger.log(`Parsed ${rows.length} shipment rows from CSV`);

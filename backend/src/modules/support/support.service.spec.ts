@@ -2,7 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { SupportService } from './support.service';
-import { SupportTicket, TicketStatus, TicketPriority } from '../../entities/support-ticket.entity';
+import {
+  SupportTicket,
+  TicketStatus,
+  TicketPriority,
+} from '../../entities/support-ticket.entity';
 import { User } from '../../entities/user.entity';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
@@ -106,7 +110,9 @@ describe('SupportService', () => {
 
     it('throws NotFoundException when ticket not found', async () => {
       ticketRepository.findOne.mockResolvedValueOnce(null);
-      await expect(service.findOne('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 

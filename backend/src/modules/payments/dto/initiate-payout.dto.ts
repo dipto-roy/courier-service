@@ -1,4 +1,11 @@
-import { IsUUID, IsNumber, IsOptional, IsString, Min, IsEnum } from 'class-validator';
+import {
+  IsUUID,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PaymentMethod } from '../../../common/enums';
 
@@ -12,7 +19,7 @@ export class InitiatePayoutDto {
 
   @ApiProperty({
     description: 'Payout amount',
-    example: 15000.50,
+    example: 15000.5,
     minimum: 0,
   })
   @IsNumber()

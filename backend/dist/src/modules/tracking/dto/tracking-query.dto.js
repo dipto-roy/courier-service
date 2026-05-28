@@ -19,7 +19,10 @@ class TrackingQueryDto {
 }
 exports.TrackingQueryDto = TrackingQueryDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Shipment AWB number', example: 'FX20250128000001' }),
+    (0, swagger_1.ApiProperty)({
+        description: 'Shipment AWB number',
+        example: 'FX20250128000001',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
@@ -28,7 +31,7 @@ __decorate([
     (0, swagger_1.ApiPropertyOptional)({
         description: 'Include GPS tracking data (requires authentication)',
         example: false,
-        default: false
+        default: false,
     }),
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
@@ -38,7 +41,7 @@ __decorate([
     (0, swagger_1.ApiPropertyOptional)({
         description: 'Include detailed status history',
         example: true,
-        default: true
+        default: true,
     }),
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),

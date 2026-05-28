@@ -19,11 +19,11 @@ export class AuditService {
     try {
       const auditLog = this.auditLogRepository.create(createAuditLogDto);
       const savedLog = await this.auditLogRepository.save(auditLog);
-      
+
       this.logger.log(
         `Audit log created: ${createAuditLogDto.action} on ${createAuditLogDto.entityType}:${createAuditLogDto.entityId} by user ${createAuditLogDto.userId}`,
       );
-      
+
       return savedLog;
     } catch (error) {
       this.logger.error('Failed to create audit log:', error.message);
@@ -212,7 +212,9 @@ export class AuditService {
 
     // Apply filters
     if (filters.userId) {
-      queryBuilder.andWhere('audit.userId = :userId', { userId: filters.userId });
+      queryBuilder.andWhere('audit.userId = :userId', {
+        userId: filters.userId,
+      });
     }
 
     if (filters.entityType) {
@@ -228,7 +230,9 @@ export class AuditService {
     }
 
     if (filters.action) {
-      queryBuilder.andWhere('audit.action = :action', { action: filters.action });
+      queryBuilder.andWhere('audit.action = :action', {
+        action: filters.action,
+      });
     }
 
     if (filters.ipAddress) {
@@ -276,7 +280,10 @@ export class AuditService {
     });
   }
 
-  async getEntityAuditTrail(entityType: string, entityId: string): Promise<AuditLog[]> {
+  async getEntityAuditTrail(
+    entityType: string,
+    entityId: string,
+  ): Promise<AuditLog[]> {
     return this.auditLogRepository.find({
       where: { entityType, entityId },
       relations: ['user'],
@@ -284,7 +291,10 @@ export class AuditService {
     });
   }
 
-  async getUserActivityLogs(userId: string, limit: number = 50): Promise<AuditLog[]> {
+  async getUserActivityLogs(
+    userId: string,
+    limit: number = 50,
+  ): Promise<AuditLog[]> {
     return this.auditLogRepository.find({
       where: { userId },
       order: { createdAt: 'DESC' },
@@ -372,13 +382,13 @@ export class AuditService {
         acc[item.action] = parseInt(item.count);
         return acc;
       }, {}),
-      topUsers: topUsers.map(user => ({
+      topUsers: topUsers.map((user) => ({
         userId: user.userId,
         userName: user.userName,
         userEmail: user.userEmail,
         activityCount: parseInt(user.count),
       })),
-      activityByDate: activityByDate.map(item => ({
+      activityByDate: activityByDate.map((item) => ({
         date: item.date,
         count: parseInt(item.count),
       })),
@@ -438,7 +448,9 @@ export class AuditService {
       .where('createdAt < :cutoffDate', { cutoffDate })
       .execute();
 
-    this.logger.log(`Deleted ${result.affected} audit logs older than ${daysToKeep} days`);
+    this.logger.log(
+      `Deleted ${result.affected} audit logs older than ${daysToKeep} days`,
+    );
     return result.affected || 0;
   }
 
@@ -455,8 +467,12 @@ export class AuditService {
     userAgent?: string,
   ): Promise<AuditLog | null> {
     const changes = this.extractChanges(oldEntity, newEntity);
-    
-    const description = this.generateChangeDescription(entityType, action, changes);
+
+    const description = this.generateChangeDescription(
+      entityType,
+      action,
+      changes,
+    );
 
     return this.log({
       userId,
@@ -490,17 +506,23 @@ export class AuditService {
     return changes;
   }
 
-  private generateChangeDescription(entityType: string, action: string, changes: any): string {
+  private generateChangeDescription(
+    entityType: string,
+    action: string,
+    changes: any,
+  ): string {
     const changedFields = Object.keys(changes);
-    
+
     if (changedFields.length === 0) {
       return `${action} on ${entityType}`;
     }
 
-    const fieldList = changedFields.map(field => {
-      const change = changes[field];
-      return `${field}: ${change.old} → ${change.new}`;
-    }).join(', ');
+    const fieldList = changedFields
+      .map((field) => {
+        const change = changes[field];
+        return `${field}: ${change.old} → ${change.new}`;
+      })
+      .join(', ');
 
     return `${action} on ${entityType}: ${fieldList}`;
   }

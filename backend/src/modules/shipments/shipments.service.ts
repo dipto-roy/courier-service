@@ -469,12 +469,12 @@ export class ShipmentsService {
 
     // Convert statusStats array to object: { PENDING: 5, DELIVERED: 10, ... }
     const byStatus: Record<string, number> = {};
-    statusStats.forEach(stat => {
+    statusStats.forEach((stat) => {
       byStatus[stat.status] = parseInt(stat.count, 10);
     });
 
     // Count by delivery type (if MERCHANT)
-    let byDeliveryType: Record<string, number> = {};
+    const byDeliveryType: Record<string, number> = {};
     if (user.role === UserRole.MERCHANT) {
       const deliveryTypeStats = await this.shipmentRepository
         .createQueryBuilder('shipment')
@@ -484,7 +484,7 @@ export class ShipmentsService {
         .groupBy('shipment.deliveryType')
         .getRawMany();
 
-      deliveryTypeStats.forEach(stat => {
+      deliveryTypeStats.forEach((stat) => {
         byDeliveryType[stat.deliveryType] = parseInt(stat.count, 10);
       });
     }

@@ -1,7 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto, FilterUserDto, KYCVerificationDto, WalletUpdateDto } from './dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  FilterUserDto,
+  KYCVerificationDto,
+  WalletUpdateDto,
+} from './dto';
 import { JwtAuthGuard, RolesGuard } from '../../common/guards';
 import { Roles, CurrentUser } from '../../common/decorators';
 import { UserRole } from '../../common/enums';
@@ -34,7 +57,7 @@ export class UsersController {
   async findAll(@Query() filterDto: FilterUserDto) {
     const result = await this.usersService.findAll(filterDto);
     // Remove sensitive data
-    const sanitizedData = result.data.map(user => {
+    const sanitizedData = result.data.map((user) => {
       const { password, refreshToken, ...userWithoutSensitiveData } = user;
       return userWithoutSensitiveData;
     });
@@ -44,7 +67,10 @@ export class UsersController {
   @Get('statistics')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get user statistics (Admin only)' })
-  @ApiResponse({ status: 200, description: 'Statistics retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Statistics retrieved successfully',
+  })
   async getStatistics() {
     return await this.usersService.getStatistics();
   }
@@ -57,7 +83,7 @@ export class UsersController {
   async getUsersByRole(@Param('role') role: UserRole) {
     const result = await this.usersService.findAll({ role } as FilterUserDto);
     // Remove sensitive data
-    const sanitizedData = result.data.map(user => {
+    const sanitizedData = result.data.map((user) => {
       const { password, refreshToken, ...userWithoutSensitiveData } = user;
       return userWithoutSensitiveData;
     });
@@ -65,7 +91,14 @@ export class UsersController {
   }
 
   @Get('me')
-  @Roles(UserRole.ADMIN, UserRole.MERCHANT, UserRole.RIDER, UserRole.HUB_STAFF, UserRole.SUPPORT, UserRole.CUSTOMER)
+  @Roles(
+    UserRole.ADMIN,
+    UserRole.MERCHANT,
+    UserRole.RIDER,
+    UserRole.HUB_STAFF,
+    UserRole.SUPPORT,
+    UserRole.CUSTOMER,
+  )
   @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Current user profile retrieved' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -106,7 +139,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Update KYC verification status' })
   @ApiResponse({ status: 200, description: 'KYC status updated successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async updateKYCStatus(@Param('id') id: string, @Body() kycDto: KYCVerificationDto) {
+  async updateKYCStatus(
+    @Param('id') id: string,
+    @Body() kycDto: KYCVerificationDto,
+  ) {
     const user = await this.usersService.updateKYCStatus(id, kycDto);
     // Remove sensitive data
     const { password, refreshToken, ...userWithoutSensitiveData } = user;
@@ -119,7 +155,10 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Wallet updated successfully' })
   @ApiResponse({ status: 400, description: 'Insufficient balance' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async updateWallet(@Param('id') id: string, @Body() walletDto: WalletUpdateDto) {
+  async updateWallet(
+    @Param('id') id: string,
+    @Body() walletDto: WalletUpdateDto,
+  ) {
     const user = await this.usersService.updateWallet(id, walletDto);
     // Remove sensitive data
     const { password, refreshToken, ...userWithoutSensitiveData } = user;

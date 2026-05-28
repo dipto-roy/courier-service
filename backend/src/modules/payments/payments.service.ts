@@ -6,10 +6,17 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
-import { Transaction, TransactionType } from '../../entities/transaction.entity';
+import {
+  Transaction,
+  TransactionType,
+} from '../../entities/transaction.entity';
 import { User } from '../../entities/user.entity';
 import { Shipment } from '../../entities/shipment.entity';
-import { PaymentStatus, PaymentMethod, ShipmentStatus } from '../../common/enums';
+import {
+  PaymentStatus,
+  PaymentMethod,
+  ShipmentStatus,
+} from '../../common/enums';
 import { InitiatePayoutDto, PaymentFilterDto } from './dto';
 
 @Injectable()
@@ -26,7 +33,10 @@ export class PaymentsService {
   /**
    * Record COD collection when shipment is delivered
    */
-  async recordCodCollection(shipmentId: string, riderId: string): Promise<Transaction> {
+  async recordCodCollection(
+    shipmentId: string,
+    riderId: string,
+  ): Promise<Transaction> {
     const shipment = await this.shipmentRepository.findOne({
       where: { id: shipmentId },
       relations: ['merchant'],
@@ -37,7 +47,9 @@ export class PaymentsService {
     }
 
     if (shipment.status !== ShipmentStatus.DELIVERED) {
-      throw new BadRequestException('Can only record COD for delivered shipments');
+      throw new BadRequestException(
+        'Can only record COD for delivered shipments',
+      );
     }
 
     if (shipment.paymentMethod !== PaymentMethod.CASH) {
@@ -53,7 +65,9 @@ export class PaymentsService {
     });
 
     if (existingTransaction) {
-      throw new BadRequestException('COD collection already recorded for this shipment');
+      throw new BadRequestException(
+        'COD collection already recorded for this shipment',
+      );
     }
 
     const transactionId = this.generateTransactionId('COD');
@@ -126,8 +140,12 @@ export class PaymentsService {
   /**
    * Initiate payout to merchant (T+7 settlement)
    */
-  async initiatePayout(initiatePayoutDto: InitiatePayoutDto, adminId: string): Promise<Transaction> {
-    const { merchantId, amount, paymentMethod, description, referenceNumber } = initiatePayoutDto;
+  async initiatePayout(
+    initiatePayoutDto: InitiatePayoutDto,
+    adminId: string,
+  ): Promise<Transaction> {
+    const { merchantId, amount, paymentMethod, description, referenceNumber } =
+      initiatePayoutDto;
 
     const merchant = await this.userRepository.findOne({
       where: { id: merchantId },
@@ -139,7 +157,7 @@ export class PaymentsService {
 
     // Validate merchant has sufficient pending balance
     const pendingBalance = await this.calculatePendingBalance(merchantId);
-    
+
     if (amount > pendingBalance) {
       throw new BadRequestException(
         `Insufficient balance. Available: ${pendingBalance}, Requested: ${amount}`,
@@ -147,7 +165,10 @@ export class PaymentsService {
     }
 
     const transactionId = this.generateTransactionId('POUT');
-    const payoutFee = this.calculatePayoutFee(amount, paymentMethod || PaymentMethod.BANK_TRANSFER);
+    const payoutFee = this.calculatePayoutFee(
+      amount,
+      paymentMethod || PaymentMethod.BANK_TRANSFER,
+    );
     const netAmount = amount - payoutFee;
 
     const transaction = this.transactionRepository.create({
@@ -178,7 +199,10 @@ export class PaymentsService {
   /**
    * Complete a payout transaction
    */
-  async completePayout(transactionId: string, referenceNumber?: string): Promise<Transaction> {
+  async completePayout(
+    transactionId: string,
+    referenceNumber?: string,
+  ): Promise<Transaction> {
     const transaction = await this.transactionRepository.findOne({
       where: { id: transactionId },
     });
@@ -197,7 +221,7 @@ export class PaymentsService {
 
     transaction.status = PaymentStatus.COMPLETED;
     transaction.processedAt = new Date();
-    
+
     if (referenceNumber) {
       transaction.referenceNumber = referenceNumber;
     }
@@ -208,7 +232,10 @@ export class PaymentsService {
   /**
    * Fail a payout transaction and reverse wallet deduction
    */
-  async failPayout(transactionId: string, reason: string): Promise<Transaction> {
+  async failPayout(
+    transactionId: string,
+    reason: string,
+  ): Promise<Transaction> {
     const transaction = await this.transactionRepository.findOne({
       where: { id: transactionId },
       relations: ['user'],
@@ -286,16 +313,23 @@ export class PaymentsService {
     }
 
     if (paymentMethod) {
-      queryBuilder.andWhere('transaction.paymentMethod = :paymentMethod', { paymentMethod });
+      queryBuilder.andWhere('transaction.paymentMethod = :paymentMethod', {
+        paymentMethod,
+      });
     }
 
     if (startDate && endDate) {
-      queryBuilder.andWhere('transaction.createdAt BETWEEN :startDate AND :endDate', {
-        startDate,
-        endDate,
-      });
+      queryBuilder.andWhere(
+        'transaction.createdAt BETWEEN :startDate AND :endDate',
+        {
+          startDate,
+          endDate,
+        },
+      );
     } else if (startDate) {
-      queryBuilder.andWhere('transaction.createdAt >= :startDate', { startDate });
+      queryBuilder.andWhere('transaction.createdAt >= :startDate', {
+        startDate,
+      });
     } else if (endDate) {
       queryBuilder.andWhere('transaction.createdAt <= :endDate', { endDate });
     }
@@ -339,7 +373,7 @@ export class PaymentsService {
 
     // Check which ones haven't been paid out yet
     const pendingCollections: Transaction[] = [];
-    
+
     for (const collection of collections) {
       const payout = await this.transactionRepository.findOne({
         where: {
@@ -369,8 +403,12 @@ export class PaymentsService {
       .createQueryBuilder('transaction')
       .select('SUM(transaction.netAmount)', 'total')
       .where('transaction.userId = :merchantId', { merchantId })
-      .andWhere('transaction.type = :type', { type: TransactionType.COD_COLLECTION })
-      .andWhere('transaction.status = :status', { status: PaymentStatus.COMPLETED })
+      .andWhere('transaction.type = :type', {
+        type: TransactionType.COD_COLLECTION,
+      })
+      .andWhere('transaction.status = :status', {
+        status: PaymentStatus.COMPLETED,
+      })
       .andWhere('transaction.createdAt <= :sevenDaysAgo', { sevenDaysAgo })
       .getRawOne();
 
@@ -381,7 +419,9 @@ export class PaymentsService {
       .createQueryBuilder('transaction')
       .select('SUM(transaction.amount)', 'total')
       .where('transaction.userId = :merchantId', { merchantId })
-      .andWhere('transaction.type = :type', { type: TransactionType.COD_PAYOUT })
+      .andWhere('transaction.type = :type', {
+        type: TransactionType.COD_PAYOUT,
+      })
       .andWhere('transaction.status IN (:...statuses)', {
         statuses: [PaymentStatus.COMPLETED, PaymentStatus.PROCESSING],
       })
@@ -410,8 +450,12 @@ export class PaymentsService {
       .select('SUM(transaction.amount)', 'total')
       .addSelect('COUNT(*)', 'count')
       .where('transaction.userId = :merchantId', { merchantId })
-      .andWhere('transaction.type = :type', { type: TransactionType.COD_COLLECTION })
-      .andWhere('transaction.status = :status', { status: PaymentStatus.COMPLETED })
+      .andWhere('transaction.type = :type', {
+        type: TransactionType.COD_COLLECTION,
+      })
+      .andWhere('transaction.status = :status', {
+        status: PaymentStatus.COMPLETED,
+      })
       .getRawOne();
 
     // Total delivery fees
@@ -419,7 +463,9 @@ export class PaymentsService {
       .createQueryBuilder('transaction')
       .select('SUM(transaction.fee)', 'total')
       .where('transaction.userId = :merchantId', { merchantId })
-      .andWhere('transaction.type = :type', { type: TransactionType.COD_COLLECTION })
+      .andWhere('transaction.type = :type', {
+        type: TransactionType.COD_COLLECTION,
+      })
       .getRawOne();
 
     // Total payouts
@@ -428,8 +474,12 @@ export class PaymentsService {
       .select('SUM(transaction.amount)', 'total')
       .addSelect('COUNT(*)', 'count')
       .where('transaction.userId = :merchantId', { merchantId })
-      .andWhere('transaction.type = :type', { type: TransactionType.COD_PAYOUT })
-      .andWhere('transaction.status = :status', { status: PaymentStatus.COMPLETED })
+      .andWhere('transaction.type = :type', {
+        type: TransactionType.COD_PAYOUT,
+      })
+      .andWhere('transaction.status = :status', {
+        status: PaymentStatus.COMPLETED,
+      })
       .getRawOne();
 
     // Pending balance
@@ -444,8 +494,12 @@ export class PaymentsService {
       .createQueryBuilder('transaction')
       .select('SUM(transaction.netAmount)', 'total')
       .where('transaction.userId = :merchantId', { merchantId })
-      .andWhere('transaction.type = :type', { type: TransactionType.COD_COLLECTION })
-      .andWhere('transaction.status = :status', { status: PaymentStatus.COMPLETED })
+      .andWhere('transaction.type = :type', {
+        type: TransactionType.COD_COLLECTION,
+      })
+      .andWhere('transaction.status = :status', {
+        status: PaymentStatus.COMPLETED,
+      })
       .andWhere('transaction.createdAt >= :startOfMonth', { startOfMonth })
       .getRawOne();
 
@@ -470,8 +524,12 @@ export class PaymentsService {
       .createQueryBuilder('transaction')
       .select('SUM(transaction.amount)', 'total')
       .addSelect('COUNT(*)', 'count')
-      .where('transaction.type = :type', { type: TransactionType.COD_COLLECTION })
-      .andWhere('transaction.status = :status', { status: PaymentStatus.COMPLETED })
+      .where('transaction.type = :type', {
+        type: TransactionType.COD_COLLECTION,
+      })
+      .andWhere('transaction.status = :status', {
+        status: PaymentStatus.COMPLETED,
+      })
       .getRawOne();
 
     // Total payouts
@@ -480,7 +538,9 @@ export class PaymentsService {
       .select('SUM(transaction.amount)', 'total')
       .addSelect('COUNT(*)', 'count')
       .where('transaction.type = :type', { type: TransactionType.COD_PAYOUT })
-      .andWhere('transaction.status = :status', { status: PaymentStatus.COMPLETED })
+      .andWhere('transaction.status = :status', {
+        status: PaymentStatus.COMPLETED,
+      })
       .getRawOne();
 
     // Pending payouts
@@ -489,7 +549,9 @@ export class PaymentsService {
       .select('SUM(transaction.amount)', 'total')
       .addSelect('COUNT(*)', 'count')
       .where('transaction.type = :type', { type: TransactionType.COD_PAYOUT })
-      .andWhere('transaction.status = :status', { status: PaymentStatus.PROCESSING })
+      .andWhere('transaction.status = :status', {
+        status: PaymentStatus.PROCESSING,
+      })
       .getRawOne();
 
     // Today's collections
@@ -499,8 +561,12 @@ export class PaymentsService {
     const todayResult = await this.transactionRepository
       .createQueryBuilder('transaction')
       .select('SUM(transaction.amount)', 'total')
-      .where('transaction.type = :type', { type: TransactionType.COD_COLLECTION })
-      .andWhere('transaction.status = :status', { status: PaymentStatus.COMPLETED })
+      .where('transaction.type = :type', {
+        type: TransactionType.COD_COLLECTION,
+      })
+      .andWhere('transaction.status = :status', {
+        status: PaymentStatus.COMPLETED,
+      })
       .andWhere('transaction.createdAt >= :startOfDay', { startOfDay })
       .getRawOne();
 
@@ -512,8 +578,12 @@ export class PaymentsService {
     const monthResult = await this.transactionRepository
       .createQueryBuilder('transaction')
       .select('SUM(transaction.amount)', 'total')
-      .where('transaction.type = :type', { type: TransactionType.COD_COLLECTION })
-      .andWhere('transaction.status = :status', { status: PaymentStatus.COMPLETED })
+      .where('transaction.type = :type', {
+        type: TransactionType.COD_COLLECTION,
+      })
+      .andWhere('transaction.status = :status', {
+        status: PaymentStatus.COMPLETED,
+      })
       .andWhere('transaction.createdAt >= :startOfMonth', { startOfMonth })
       .getRawOne();
 

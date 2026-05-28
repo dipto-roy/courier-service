@@ -33,7 +33,7 @@ let UsersController = class UsersController {
     }
     async findAll(filterDto) {
         const result = await this.usersService.findAll(filterDto);
-        const sanitizedData = result.data.map(user => {
+        const sanitizedData = result.data.map((user) => {
             const { password, refreshToken, ...userWithoutSensitiveData } = user;
             return userWithoutSensitiveData;
         });
@@ -44,7 +44,7 @@ let UsersController = class UsersController {
     }
     async getUsersByRole(role) {
         const result = await this.usersService.findAll({ role });
-        const sanitizedData = result.data.map(user => {
+        const sanitizedData = result.data.map((user) => {
             const { password, refreshToken, ...userWithoutSensitiveData } = user;
             return userWithoutSensitiveData;
         });
@@ -111,7 +111,10 @@ __decorate([
     (0, common_1.Get)('statistics'),
     (0, decorators_1.Roles)(enums_1.UserRole.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get user statistics (Admin only)' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Statistics retrieved successfully' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Statistics retrieved successfully',
+    }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

@@ -18,7 +18,13 @@ describe('FinanceService', () => {
   let service: FinanceService;
   let transactionRepository: { find: jest.Mock };
   let paymentsService: jest.Mocked<
-    Pick<PaymentsService, 'getTransactions' | 'getOverallStatistics' | 'completePayout' | 'failPayout'>
+    Pick<
+      PaymentsService,
+      | 'getTransactions'
+      | 'getOverallStatistics'
+      | 'completePayout'
+      | 'failPayout'
+    >
   >;
 
   beforeEach(async () => {
@@ -27,16 +33,29 @@ describe('FinanceService', () => {
     };
 
     paymentsService = {
-      getTransactions: jest.fn().mockResolvedValue({ data: [mockTransaction], total: 1 }),
-      getOverallStatistics: jest.fn().mockResolvedValue({ total: 1, totalAmount: 1500 }),
-      completePayout: jest.fn().mockResolvedValue({ ...mockTransaction, status: PaymentStatus.COMPLETED }),
-      failPayout: jest.fn().mockResolvedValue({ ...mockTransaction, status: PaymentStatus.FAILED }),
+      getTransactions: jest
+        .fn()
+        .mockResolvedValue({ data: [mockTransaction], total: 1 }),
+      getOverallStatistics: jest
+        .fn()
+        .mockResolvedValue({ total: 1, totalAmount: 1500 }),
+      completePayout: jest.fn().mockResolvedValue({
+        ...mockTransaction,
+        status: PaymentStatus.COMPLETED,
+      }),
+      failPayout: jest.fn().mockResolvedValue({
+        ...mockTransaction,
+        status: PaymentStatus.FAILED,
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FinanceService,
-        { provide: getRepositoryToken(Transaction), useValue: transactionRepository },
+        {
+          provide: getRepositoryToken(Transaction),
+          useValue: transactionRepository,
+        },
         { provide: PaymentsService, useValue: paymentsService },
       ],
     }).compile();
@@ -91,20 +110,29 @@ describe('FinanceService', () => {
     it('calls completePayout with reference number', async () => {
       const dto: ApprovePayoutDto = { referenceNumber: 'REF-001' };
       await service.approvePayout('txn-uuid-1', dto);
-      expect(paymentsService.completePayout).toHaveBeenCalledWith('txn-uuid-1', 'REF-001');
+      expect(paymentsService.completePayout).toHaveBeenCalledWith(
+        'txn-uuid-1',
+        'REF-001',
+      );
     });
 
     it('calls completePayout without reference number', async () => {
       const dto: ApprovePayoutDto = {};
       await service.approvePayout('txn-uuid-1', dto);
-      expect(paymentsService.completePayout).toHaveBeenCalledWith('txn-uuid-1', undefined);
+      expect(paymentsService.completePayout).toHaveBeenCalledWith(
+        'txn-uuid-1',
+        undefined,
+      );
     });
   });
 
   describe('rejectPayout', () => {
     it('calls failPayout with reason', async () => {
       await service.rejectPayout('txn-uuid-1', 'Fraudulent request');
-      expect(paymentsService.failPayout).toHaveBeenCalledWith('txn-uuid-1', 'Fraudulent request');
+      expect(paymentsService.failPayout).toHaveBeenCalledWith(
+        'txn-uuid-1',
+        'Fraudulent request',
+      );
     });
   });
 

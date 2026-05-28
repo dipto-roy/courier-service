@@ -228,7 +228,11 @@ let SlaWatcherService = SlaWatcherService_1 = class SlaWatcherService {
                 violations.push('Pickup SLA exceeded');
             }
         }
-        if ([shipment_status_enum_1.ShipmentStatus.PICKED_UP, shipment_status_enum_1.ShipmentStatus.IN_TRANSIT, shipment_status_enum_1.ShipmentStatus.OUT_FOR_DELIVERY].includes(shipment.status)) {
+        if ([
+            shipment_status_enum_1.ShipmentStatus.PICKED_UP,
+            shipment_status_enum_1.ShipmentStatus.IN_TRANSIT,
+            shipment_status_enum_1.ShipmentStatus.OUT_FOR_DELIVERY,
+        ].includes(shipment.status)) {
             const deliveryDeadline = new Date(shipment.createdAt);
             deliveryDeadline.setHours(deliveryDeadline.getHours() + this.slaConfig.deliverySLA);
             if (now > deliveryDeadline) {

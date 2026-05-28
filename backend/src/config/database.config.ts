@@ -10,7 +10,9 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => ({
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   // Disable synchronize for production safety - use migrations instead
-  synchronize: process.env.NODE_ENV === 'development' && process.env.USE_MIGRATIONS !== 'true',
+  synchronize:
+    process.env.NODE_ENV === 'development' &&
+    process.env.USE_MIGRATIONS !== 'true',
   migrationsRun: process.env.USE_MIGRATIONS === 'true',
   logging: process.env.NODE_ENV === 'development',
   migrationsTableName: 'migrations_history',

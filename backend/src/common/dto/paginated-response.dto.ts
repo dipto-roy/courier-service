@@ -30,7 +30,7 @@ export class PaginatedResponseDto<T> {
   constructor(data: T[], page: number, limit: number, totalItems: number) {
     this.data = data;
     const totalPages = Math.ceil(totalItems / limit);
-    
+
     this.meta = {
       page,
       limit,

@@ -46,7 +46,10 @@ export class EmailService {
       this.logger.log(`Email sent to ${emailDto.to}: ${info.messageId}`);
       return true;
     } catch (error) {
-      this.logger.error(`Failed to send email to ${emailDto.to}:`, error.message);
+      this.logger.error(
+        `Failed to send email to ${emailDto.to}:`,
+        error.message,
+      );
       throw error;
     }
   }

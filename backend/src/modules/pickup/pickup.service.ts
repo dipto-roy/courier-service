@@ -33,7 +33,10 @@ export class PickupService {
   /**
    * Create a new pickup request (Merchant)
    */
-  async create(createPickupDto: CreatePickupDto, merchant: User): Promise<Pickup> {
+  async create(
+    createPickupDto: CreatePickupDto,
+    merchant: User,
+  ): Promise<Pickup> {
     const pickup = this.pickupRepository.create({
       ...createPickupDto,
       merchantId: merchant.id,
@@ -51,7 +54,17 @@ export class PickupService {
     filterDto: FilterPickupDto,
     user: User,
   ): Promise<PaginatedResponseDto<Pickup>> {
-    const { page = 1, limit = 10, merchantId, agentId, status, pickupCity, fromDate, toDate, search } = filterDto;
+    const {
+      page = 1,
+      limit = 10,
+      merchantId,
+      agentId,
+      status,
+      pickupCity,
+      fromDate,
+      toDate,
+      search,
+    } = filterDto;
 
     const queryBuilder = this.pickupRepository
       .createQueryBuilder('pickup')
@@ -60,7 +73,9 @@ export class PickupService {
 
     // Role-based filtering
     if (user.role === UserRole.MERCHANT) {
-      queryBuilder.andWhere('pickup.merchantId = :merchantId', { merchantId: user.id });
+      queryBuilder.andWhere('pickup.merchantId = :merchantId', {
+        merchantId: user.id,
+      });
     } else if (user.role === UserRole.AGENT) {
       queryBuilder.andWhere('pickup.agentId = :agentId', { agentId: user.id });
     }
@@ -83,10 +98,13 @@ export class PickupService {
     }
 
     if (fromDate && toDate) {
-      queryBuilder.andWhere('pickup.scheduledDate BETWEEN :fromDate AND :toDate', {
-        fromDate: new Date(fromDate),
-        toDate: new Date(toDate),
-      });
+      queryBuilder.andWhere(
+        'pickup.scheduledDate BETWEEN :fromDate AND :toDate',
+        {
+          fromDate: new Date(fromDate),
+          toDate: new Date(toDate),
+        },
+      );
     } else if (fromDate) {
       queryBuilder.andWhere('pickup.scheduledDate >= :fromDate', {
         fromDate: new Date(fromDate),
@@ -143,7 +161,11 @@ export class PickupService {
   /**
    * Update pickup (Merchant/Admin)
    */
-  async update(id: string, updatePickupDto: UpdatePickupDto, user: User): Promise<Pickup> {
+  async update(
+    id: string,
+    updatePickupDto: UpdatePickupDto,
+    user: User,
+  ): Promise<Pickup> {
     const pickup = await this.findOne(id, user);
 
     // Only pending pickups can be updated
@@ -168,15 +190,23 @@ export class PickupService {
   /**
    * Assign pickup to agent (Admin/Hub Staff)
    */
-  async assignPickup(id: string, assignPickupDto: AssignPickupDto): Promise<Pickup> {
+  async assignPickup(
+    id: string,
+    assignPickupDto: AssignPickupDto,
+  ): Promise<Pickup> {
     const pickup = await this.pickupRepository.findOne({ where: { id } });
 
     if (!pickup) {
       throw new NotFoundException(`Pickup with ID ${id} not found`);
     }
 
-    if (pickup.status === PickupStatus.COMPLETED || pickup.status === PickupStatus.CANCELLED) {
-      throw new BadRequestException('Cannot assign a completed or cancelled pickup');
+    if (
+      pickup.status === PickupStatus.COMPLETED ||
+      pickup.status === PickupStatus.CANCELLED
+    ) {
+      throw new BadRequestException(
+        'Cannot assign a completed or cancelled pickup',
+      );
     }
 
     // Verify agent exists and has AGENT role
@@ -206,7 +236,9 @@ export class PickupService {
 
     // Only assigned agent can start pickup
     if (pickup.agentId !== user.id) {
-      throw new ForbiddenException('You can only start pickups assigned to you');
+      throw new ForbiddenException(
+        'You can only start pickups assigned to you',
+      );
     }
 
     if (pickup.status !== PickupStatus.ASSIGNED) {
@@ -237,11 +269,18 @@ export class PickupService {
 
     // Only assigned agent can complete pickup
     if (pickup.agentId !== user.id) {
-      throw new ForbiddenException('You can only complete pickups assigned to you');
+      throw new ForbiddenException(
+        'You can only complete pickups assigned to you',
+      );
     }
 
-    if (pickup.status !== PickupStatus.IN_PROGRESS && pickup.status !== PickupStatus.ASSIGNED) {
-      throw new BadRequestException('Only in-progress or assigned pickups can be completed');
+    if (
+      pickup.status !== PickupStatus.IN_PROGRESS &&
+      pickup.status !== PickupStatus.ASSIGNED
+    ) {
+      throw new BadRequestException(
+        'Only in-progress or assigned pickups can be completed',
+      );
     }
 
     // Validate and update shipments
@@ -255,9 +294,13 @@ export class PickupService {
     }
 
     // Verify all shipments belong to the pickup merchant
-    const invalidShipments = shipments.filter((s) => s.merchantId !== pickup.merchantId);
+    const invalidShipments = shipments.filter(
+      (s) => s.merchantId !== pickup.merchantId,
+    );
     if (invalidShipments.length > 0) {
-      throw new BadRequestException('Some shipments do not belong to this merchant');
+      throw new BadRequestException(
+        'Some shipments do not belong to this merchant',
+      );
     }
 
     // Update shipment status and link to pickup
@@ -270,7 +313,7 @@ export class PickupService {
     // Update pickup
     pickup.status = PickupStatus.COMPLETED;
     pickup.pickupDate = new Date();
-    
+
     if (completePickupDto.signatureUrl) {
       pickup.signatureUrl = completePickupDto.signatureUrl;
     }
@@ -286,7 +329,7 @@ export class PickupService {
     if (completePickupDto.notes) {
       pickup.notes = completePickupDto.notes;
     }
-    
+
     pickup.totalShipments = shipments.length;
 
     return await this.pickupRepository.save(pickup);
@@ -320,7 +363,9 @@ export class PickupService {
 
     // Role-based filtering
     if (user.role === UserRole.MERCHANT) {
-      queryBuilder.where('pickup.merchantId = :merchantId', { merchantId: user.id });
+      queryBuilder.where('pickup.merchantId = :merchantId', {
+        merchantId: user.id,
+      });
     } else if (user.role === UserRole.AGENT) {
       queryBuilder.where('pickup.agentId = :agentId', { agentId: user.id });
     }
@@ -362,7 +407,9 @@ export class PickupService {
    */
   async getAgentTodayPickups(user: User): Promise<Pickup[]> {
     if (user.role !== UserRole.AGENT) {
-      throw new ForbiddenException('Only agents can view their assigned pickups');
+      throw new ForbiddenException(
+        'Only agents can view their assigned pickups',
+      );
     }
 
     const today = new Date();

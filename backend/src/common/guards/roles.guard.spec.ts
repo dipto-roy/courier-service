@@ -5,7 +5,10 @@ import { RolesGuard } from './roles.guard';
 import { ROLES_KEY } from '../decorators';
 import { UserRole } from '../enums';
 
-function createContext(userRole: string | undefined, requiredRoles: UserRole[] | undefined): ExecutionContext {
+function createContext(
+  userRole: string | undefined,
+  requiredRoles: UserRole[] | undefined,
+): ExecutionContext {
   const reflector = {
     getAllAndOverride: jest.fn().mockReturnValue(requiredRoles),
   } as unknown as Reflector;
@@ -51,39 +54,48 @@ describe('RolesGuard', () => {
   });
 
   it('allows access when user role matches required role', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRole.ADMIN]);
+    jest
+      .spyOn(reflector, 'getAllAndOverride')
+      .mockReturnValue([UserRole.ADMIN]);
     const ctx = {
       getHandler: jest.fn(),
       getClass: jest.fn(),
       switchToHttp: jest.fn().mockReturnValue({
-        getRequest: jest.fn().mockReturnValue({ user: { role: UserRole.ADMIN } }),
+        getRequest: jest
+          .fn()
+          .mockReturnValue({ user: { role: UserRole.ADMIN } }),
       }),
     } as unknown as ExecutionContext;
     expect(guard.canActivate(ctx)).toBe(true);
   });
 
   it('denies access when user role does not match', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([UserRole.ADMIN]);
+    jest
+      .spyOn(reflector, 'getAllAndOverride')
+      .mockReturnValue([UserRole.ADMIN]);
     const ctx = {
       getHandler: jest.fn(),
       getClass: jest.fn(),
       switchToHttp: jest.fn().mockReturnValue({
-        getRequest: jest.fn().mockReturnValue({ user: { role: UserRole.CUSTOMER } }),
+        getRequest: jest
+          .fn()
+          .mockReturnValue({ user: { role: UserRole.CUSTOMER } }),
       }),
     } as unknown as ExecutionContext;
     expect(guard.canActivate(ctx)).toBe(false);
   });
 
   it('allows access when user has one of multiple required roles', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([
-      UserRole.ADMIN,
-      UserRole.FINANCE,
-    ]);
+    jest
+      .spyOn(reflector, 'getAllAndOverride')
+      .mockReturnValue([UserRole.ADMIN, UserRole.FINANCE]);
     const ctx = {
       getHandler: jest.fn(),
       getClass: jest.fn(),
       switchToHttp: jest.fn().mockReturnValue({
-        getRequest: jest.fn().mockReturnValue({ user: { role: UserRole.FINANCE } }),
+        getRequest: jest
+          .fn()
+          .mockReturnValue({ user: { role: UserRole.FINANCE } }),
       }),
     } as unknown as ExecutionContext;
     expect(guard.canActivate(ctx)).toBe(true);

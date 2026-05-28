@@ -1,15 +1,26 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationDto } from '../../../common/dto';
-import { ShipmentStatus, DeliveryType, PaymentMethod, PaymentStatus } from '../../../common/enums';
+import {
+  ShipmentStatus,
+  DeliveryType,
+  PaymentMethod,
+  PaymentStatus,
+} from '../../../common/enums';
 
 export class FilterShipmentDto extends PaginationDto {
-  @ApiPropertyOptional({ example: 'FX20251028', description: 'Search by AWB number' })
+  @ApiPropertyOptional({
+    example: 'FX20251028',
+    description: 'Search by AWB number',
+  })
   @IsString()
   @IsOptional()
   awb?: string;
 
-  @ApiPropertyOptional({ example: 'merchant-uuid', description: 'Filter by merchant ID' })
+  @ApiPropertyOptional({
+    example: 'merchant-uuid',
+    description: 'Filter by merchant ID',
+  })
   @IsString()
   @IsOptional()
   merchantId?: string;
@@ -50,22 +61,34 @@ export class FilterShipmentDto extends PaginationDto {
   @IsOptional()
   paymentStatus?: PaymentStatus;
 
-  @ApiPropertyOptional({ example: 'Dhaka', description: 'Filter by receiver city' })
+  @ApiPropertyOptional({
+    example: 'Dhaka',
+    description: 'Filter by receiver city',
+  })
   @IsString()
   @IsOptional()
   receiverCity?: string;
 
-  @ApiPropertyOptional({ example: '2025-10-28', description: 'Filter from date (YYYY-MM-DD)' })
+  @ApiPropertyOptional({
+    example: '2025-10-28',
+    description: 'Filter from date (YYYY-MM-DD)',
+  })
   @IsString()
   @IsOptional()
   fromDate?: string;
 
-  @ApiPropertyOptional({ example: '2025-10-29', description: 'Filter to date (YYYY-MM-DD)' })
+  @ApiPropertyOptional({
+    example: '2025-10-29',
+    description: 'Filter to date (YYYY-MM-DD)',
+  })
   @IsString()
   @IsOptional()
   toDate?: string;
 
-  @ApiPropertyOptional({ example: 'John Doe', description: 'Search by receiver name or phone' })
+  @ApiPropertyOptional({
+    example: 'John Doe',
+    description: 'Search by receiver name or phone',
+  })
   @IsString()
   @IsOptional()
   declare search?: string;
