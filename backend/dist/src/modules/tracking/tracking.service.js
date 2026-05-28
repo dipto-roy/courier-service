@@ -77,7 +77,8 @@ let TrackingService = class TrackingService {
         }
         const timeline = await this.generateTimeline(shipment);
         let currentLocation = null;
-        if (shipment.riderId && shipment.status === enums_1.ShipmentStatus.OUT_FOR_DELIVERY) {
+        if (shipment.riderId &&
+            shipment.status === enums_1.ShipmentStatus.OUT_FOR_DELIVERY) {
             currentLocation = await this.getRiderCurrentLocation(shipment.riderId);
         }
         const eta = this.calculateETA(shipment);
@@ -171,7 +172,9 @@ let TrackingService = class TrackingService {
                 relations: ['agent'],
             });
             if (pickup) {
-                if (pickup.status === 'assigned' || pickup.status === 'in_progress' || pickup.status === 'completed') {
+                if (pickup.status === 'assigned' ||
+                    pickup.status === 'in_progress' ||
+                    pickup.status === 'completed') {
                     timeline.push({
                         status: 'PICKUP_ASSIGNED',
                         timestamp: pickup.updatedAt,
@@ -259,7 +262,7 @@ let TrackingService = class TrackingService {
         }
         if (shipment.deliveryAttempts > 0 && shipment.failedReason) {
             const attemptTime = new Date();
-            attemptTime.setHours(attemptTime.getHours() - (shipment.deliveryAttempts * 2));
+            attemptTime.setHours(attemptTime.getHours() - shipment.deliveryAttempts * 2);
             timeline.push({
                 status: 'FAILED_DELIVERY',
                 timestamp: attemptTime,
@@ -329,7 +332,8 @@ let TrackingService = class TrackingService {
         if (shipment.expectedDeliveryDate) {
             const now = new Date();
             if (shipment.expectedDeliveryDate > now) {
-                const hoursRemaining = Math.ceil((shipment.expectedDeliveryDate.getTime() - now.getTime()) / (1000 * 60 * 60));
+                const hoursRemaining = Math.ceil((shipment.expectedDeliveryDate.getTime() - now.getTime()) /
+                    (1000 * 60 * 60));
                 if (hoursRemaining <= 24) {
                     return `${hoursRemaining} hours`;
                 }

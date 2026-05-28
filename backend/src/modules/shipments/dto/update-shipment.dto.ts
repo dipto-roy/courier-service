@@ -9,7 +9,11 @@ import {
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { DeliveryType, PaymentMethod, ShipmentStatus } from '../../../common/enums';
+import {
+  DeliveryType,
+  PaymentMethod,
+  ShipmentStatus,
+} from '../../../common/enums';
 
 class UpdateAddressDto {
   @ApiPropertyOptional({ example: 'John Doe' })

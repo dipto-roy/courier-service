@@ -38,7 +38,9 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException('User with this email or phone already exists');
+      throw new ConflictException(
+        'User with this email or phone already exists',
+      );
     }
 
     // Hash password
@@ -88,7 +90,8 @@ export class AuthService {
     await this.userRepository.save(user);
 
     return {
-      message: 'User created successfully. Please verify your account with OTP.',
+      message:
+        'User created successfully. Please verify your account with OTP.',
       user: this.sanitizeUser(user),
       ...tokens,
     };
@@ -314,7 +317,14 @@ export class AuthService {
   }
 
   private sanitizeUser(user: User) {
-    const { password, refreshToken, otpCode, otpExpiry, twoFaSecret, ...sanitized } = user;
+    const {
+      password,
+      refreshToken,
+      otpCode,
+      otpExpiry,
+      twoFaSecret,
+      ...sanitized
+    } = user;
     return sanitized;
   }
 

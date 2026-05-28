@@ -310,10 +310,10 @@ let ShipmentsService = class ShipmentsService {
             .groupBy('shipment.status')
             .getRawMany();
         const byStatus = {};
-        statusStats.forEach(stat => {
+        statusStats.forEach((stat) => {
             byStatus[stat.status] = parseInt(stat.count, 10);
         });
-        let byDeliveryType = {};
+        const byDeliveryType = {};
         if (user.role === enums_1.UserRole.MERCHANT) {
             const deliveryTypeStats = await this.shipmentRepository
                 .createQueryBuilder('shipment')
@@ -322,7 +322,7 @@ let ShipmentsService = class ShipmentsService {
                 .where('shipment.merchantId = :merchantId', { merchantId: user.id })
                 .groupBy('shipment.deliveryType')
                 .getRawMany();
-            deliveryTypeStats.forEach(stat => {
+            deliveryTypeStats.forEach((stat) => {
                 byDeliveryType[stat.deliveryType] = parseInt(stat.count, 10);
             });
         }

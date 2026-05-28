@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { RiderService } from './rider.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { Shipment } from '../../entities/shipment.entity';
 import { Manifest } from '../../entities/manifest.entity';
 import { RiderLocation } from '../../entities/rider-location.entity';
@@ -100,6 +101,13 @@ describe('RiderService', () => {
           provide: getRepositoryToken(User),
           useValue: {
             findOne: jest.fn(),
+          },
+        },
+        {
+          provide: NotificationsService,
+          useValue: {
+            createAndSend: jest.fn().mockResolvedValue(undefined),
+            sendNotification: jest.fn().mockResolvedValue(undefined),
           },
         },
       ],

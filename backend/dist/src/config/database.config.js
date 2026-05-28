@@ -10,7 +10,8 @@ const getDatabaseConfig = () => ({
     database: process.env.DATABASE_NAME || 'courier_service',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-    synchronize: process.env.NODE_ENV === 'development' && process.env.USE_MIGRATIONS !== 'true',
+    synchronize: process.env.NODE_ENV === 'development' &&
+        process.env.USE_MIGRATIONS !== 'true',
     migrationsRun: process.env.USE_MIGRATIONS === 'true',
     logging: process.env.NODE_ENV === 'development',
     migrationsTableName: 'migrations_history',

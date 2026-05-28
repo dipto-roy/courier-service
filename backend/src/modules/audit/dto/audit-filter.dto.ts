@@ -34,7 +34,8 @@ export class AuditFilterDto {
   entityId?: string;
 
   @ApiPropertyOptional({
-    description: 'Action performed (create, update, delete, status_change, etc.)',
+    description:
+      'Action performed (create, update, delete, status_change, etc.)',
     example: 'update',
   })
   @IsString()

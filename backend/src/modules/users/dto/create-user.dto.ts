@@ -1,4 +1,11 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '../../../common/enums';
 
@@ -8,7 +15,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   fullName: string;
 
-  @ApiProperty({ example: 'john.doe@example.com', description: 'Email address' })
+  @ApiProperty({
+    example: 'john.doe@example.com',
+    description: 'Email address',
+  })
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -18,13 +28,20 @@ export class CreateUserDto {
   @IsNotEmpty()
   phone: string;
 
-  @ApiProperty({ example: 'Password@123', description: 'User password (min 6 characters)' })
+  @ApiProperty({
+    example: 'Password@123',
+    description: 'User password (min 6 characters)',
+  })
   @IsString()
   @MinLength(6)
   @IsNotEmpty()
   password: string;
 
-  @ApiProperty({ enum: UserRole, example: UserRole.MERCHANT, description: 'User role' })
+  @ApiProperty({
+    enum: UserRole,
+    example: UserRole.MERCHANT,
+    description: 'User role',
+  })
   @IsEnum(UserRole)
   @IsNotEmpty()
   role: UserRole;
@@ -39,17 +56,26 @@ export class CreateUserDto {
   @IsOptional()
   area?: string;
 
-  @ApiPropertyOptional({ example: 'House 12, Road 5', description: 'Detailed address' })
+  @ApiPropertyOptional({
+    example: 'House 12, Road 5',
+    description: 'Detailed address',
+  })
   @IsString()
   @IsOptional()
   address?: string;
 
-  @ApiPropertyOptional({ example: 'ABC Company Ltd.', description: 'Company name (for Merchant)' })
+  @ApiPropertyOptional({
+    example: 'ABC Company Ltd.',
+    description: 'Company name (for Merchant)',
+  })
   @IsString()
   @IsOptional()
   companyName?: string;
 
-  @ApiPropertyOptional({ example: 'www.abccompany.com', description: 'Business website' })
+  @ApiPropertyOptional({
+    example: 'www.abccompany.com',
+    description: 'Business website',
+  })
   @IsString()
   @IsOptional()
   businessWebsite?: string;

@@ -5,12 +5,14 @@ import { RiderLocation } from '../../entities/rider-location.entity';
 import { User } from '../../entities/user.entity';
 import { ShipmentStatus, PaymentMethod, PaymentStatus } from '../../common/enums';
 import { DeliveryAttemptDto, FailedDeliveryDto, UpdateLocationDto, RTODto, GenerateOTPDto } from './dto';
+import { NotificationsService } from '../notifications/notifications.service';
 export declare class RiderService {
     private shipmentRepository;
     private manifestRepository;
     private riderLocationRepository;
     private userRepository;
-    constructor(shipmentRepository: Repository<Shipment>, manifestRepository: Repository<Manifest>, riderLocationRepository: Repository<RiderLocation>, userRepository: Repository<User>);
+    private notificationsService;
+    constructor(shipmentRepository: Repository<Shipment>, manifestRepository: Repository<Manifest>, riderLocationRepository: Repository<RiderLocation>, userRepository: Repository<User>, notificationsService: NotificationsService);
     getAssignedManifests(riderId: string): Promise<{
         success: boolean;
         total: number;

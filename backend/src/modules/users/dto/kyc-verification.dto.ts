@@ -7,7 +7,10 @@ export class KYCVerificationDto {
   @IsNotEmpty()
   isKYCVerified: boolean;
 
-  @ApiPropertyOptional({ example: 'KYC documents verified successfully', description: 'Verification remarks' })
+  @ApiPropertyOptional({
+    example: 'KYC documents verified successfully',
+    description: 'Verification remarks',
+  })
   @IsString()
   @IsOptional()
   kycRemarks?: string;

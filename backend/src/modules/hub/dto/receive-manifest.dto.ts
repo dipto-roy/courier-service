@@ -3,7 +3,8 @@ import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class ReceiveManifestDto {
   @ApiProperty({
-    description: 'Array of shipment AWB numbers actually received (may differ from manifest)',
+    description:
+      'Array of shipment AWB numbers actually received (may differ from manifest)',
     example: ['FXC2025010001', 'FXC2025010002'],
     type: [String],
   })

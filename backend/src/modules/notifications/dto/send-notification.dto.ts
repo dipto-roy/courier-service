@@ -81,7 +81,8 @@ export class SendEmailDto {
 
   @ApiPropertyOptional({
     description: 'HTML content for email body',
-    example: '<h1>Shipment Delivered</h1><p>Your shipment has been delivered.</p>',
+    example:
+      '<h1>Shipment Delivered</h1><p>Your shipment has been delivered.</p>',
   })
   @IsString()
   @IsOptional()
@@ -173,7 +174,10 @@ export class SendPushNotificationDto {
 
   @ApiPropertyOptional({
     description: 'Additional data payload',
-    example: { shipmentId: '123e4567-e89b-12d3-a456-426614174001', action: 'VIEW_SHIPMENT' },
+    example: {
+      shipmentId: '123e4567-e89b-12d3-a456-426614174001',
+      action: 'VIEW_SHIPMENT',
+    },
   })
   @IsObject()
   @IsOptional()

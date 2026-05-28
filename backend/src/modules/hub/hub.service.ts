@@ -114,7 +114,7 @@ export class HubService {
     for (const shipment of shipments) {
       shipment.status = ShipmentStatus.IN_HUB;
       shipment.currentHub = hubLocation;
-      
+
       if (manifestId) {
         shipment.manifestId = manifestId;
       }
@@ -387,7 +387,7 @@ export class HubService {
     manifest.status = ManifestStatus.RECEIVED;
     manifest.receivedDate = new Date();
     manifest.receivedById = user.id;
-    
+
     if (notes || notInManifest.length > 0 || notReceived.length > 0) {
       const discrepancyNotes: string[] = [];
       if (notInManifest.length > 0) {
@@ -430,9 +430,7 @@ export class HubService {
     }
 
     if (manifest.status !== ManifestStatus.RECEIVED) {
-      throw new BadRequestException(
-        'Can only close received manifests',
-      );
+      throw new BadRequestException('Can only close received manifests');
     }
 
     manifest.status = ManifestStatus.CLOSED;
@@ -540,10 +538,13 @@ export class HubService {
     }
 
     if (fromDate && toDate) {
-      queryBuilder.andWhere('manifest.dispatchDate BETWEEN :fromDate AND :toDate', {
-        fromDate: new Date(fromDate),
-        toDate: new Date(toDate),
-      });
+      queryBuilder.andWhere(
+        'manifest.dispatchDate BETWEEN :fromDate AND :toDate',
+        {
+          fromDate: new Date(fromDate),
+          toDate: new Date(toDate),
+        },
+      );
     }
 
     if (search) {
@@ -579,7 +580,13 @@ export class HubService {
   async findOne(manifestId: string) {
     const manifest = await this.manifestRepository.findOne({
       where: { id: manifestId },
-      relations: ['createdBy', 'receivedBy', 'rider', 'shipments', 'shipments.merchant'],
+      relations: [
+        'createdBy',
+        'receivedBy',
+        'rider',
+        'shipments',
+        'shipments.merchant',
+      ],
     });
 
     if (!manifest) {
@@ -615,7 +622,8 @@ export class HubService {
 
     shipments.forEach((shipment) => {
       // Count by next hub/destination
-      const destination = shipment.nextHub || shipment.deliveryArea || 'Unknown';
+      const destination =
+        shipment.nextHub || shipment.deliveryArea || 'Unknown';
       statistics.byDestination[destination] =
         (statistics.byDestination[destination] || 0) + 1;
 
@@ -664,10 +672,30 @@ export class HubService {
 
     const [total, created, inTransit, received, closed] = await Promise.all([
       queryBuilder.getCount(),
-      queryBuilder.clone().andWhere('manifest.status = :status', { status: ManifestStatus.CREATED }).getCount(),
-      queryBuilder.clone().andWhere('manifest.status = :status', { status: ManifestStatus.IN_TRANSIT }).getCount(),
-      queryBuilder.clone().andWhere('manifest.status = :status', { status: ManifestStatus.RECEIVED }).getCount(),
-      queryBuilder.clone().andWhere('manifest.status = :status', { status: ManifestStatus.CLOSED }).getCount(),
+      queryBuilder
+        .clone()
+        .andWhere('manifest.status = :status', {
+          status: ManifestStatus.CREATED,
+        })
+        .getCount(),
+      queryBuilder
+        .clone()
+        .andWhere('manifest.status = :status', {
+          status: ManifestStatus.IN_TRANSIT,
+        })
+        .getCount(),
+      queryBuilder
+        .clone()
+        .andWhere('manifest.status = :status', {
+          status: ManifestStatus.RECEIVED,
+        })
+        .getCount(),
+      queryBuilder
+        .clone()
+        .andWhere('manifest.status = :status', {
+          status: ManifestStatus.CLOSED,
+        })
+        .getCount(),
     ]);
 
     return {

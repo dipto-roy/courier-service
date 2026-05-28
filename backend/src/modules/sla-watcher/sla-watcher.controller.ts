@@ -1,10 +1,10 @@
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import {
-  Controller,
-  Get,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SlaWatcherService } from './sla-watcher.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -22,7 +22,8 @@ export class SlaWatcherController {
   @Roles(UserRole.ADMIN, UserRole.SUPPORT, UserRole.HUB_STAFF)
   @ApiOperation({
     summary: 'Get SLA violation statistics',
-    description: 'Get overall SLA violation statistics including pickup and delivery violations.',
+    description:
+      'Get overall SLA violation statistics including pickup and delivery violations.',
   })
   @ApiResponse({
     status: 200,
@@ -58,7 +59,8 @@ export class SlaWatcherController {
   @Roles(UserRole.ADMIN, UserRole.SUPPORT, UserRole.MERCHANT, UserRole.CUSTOMER)
   @ApiOperation({
     summary: 'Check SLA status for specific shipment',
-    description: 'Check if a specific shipment has any SLA violations and get detailed information.',
+    description:
+      'Check if a specific shipment has any SLA violations and get detailed information.',
   })
   @ApiResponse({
     status: 200,
@@ -95,7 +97,8 @@ export class SlaWatcherController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get SLA queue status',
-    description: 'Get the current status of the SLA watcher queue including waiting, active, and completed jobs.',
+    description:
+      'Get the current status of the SLA watcher queue including waiting, active, and completed jobs.',
   })
   @ApiResponse({
     status: 200,

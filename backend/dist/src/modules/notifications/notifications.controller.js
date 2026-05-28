@@ -138,7 +138,9 @@ __decorate([
     (0, swagger_1.ApiResponse)({
         status: 201,
         description: 'Email queued successfully',
-        schema: { example: { success: true, message: 'Email queued for delivery' } },
+        schema: {
+            example: { success: true, message: 'Email queued for delivery' },
+        },
     }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -166,7 +168,12 @@ __decorate([
     (0, swagger_1.ApiResponse)({
         status: 201,
         description: 'Push notification queued successfully',
-        schema: { example: { success: true, message: 'Push notification queued for delivery' } },
+        schema: {
+            example: {
+                success: true,
+                message: 'Push notification queued for delivery',
+            },
+        },
     }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -177,7 +184,12 @@ __decorate([
     (0, common_1.Get)('my-notifications'),
     (0, roles_decorator_1.Roles)(enums_1.UserRole.CUSTOMER, enums_1.UserRole.MERCHANT, enums_1.UserRole.ADMIN, enums_1.UserRole.SUPPORT, enums_1.UserRole.HUB_STAFF, enums_1.UserRole.RIDER),
     (0, swagger_1.ApiOperation)({ summary: 'Get current user notifications' }),
-    (0, swagger_1.ApiQuery)({ name: 'isRead', required: false, type: Boolean, description: 'Filter by read status' }),
+    (0, swagger_1.ApiQuery)({
+        name: 'isRead',
+        required: false,
+        type: Boolean,
+        description: 'Filter by read status',
+    }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'User notifications retrieved',
@@ -241,7 +253,9 @@ __decorate([
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'All notifications marked as read',
-        schema: { example: { success: true, message: 'All notifications marked as read' } },
+        schema: {
+            example: { success: true, message: 'All notifications marked as read' },
+        },
     }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
@@ -266,7 +280,9 @@ __decorate([
 __decorate([
     (0, common_1.Get)('users/:userId'),
     (0, roles_decorator_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.SUPPORT),
-    (0, swagger_1.ApiOperation)({ summary: 'Get notifications for a specific user (Admin only)' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get notifications for a specific user (Admin only)',
+    }),
     (0, swagger_1.ApiParam)({ name: 'userId', description: 'User ID' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
@@ -305,7 +321,9 @@ __decorate([
 __decorate([
     (0, common_1.Get)('statistics/user/:userId'),
     (0, roles_decorator_1.Roles)(enums_1.UserRole.ADMIN, enums_1.UserRole.SUPPORT),
-    (0, swagger_1.ApiOperation)({ summary: 'Get notification statistics for a user (Admin only)' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get notification statistics for a user (Admin only)',
+    }),
     (0, swagger_1.ApiParam)({ name: 'userId', description: 'User ID' }),
     (0, swagger_1.ApiResponse)({
         status: 200,

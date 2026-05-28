@@ -8,7 +8,13 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuditService } from './audit.service';
 import { AuditFilterDto, CreateAuditLogDto } from './dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -30,7 +36,8 @@ export class AuditController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Create audit log manually',
-    description: 'Manually create an audit log entry. Used for system events or custom logging.',
+    description:
+      'Manually create an audit log entry. Used for system events or custom logging.',
   })
   @ApiResponse({
     status: 201,
@@ -78,17 +85,55 @@ export class AuditController {
   @Roles(UserRole.ADMIN, UserRole.SUPPORT)
   @ApiOperation({
     summary: 'Get audit logs with filtering',
-    description: 'Retrieve audit logs with optional filtering by user, entity, action, date range, and IP address. Supports pagination.',
+    description:
+      'Retrieve audit logs with optional filtering by user, entity, action, date range, and IP address. Supports pagination.',
   })
-  @ApiQuery({ name: 'userId', required: false, description: 'Filter by user ID' })
-  @ApiQuery({ name: 'entityType', required: false, description: 'Filter by entity type (e.g., shipment, user, pickup)' })
-  @ApiQuery({ name: 'entityId', required: false, description: 'Filter by entity ID' })
-  @ApiQuery({ name: 'action', required: false, description: 'Filter by action (e.g., create, update, delete, status_change)' })
-  @ApiQuery({ name: 'startDate', required: false, description: 'Start date for date range filter (ISO 8601)' })
-  @ApiQuery({ name: 'endDate', required: false, description: 'End date for date range filter (ISO 8601)' })
-  @ApiQuery({ name: 'ipAddress', required: false, description: 'Filter by IP address' })
-  @ApiQuery({ name: 'page', required: false, description: 'Page number (default: 1)' })
-  @ApiQuery({ name: 'limit', required: false, description: 'Items per page (default: 20, max: 100)' })
+  @ApiQuery({
+    name: 'userId',
+    required: false,
+    description: 'Filter by user ID',
+  })
+  @ApiQuery({
+    name: 'entityType',
+    required: false,
+    description: 'Filter by entity type (e.g., shipment, user, pickup)',
+  })
+  @ApiQuery({
+    name: 'entityId',
+    required: false,
+    description: 'Filter by entity ID',
+  })
+  @ApiQuery({
+    name: 'action',
+    required: false,
+    description:
+      'Filter by action (e.g., create, update, delete, status_change)',
+  })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    description: 'Start date for date range filter (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    description: 'End date for date range filter (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'ipAddress',
+    required: false,
+    description: 'Filter by IP address',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Items per page (default: 20, max: 100)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Audit logs retrieved successfully',
@@ -168,7 +213,8 @@ export class AuditController {
   @Roles(UserRole.ADMIN, UserRole.SUPPORT)
   @ApiOperation({
     summary: 'Get entity audit trail',
-    description: 'Retrieve the complete audit trail for a specific entity, showing all changes in chronological order.',
+    description:
+      'Retrieve the complete audit trail for a specific entity, showing all changes in chronological order.',
   })
   @ApiResponse({
     status: 200,
@@ -201,7 +247,10 @@ export class AuditController {
     @Param('entityType') entityType: string,
     @Param('entityId') entityId: string,
   ) {
-    const auditTrail = await this.auditService.getEntityAuditTrail(entityType, entityId);
+    const auditTrail = await this.auditService.getEntityAuditTrail(
+      entityType,
+      entityId,
+    );
 
     return {
       success: true,
@@ -216,9 +265,14 @@ export class AuditController {
   @Roles(UserRole.ADMIN, UserRole.SUPPORT)
   @ApiOperation({
     summary: 'Get user activity logs',
-    description: 'Retrieve all actions performed by a specific user, ordered by most recent first.',
+    description:
+      'Retrieve all actions performed by a specific user, ordered by most recent first.',
   })
-  @ApiQuery({ name: 'limit', required: false, description: 'Maximum number of logs to return (default: 50)' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Maximum number of logs to return (default: 50)',
+  })
   @ApiResponse({
     status: 200,
     description: 'User activity logs retrieved successfully',
@@ -244,9 +298,14 @@ export class AuditController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get recent audit logs',
-    description: 'Retrieve the most recent audit logs across the entire system for admin dashboard.',
+    description:
+      'Retrieve the most recent audit logs across the entire system for admin dashboard.',
   })
-  @ApiQuery({ name: 'limit', required: false, description: 'Maximum number of logs to return (default: 100)' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Maximum number of logs to return (default: 100)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Recent audit logs retrieved successfully',
@@ -268,10 +327,19 @@ export class AuditController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Get audit statistics',
-    description: 'Get comprehensive audit statistics including total logs, breakdown by entity type and action, top users, and activity trends.',
+    description:
+      'Get comprehensive audit statistics including total logs, breakdown by entity type and action, top users, and activity trends.',
   })
-  @ApiQuery({ name: 'startDate', required: false, description: 'Start date for statistics (ISO 8601)' })
-  @ApiQuery({ name: 'endDate', required: false, description: 'End date for statistics (ISO 8601)' })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    description: 'Start date for statistics (ISO 8601)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    description: 'End date for statistics (ISO 8601)',
+  })
   @ApiResponse({
     status: 200,
     description: 'Audit statistics retrieved successfully',
@@ -313,7 +381,10 @@ export class AuditController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    const statistics = await this.auditService.getAuditStatistics(startDate, endDate);
+    const statistics = await this.auditService.getAuditStatistics(
+      startDate,
+      endDate,
+    );
 
     return {
       success: true,
@@ -325,7 +396,8 @@ export class AuditController {
   @Roles(UserRole.ADMIN, UserRole.SUPPORT)
   @ApiOperation({
     summary: 'Get user audit statistics',
-    description: 'Get detailed audit statistics for a specific user, including activity breakdown and recent actions.',
+    description:
+      'Get detailed audit statistics for a specific user, including activity breakdown and recent actions.',
   })
   @ApiResponse({
     status: 200,
@@ -374,7 +446,9 @@ export class AuditController {
   private getIpAddress(req: Request): string {
     const forwarded = req.headers['x-forwarded-for'];
     if (forwarded) {
-      return typeof forwarded === 'string' ? forwarded.split(',')[0] : forwarded[0];
+      return typeof forwarded === 'string'
+        ? forwarded.split(',')[0]
+        : forwarded[0];
     }
     return req.ip || req.socket.remoteAddress || 'unknown';
   }

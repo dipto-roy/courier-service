@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export enum WalletOperationType {
@@ -7,7 +14,11 @@ export enum WalletOperationType {
 }
 
 export class WalletUpdateDto {
-  @ApiProperty({ enum: WalletOperationType, example: WalletOperationType.CREDIT, description: 'Operation type' })
+  @ApiProperty({
+    enum: WalletOperationType,
+    example: WalletOperationType.CREDIT,
+    description: 'Operation type',
+  })
   @IsEnum(WalletOperationType)
   @IsNotEmpty()
   operation: WalletOperationType;
@@ -18,7 +29,10 @@ export class WalletUpdateDto {
   @IsNotEmpty()
   amount: number;
 
-  @ApiPropertyOptional({ example: 'Payment for delivery charges', description: 'Transaction remarks' })
+  @ApiPropertyOptional({
+    example: 'Payment for delivery charges',
+    description: 'Transaction remarks',
+  })
   @IsString()
   @IsOptional()
   remarks?: string;

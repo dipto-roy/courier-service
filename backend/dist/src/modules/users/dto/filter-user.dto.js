@@ -24,37 +24,56 @@ class FilterUserDto extends dto_1.PaginationDto {
 }
 exports.FilterUserDto = FilterUserDto;
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'John Doe', description: 'Search by name, email, or phone' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'John Doe',
+        description: 'Search by name, email, or phone',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], FilterUserDto.prototype, "search", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ enum: enums_1.UserRole, example: enums_1.UserRole.MERCHANT, description: 'Filter by role' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        enum: enums_1.UserRole,
+        example: enums_1.UserRole.MERCHANT,
+        description: 'Filter by role',
+    }),
     (0, class_validator_1.IsEnum)(enums_1.UserRole),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], FilterUserDto.prototype, "role", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: true, description: 'Filter by active status' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: true,
+        description: 'Filter by active status',
+    }),
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], FilterUserDto.prototype, "isActive", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: true, description: 'Filter by email verification status' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: true,
+        description: 'Filter by email verification status',
+    }),
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], FilterUserDto.prototype, "isEmailVerified", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: true, description: 'Filter by phone verification status' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: true,
+        description: 'Filter by phone verification status',
+    }),
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], FilterUserDto.prototype, "isPhoneVerified", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: true, description: 'Filter by KYC verification status' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: true,
+        description: 'Filter by KYC verification status',
+    }),
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)

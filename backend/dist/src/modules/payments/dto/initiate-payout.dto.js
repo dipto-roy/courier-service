@@ -32,7 +32,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'Payout amount',
-        example: 15000.50,
+        example: 15000.5,
         minimum: 0,
     }),
     (0, class_validator_1.IsNumber)(),

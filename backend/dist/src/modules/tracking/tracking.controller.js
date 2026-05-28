@@ -76,7 +76,11 @@ __decorate([
         summary: 'Public shipment tracking by AWB',
         description: 'Track shipment status without authentication. Returns safe subset of data.',
     }),
-    (0, swagger_1.ApiParam)({ name: 'awb', description: 'Shipment AWB number', example: 'FX20250128000001' }),
+    (0, swagger_1.ApiParam)({
+        name: 'awb',
+        description: 'Shipment AWB number',
+        example: 'FX20250128000001',
+    }),
     (0, swagger_1.ApiQuery)({
         name: 'phone',
         required: false,

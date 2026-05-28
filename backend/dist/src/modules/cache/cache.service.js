@@ -165,7 +165,7 @@ let CacheService = CacheService_1 = class CacheService {
     }
     async lpush(key, ...values) {
         try {
-            const stringValues = values.map(v => JSON.stringify(v));
+            const stringValues = values.map((v) => JSON.stringify(v));
             await this.redisClient.lpush(key, ...stringValues);
         }
         catch (error) {
@@ -174,7 +174,7 @@ let CacheService = CacheService_1 = class CacheService {
     }
     async rpush(key, ...values) {
         try {
-            const stringValues = values.map(v => JSON.stringify(v));
+            const stringValues = values.map((v) => JSON.stringify(v));
             await this.redisClient.rpush(key, ...stringValues);
         }
         catch (error) {
@@ -184,7 +184,7 @@ let CacheService = CacheService_1 = class CacheService {
     async lrange(key, start, stop) {
         try {
             const values = await this.redisClient.lrange(key, start, stop);
-            return values.map(v => JSON.parse(v));
+            return values.map((v) => JSON.parse(v));
         }
         catch (error) {
             this.logger.error(`Error getting list range from ${key}:`, error.message);
@@ -201,7 +201,7 @@ let CacheService = CacheService_1 = class CacheService {
     }
     async sadd(key, ...members) {
         try {
-            const stringMembers = members.map(m => JSON.stringify(m));
+            const stringMembers = members.map((m) => JSON.stringify(m));
             await this.redisClient.sadd(key, ...stringMembers);
         }
         catch (error) {
@@ -210,7 +210,7 @@ let CacheService = CacheService_1 = class CacheService {
     }
     async srem(key, ...members) {
         try {
-            const stringMembers = members.map(m => JSON.stringify(m));
+            const stringMembers = members.map((m) => JSON.stringify(m));
             await this.redisClient.srem(key, ...stringMembers);
         }
         catch (error) {
@@ -220,7 +220,7 @@ let CacheService = CacheService_1 = class CacheService {
     async smembers(key) {
         try {
             const members = await this.redisClient.smembers(key);
-            return members.map(m => JSON.parse(m));
+            return members.map((m) => JSON.parse(m));
         }
         catch (error) {
             this.logger.error(`Error getting set members from ${key}:`, error.message);
@@ -298,7 +298,7 @@ let CacheService = CacheService_1 = class CacheService {
     async zrangebyscore(key, min, max) {
         try {
             const members = await this.redisClient.zrangebyscore(key, min, max);
-            return members.map(m => JSON.parse(m));
+            return members.map((m) => JSON.parse(m));
         }
         catch (error) {
             this.logger.error(`Error getting sorted set range from ${key}:`, error.message);

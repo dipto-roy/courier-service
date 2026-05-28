@@ -22,4 +22,5 @@ __exportStar(require("./rider-location.entity"), exports);
 __exportStar(require("./transaction.entity"), exports);
 __exportStar(require("./notification.entity"), exports);
 __exportStar(require("./audit-log.entity"), exports);
+__exportStar(require("./support-ticket.entity"), exports);
 //# sourceMappingURL=index.js.map

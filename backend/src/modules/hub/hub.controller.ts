@@ -194,7 +194,8 @@ export class HubController {
   @Roles(UserRole.ADMIN, UserRole.HUB_STAFF)
   @ApiOperation({
     summary: 'Get manifest statistics',
-    description: 'Get count of manifests by status, optionally filtered by hub.',
+    description:
+      'Get count of manifests by status, optionally filtered by hub.',
   })
   @ApiQuery({
     name: 'hubLocation',
@@ -224,7 +225,8 @@ export class HubController {
   @Roles(UserRole.ADMIN, UserRole.HUB_STAFF, UserRole.RIDER)
   @ApiOperation({
     summary: 'Get manifest details by ID',
-    description: 'Get full manifest details including all shipments and related data.',
+    description:
+      'Get full manifest details including all shipments and related data.',
   })
   @ApiParam({
     name: 'id',
@@ -296,7 +298,10 @@ export class HubController {
     status: 200,
     description: 'Manifest closed successfully',
   })
-  @ApiResponse({ status: 400, description: 'Can only close received manifests' })
+  @ApiResponse({
+    status: 400,
+    description: 'Can only close received manifests',
+  })
   closeManifest(@Param('id') id: string, @CurrentUser() user: User) {
     return this.hubService.closeManifest(id, user);
   }

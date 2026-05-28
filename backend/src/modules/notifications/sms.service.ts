@@ -11,7 +11,9 @@ export class SmsService {
 
   constructor(private configService: ConfigService) {
     // Configure your SMS gateway (e.g., Twilio, BulkSMS, local BD provider)
-    this.apiUrl = this.configService.get('SMS_API_URL') || 'https://api.sms-gateway.com/send';
+    this.apiUrl =
+      this.configService.get('SMS_API_URL') ||
+      'https://api.sms-gateway.com/send';
     this.apiKey = this.configService.get('SMS_API_KEY') || '';
     this.senderId = this.configService.get('SMS_SENDER_ID') || 'FastX';
 
@@ -46,16 +48,16 @@ export class SmsService {
       switch (smsProvider) {
         case 'twilio':
           return await this.sendViaTwilio(to, message);
-        
+
         case 'ssl-wireless':
           return await this.sendViaSSLWireless(to, message);
-        
+
         case 'nexmo':
           return await this.sendViaNexmo(to, message);
-        
+
         case 'generic':
           return await this.sendViaGenericAPI(to, message);
-        
+
         default:
           // Log mode for development (no actual SMS sent)
           this.logger.log(`[DEV MODE] SMS would be sent to ${to}: ${message}`);
@@ -100,11 +102,15 @@ export class SmsService {
   /**
    * Send SMS via SSL Wireless (Bangladesh)
    */
-  private async sendViaSSLWireless(to: string, message: string): Promise<boolean> {
+  private async sendViaSSLWireless(
+    to: string,
+    message: string,
+  ): Promise<boolean> {
     try {
       const apiToken = this.configService.get('SSL_SMS_API_TOKEN');
       const sid = this.configService.get('SSL_SMS_SID');
-      const senderId = this.configService.get('SSL_SMS_SENDER_ID') || this.senderId;
+      const senderId =
+        this.configService.get('SSL_SMS_SENDER_ID') || this.senderId;
 
       if (!apiToken || !sid) {
         throw new Error('SSL Wireless credentials not configured');
@@ -123,16 +129,21 @@ export class SmsService {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            Accept: 'application/json',
           },
-        }
+        },
       );
 
-      if (response.data.status === 'success' || response.data.status === 'SUCCESS') {
+      if (
+        response.data.status === 'success' ||
+        response.data.status === 'SUCCESS'
+      ) {
         this.logger.log(`SMS sent via SSL Wireless to ${to}`);
         return true;
       } else {
-        throw new Error(`SSL Wireless error: ${response.data.message || 'Unknown error'}`);
+        throw new Error(
+          `SSL Wireless error: ${response.data.message || 'Unknown error'}`,
+        );
       }
     } catch (error) {
       this.logger.error('SSL Wireless SMS error:', error.message);
@@ -147,7 +158,8 @@ export class SmsService {
     try {
       const apiKey = this.configService.get('NEXMO_API_KEY');
       const apiSecret = this.configService.get('NEXMO_API_SECRET');
-      const fromName = this.configService.get('NEXMO_FROM_NAME') || this.senderId;
+      const fromName =
+        this.configService.get('NEXMO_FROM_NAME') || this.senderId;
 
       if (!apiKey || !apiSecret) {
         throw new Error('Nexmo credentials not configured');
@@ -166,7 +178,9 @@ export class SmsService {
         this.logger.log(`SMS sent via Nexmo to ${to}`);
         return true;
       } else {
-        throw new Error(`Nexmo error: ${response.data.messages[0]['error-text']}`);
+        throw new Error(
+          `Nexmo error: ${response.data.messages[0]['error-text']}`,
+        );
       }
     } catch (error) {
       this.logger.error('Nexmo SMS error:', error.message);
@@ -177,7 +191,10 @@ export class SmsService {
   /**
    * Send SMS via Generic REST API
    */
-  private async sendViaGenericAPI(to: string, message: string): Promise<boolean> {
+  private async sendViaGenericAPI(
+    to: string,
+    message: string,
+  ): Promise<boolean> {
     try {
       if (!this.apiUrl || !this.apiKey) {
         throw new Error('Generic API credentials not configured');
@@ -195,9 +212,9 @@ export class SmsService {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.apiKey}`,
+            Authorization: `Bearer ${this.apiKey}`,
           },
-        }
+        },
       );
 
       this.logger.log(`SMS sent via Generic API to ${to}`);
@@ -212,31 +229,31 @@ export class SmsService {
     const templates = {
       'shipment-created': (ctx: any) =>
         `FastX: Your shipment ${ctx.awb} has been created. Track at ${ctx.trackingUrl}`,
-      
+
       'shipment-picked-up': (ctx: any) =>
         `FastX: Shipment ${ctx.awb} picked up and in transit. Expected delivery: ${ctx.expectedDelivery}`,
-      
+
       'out-for-delivery': (ctx: any) =>
         `FastX: Your shipment ${ctx.awb} is out for delivery. Rider: ${ctx.riderName} ${ctx.riderPhone}`,
-      
-      'delivered': (ctx: any) =>
+
+      delivered: (ctx: any) =>
         `FastX: Shipment ${ctx.awb} delivered successfully at ${ctx.deliveredAt}. Thank you!`,
-      
+
       'failed-delivery': (ctx: any) =>
         `FastX: Delivery failed for ${ctx.awb}. Reason: ${ctx.failureReason}. Contact: ${ctx.supportPhone}`,
-      
+
       'otp-verification': (ctx: any) =>
         `FastX: Your OTP is ${ctx.otp}. Valid for ${ctx.expiryMinutes || 5} minutes. Do not share.`,
-      
+
       'delivery-otp': (ctx: any) =>
         `FastX: Your delivery OTP for ${ctx.awb} is ${ctx.otp}. Share with rider to confirm delivery.`,
-      
+
       'cod-collection': (ctx: any) =>
         `FastX: COD ${ctx.amount} BDT collected for ${ctx.awb}. Transaction ID: ${ctx.transactionId}`,
-      
+
       'payout-initiated': (ctx: any) =>
         `FastX: Payout of ${ctx.amount} BDT initiated. Ref: ${ctx.transactionId}`,
-      
+
       'payout-completed': (ctx: any) =>
         `FastX: Payout completed. ${ctx.amount} BDT credited. Ref: ${ctx.referenceNumber}`,
     };
@@ -252,12 +269,12 @@ export class SmsService {
 
   async sendBulkSms(recipients: string[], message: string): Promise<boolean> {
     try {
-      const promises = recipients.map(phone => 
-        this.sendSms({ to: phone, message })
+      const promises = recipients.map((phone) =>
+        this.sendSms({ to: phone, message }),
       );
-      
+
       await Promise.all(promises);
-      
+
       this.logger.log(`Bulk SMS sent to ${recipients.length} recipients`);
       return true;
     } catch (error) {
@@ -271,16 +288,20 @@ export class SmsService {
       to: phone,
       message: '',
       template: 'otp-verification',
-      context: { otp, expiryMinutes: 5 }
+      context: { otp, expiryMinutes: 5 },
     });
   }
 
-  async sendDeliveryOtp(phone: string, awb: string, otp: string): Promise<boolean> {
+  async sendDeliveryOtp(
+    phone: string,
+    awb: string,
+    otp: string,
+  ): Promise<boolean> {
     return this.sendSms({
       to: phone,
       message: '',
       template: 'delivery-otp',
-      context: { awb, otp }
+      context: { awb, otp },
     });
   }
 }

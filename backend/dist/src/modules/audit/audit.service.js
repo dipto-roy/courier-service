@@ -73,7 +73,9 @@ let AuditService = AuditService_1 = class AuditService {
             .createQueryBuilder('audit')
             .leftJoinAndSelect('audit.user', 'user');
         if (filters.userId) {
-            queryBuilder.andWhere('audit.userId = :userId', { userId: filters.userId });
+            queryBuilder.andWhere('audit.userId = :userId', {
+                userId: filters.userId,
+            });
         }
         if (filters.entityType) {
             queryBuilder.andWhere('audit.entityType = :entityType', {
@@ -86,7 +88,9 @@ let AuditService = AuditService_1 = class AuditService {
             });
         }
         if (filters.action) {
-            queryBuilder.andWhere('audit.action = :action', { action: filters.action });
+            queryBuilder.andWhere('audit.action = :action', {
+                action: filters.action,
+            });
         }
         if (filters.ipAddress) {
             queryBuilder.andWhere('audit.ipAddress = :ipAddress', {
@@ -206,13 +210,13 @@ let AuditService = AuditService_1 = class AuditService {
                 acc[item.action] = parseInt(item.count);
                 return acc;
             }, {}),
-            topUsers: topUsers.map(user => ({
+            topUsers: topUsers.map((user) => ({
                 userId: user.userId,
                 userName: user.userName,
                 userEmail: user.userEmail,
                 activityCount: parseInt(user.count),
             })),
-            activityByDate: activityByDate.map(item => ({
+            activityByDate: activityByDate.map((item) => ({
                 date: item.date,
                 count: parseInt(item.count),
             })),
@@ -300,10 +304,12 @@ let AuditService = AuditService_1 = class AuditService {
         if (changedFields.length === 0) {
             return `${action} on ${entityType}`;
         }
-        const fieldList = changedFields.map(field => {
+        const fieldList = changedFields
+            .map((field) => {
             const change = changes[field];
             return `${field}: ${change.old} → ${change.new}`;
-        }).join(', ');
+        })
+            .join(', ');
         return `${action} on ${entityType}: ${fieldList}`;
     }
 };

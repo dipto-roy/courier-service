@@ -1,8 +1,20 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, FindOptionsWhere } from 'typeorm';
 import { User } from '../../entities';
-import { CreateUserDto, UpdateUserDto, FilterUserDto, KYCVerificationDto, WalletUpdateDto, WalletOperationType } from './dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  FilterUserDto,
+  KYCVerificationDto,
+  WalletUpdateDto,
+  WalletOperationType,
+} from './dto';
 import { PaginatedResponseDto } from '../../common/dto';
 import { hashPassword } from '../../common/utils';
 
@@ -19,10 +31,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Check if email or phone already exists
     const existingUser = await this.userRepository.findOne({
-      where: [
-        { email: createUserDto.email },
-        { phone: createUserDto.phone },
-      ],
+      where: [{ email: createUserDto.email }, { phone: createUserDto.phone }],
     });
 
     if (existingUser) {
@@ -51,21 +60,31 @@ export class UsersService {
    * Get all users with pagination and filters
    */
   async findAll(filterDto: FilterUserDto): Promise<PaginatedResponseDto<User>> {
-    const { page = 1, limit = 10, search, role, isActive, isEmailVerified, isPhoneVerified, isKYCVerified, city } = filterDto;
-    
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      role,
+      isActive,
+      isEmailVerified,
+      isPhoneVerified,
+      isKYCVerified,
+      city,
+    } = filterDto;
+
     const skip = (page - 1) * limit;
-    
+
     // Build where conditions
     const where: FindOptionsWhere<User> = {};
-    
+
     if (role) {
       where.role = role;
     }
-    
+
     if (typeof isActive === 'boolean') {
       where.isActive = isActive;
     }
-    
+
     if (isEmailVerified !== undefined) {
       where.isVerified = isEmailVerified; // Using isVerified as the entity field
     }
@@ -76,18 +95,19 @@ export class UsersService {
 
     if (isKYCVerified !== undefined) {
       where.isKycVerified = isKYCVerified;
-    }    if (city) {
+    }
+    if (city) {
       where.city = city;
     }
 
     // Create query builder for search
     const queryBuilder = this.userRepository.createQueryBuilder('user');
-    
+
     // Apply filters
     Object.keys(where).forEach((key) => {
       queryBuilder.andWhere(`user.${key} = :${key}`, { [key]: where[key] });
     });
-    
+
     // Apply search
     if (search) {
       queryBuilder.andWhere(
@@ -95,10 +115,10 @@ export class UsersService {
         { search: `%${search}%` },
       );
     }
-    
+
     // Get total count
     const totalItems = await queryBuilder.getCount();
-    
+
     // Get paginated data
     const data = await queryBuilder
       .orderBy('user.createdAt', 'DESC')
@@ -126,11 +146,11 @@ export class UsersService {
    */
   async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
-    
+
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    
+
     return user;
   }
 
@@ -176,7 +196,7 @@ export class UsersService {
 
     // Update user
     Object.assign(user, updateUserDto);
-    
+
     return await this.userRepository.save(user);
   }
 
@@ -240,9 +260,15 @@ export class UsersService {
    */
   async getStatistics() {
     const totalUsers = await this.userRepository.count();
-    const activeUsers = await this.userRepository.count({ where: { isActive: true } });
-    const verifiedUsers = await this.userRepository.count({ where: { isVerified: true } });
-    const kycVerifiedUsers = await this.userRepository.count({ where: { isKycVerified: true } });
+    const activeUsers = await this.userRepository.count({
+      where: { isActive: true },
+    });
+    const verifiedUsers = await this.userRepository.count({
+      where: { isVerified: true },
+    });
+    const kycVerifiedUsers = await this.userRepository.count({
+      where: { isKycVerified: true },
+    });
 
     // Count by role
     const roleStats = await this.userRepository

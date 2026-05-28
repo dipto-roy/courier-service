@@ -87,8 +87,17 @@ export class TrackingService {
     const timeline = await this.generateTimeline(shipment);
 
     // Get current location if rider is assigned
-    let currentLocation: { latitude: number; longitude: number; accuracy: number; timestamp: Date; isOnline: boolean; } | null = null;
-    if (shipment.riderId && shipment.status === ShipmentStatus.OUT_FOR_DELIVERY) {
+    let currentLocation: {
+      latitude: number;
+      longitude: number;
+      accuracy: number;
+      timestamp: Date;
+      isOnline: boolean;
+    } | null = null;
+    if (
+      shipment.riderId &&
+      shipment.status === ShipmentStatus.OUT_FOR_DELIVERY
+    ) {
       currentLocation = await this.getRiderCurrentLocation(shipment.riderId);
     }
 
@@ -100,7 +109,8 @@ export class TrackingService {
       tracking: {
         awb: shipment.awb,
         status: shipment.status,
-        currentLocation: shipment.currentHub || shipment.currentHub || 'In Transit',
+        currentLocation:
+          shipment.currentHub || shipment.currentHub || 'In Transit',
         expectedDeliveryDate: shipment.expectedDeliveryDate,
         actualDeliveryDate: shipment.actualDeliveryDate,
         eta,
@@ -136,8 +146,15 @@ export class TrackingService {
     }
 
     const timeline = await this.generateTimeline(shipment);
-    
-    let riderLocation: Array<{ latitude: number; longitude: number; accuracy: number; speed: number; heading: number; timestamp: Date; }> | null = null;
+
+    let riderLocation: Array<{
+      latitude: number;
+      longitude: number;
+      accuracy: number;
+      speed: number;
+      heading: number;
+      timestamp: Date;
+    }> | null = null;
     if (shipment.riderId) {
       riderLocation = await this.getRiderLocationHistory(shipment.riderId, 10);
     }
@@ -151,23 +168,23 @@ export class TrackingService {
         id: shipment.id,
         awb: shipment.awb,
         status: shipment.status,
-        
+
         // Merchant info
         merchantId: shipment.merchantId,
         merchantName: shipment.merchant?.name,
-        
+
         // Customer info
         receiverName: shipment.receiverName,
         receiverPhone: shipment.receiverPhone,
         receiverAddress: shipment.receiverAddress,
         deliveryArea: shipment.deliveryArea,
-        
+
         // Shipment details
         weight: shipment.weight,
         deliveryType: shipment.deliveryType,
         paymentMethod: shipment.paymentMethod,
         codAmount: shipment.codAmount,
-        
+
         // Tracking details
         currentHub: shipment.currentHub,
         nextHub: shipment.nextHub,
@@ -175,26 +192,26 @@ export class TrackingService {
         manifestId: shipment.manifestId,
         riderId: shipment.riderId,
         riderName: shipment.rider?.name,
-        
+
         // Dates
         expectedDeliveryDate: shipment.expectedDeliveryDate,
         actualDeliveryDate: shipment.actualDeliveryDate,
         createdAt: shipment.createdAt,
-        
+
         // Delivery info
         deliveryAttempts: shipment.deliveryAttempts,
         failedReason: shipment.failedReason,
         deliveryNote: shipment.deliveryNote,
-        
+
         // RTO info
         isRto: shipment.isRto,
         rtoReason: shipment.rtoReason,
-        
+
         // POD
         signatureUrl: shipment.signatureUrl,
         podPhotoUrl: shipment.podPhotoUrl,
         pickupPhotoUrl: shipment.pickupPhotoUrl,
-        
+
         // Calculated
         eta,
         timeline,
@@ -226,7 +243,11 @@ export class TrackingService {
 
       if (pickup) {
         // Use status field to determine if assigned/completed
-        if (pickup.status === 'assigned' || pickup.status === 'in_progress' || pickup.status === 'completed') {
+        if (
+          pickup.status === 'assigned' ||
+          pickup.status === 'in_progress' ||
+          pickup.status === 'completed'
+        ) {
           timeline.push({
             status: 'PICKUP_ASSIGNED',
             timestamp: pickup.updatedAt,
@@ -249,22 +270,24 @@ export class TrackingService {
     }
 
     // 3. Hub operations - inbound scan
-    if (shipment.status === ShipmentStatus.IN_HUB || 
-        shipment.status === ShipmentStatus.IN_TRANSIT ||
-        shipment.status === ShipmentStatus.OUT_FOR_DELIVERY ||
-        shipment.status === ShipmentStatus.DELIVERED ||
-        shipment.status === ShipmentStatus.FAILED_DELIVERY) {
+    if (
+      shipment.status === ShipmentStatus.IN_HUB ||
+      shipment.status === ShipmentStatus.IN_TRANSIT ||
+      shipment.status === ShipmentStatus.OUT_FOR_DELIVERY ||
+      shipment.status === ShipmentStatus.DELIVERED ||
+      shipment.status === ShipmentStatus.FAILED_DELIVERY
+    ) {
       // Add hub inbound event (estimated based on pickup completion + 2 hours)
       if (shipment.pickupId) {
         const pickup = await this.pickupRepository.findOne({
           where: { id: shipment.pickupId },
           select: ['pickupDate', 'status'],
         });
-        
+
         if (pickup?.pickupDate) {
           const hubArrival = new Date(pickup.pickupDate);
           hubArrival.setHours(hubArrival.getHours() + 2);
-          
+
           timeline.push({
             status: 'IN_HUB',
             timestamp: hubArrival,
@@ -305,10 +328,11 @@ export class TrackingService {
     }
 
     // 5. Out for delivery
-    if (shipment.status === ShipmentStatus.OUT_FOR_DELIVERY ||
-        shipment.status === ShipmentStatus.DELIVERED ||
-        shipment.status === ShipmentStatus.FAILED_DELIVERY) {
-      
+    if (
+      shipment.status === ShipmentStatus.OUT_FOR_DELIVERY ||
+      shipment.status === ShipmentStatus.DELIVERED ||
+      shipment.status === ShipmentStatus.FAILED_DELIVERY
+    ) {
       // Get first location update after status became OUT_FOR_DELIVERY
       if (shipment.riderId) {
         const firstLocation = await this.riderLocationRepository.findOne({
@@ -332,8 +356,10 @@ export class TrackingService {
     if (shipment.deliveryAttempts > 0 && shipment.failedReason) {
       // Estimate failed attempt times (we don't have exact timestamps)
       const attemptTime = new Date();
-      attemptTime.setHours(attemptTime.getHours() - (shipment.deliveryAttempts * 2));
-      
+      attemptTime.setHours(
+        attemptTime.getHours() - shipment.deliveryAttempts * 2,
+      );
+
       timeline.push({
         status: 'FAILED_DELIVERY',
         timestamp: attemptTime,
@@ -429,9 +455,10 @@ export class TrackingService {
       const now = new Date();
       if (shipment.expectedDeliveryDate > now) {
         const hoursRemaining = Math.ceil(
-          (shipment.expectedDeliveryDate.getTime() - now.getTime()) / (1000 * 60 * 60)
+          (shipment.expectedDeliveryDate.getTime() - now.getTime()) /
+            (1000 * 60 * 60),
         );
-        
+
         if (hoursRemaining <= 24) {
           return `${hoursRemaining} hours`;
         } else {
@@ -446,17 +473,17 @@ export class TrackingService {
       case ShipmentStatus.PENDING:
       case ShipmentStatus.PICKUP_ASSIGNED:
         return '2-3 days';
-      
+
       case ShipmentStatus.PICKED_UP:
       case ShipmentStatus.IN_HUB:
         return '1-2 days';
-      
+
       case ShipmentStatus.IN_TRANSIT:
         return '12-24 hours';
-      
+
       case ShipmentStatus.OUT_FOR_DELIVERY:
         return '2-4 hours';
-      
+
       default:
         return null;
     }
@@ -465,7 +492,11 @@ export class TrackingService {
   /**
    * Emit status change event via Pusher and Redis pub/sub
    */
-  async emitStatusChange(shipment: Shipment, oldStatus: ShipmentStatus, newStatus: ShipmentStatus) {
+  async emitStatusChange(
+    shipment: Shipment,
+    oldStatus: ShipmentStatus,
+    newStatus: ShipmentStatus,
+  ) {
     const trackingData = {
       awb: shipment.awb,
       oldStatus,
@@ -487,7 +518,7 @@ export class TrackingService {
       await this.pusher.trigger(
         `shipment-${shipment.awb}`,
         'status-changed',
-        trackingData
+        trackingData,
       );
 
       // Also emit to merchant channel
@@ -495,7 +526,7 @@ export class TrackingService {
         await this.pusher.trigger(
           `merchant-${shipment.merchantId}`,
           'shipment-updated',
-          trackingData
+          trackingData,
         );
       }
     } catch (error) {
@@ -509,7 +540,11 @@ export class TrackingService {
   /**
    * Emit location update via Pusher and Redis pub/sub
    */
-  async emitLocationUpdate(riderId: string, location: any, shipmentAwb?: string) {
+  async emitLocationUpdate(
+    riderId: string,
+    location: any,
+    shipmentAwb?: string,
+  ) {
     const locationData = {
       riderId,
       latitude: location.latitude,
@@ -521,18 +556,25 @@ export class TrackingService {
     // Emit to Redis pub/sub
     await this.cacheService.publish(`rider:location:${riderId}`, locationData);
     if (shipmentAwb) {
-      await this.cacheService.publish(`tracking:${shipmentAwb}:location`, locationData);
+      await this.cacheService.publish(
+        `tracking:${shipmentAwb}:location`,
+        locationData,
+      );
     }
 
     // Store latest location in cache (5 minute TTL)
-    await this.cacheService.set(`rider:location:latest:${riderId}`, locationData, 300);
+    await this.cacheService.set(
+      `rider:location:latest:${riderId}`,
+      locationData,
+      300,
+    );
 
     try {
       // Emit to rider channel
       await this.pusher.trigger(
         `rider-${riderId}`,
         'location-updated',
-        locationData
+        locationData,
       );
 
       // If shipment AWB provided, emit to shipment channel too
@@ -540,7 +582,7 @@ export class TrackingService {
         await this.pusher.trigger(
           `shipment-${shipmentAwb}`,
           'rider-location-updated',
-          locationData
+          locationData,
         );
       }
     } catch (error) {

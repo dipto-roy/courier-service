@@ -35,9 +35,14 @@ export class TrackingController {
   @Get('public/:awb')
   @ApiOperation({
     summary: 'Public shipment tracking by AWB',
-    description: 'Track shipment status without authentication. Returns safe subset of data.',
+    description:
+      'Track shipment status without authentication. Returns safe subset of data.',
   })
-  @ApiParam({ name: 'awb', description: 'Shipment AWB number', example: 'FX20250128000001' })
+  @ApiParam({
+    name: 'awb',
+    description: 'Shipment AWB number',
+    example: 'FX20250128000001',
+  })
   @ApiQuery({
     name: 'phone',
     required: false,
@@ -107,11 +112,18 @@ export class TrackingController {
 
   @Get('detailed/:awb')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.MERCHANT, UserRole.HUB_STAFF, UserRole.SUPPORT, UserRole.CUSTOMER)
+  @Roles(
+    UserRole.ADMIN,
+    UserRole.MERCHANT,
+    UserRole.HUB_STAFF,
+    UserRole.SUPPORT,
+    UserRole.CUSTOMER,
+  )
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get detailed tracking information',
-    description: 'Get comprehensive tracking data including all shipment details (requires authentication)',
+    description:
+      'Get comprehensive tracking data including all shipment details (requires authentication)',
   })
   @ApiParam({ name: 'awb', description: 'Shipment AWB number' })
   @ApiResponse({
@@ -128,7 +140,8 @@ export class TrackingController {
   @Get('subscription/:awb')
   @ApiOperation({
     summary: 'Get Pusher subscription info for real-time updates',
-    description: 'Returns Pusher channel and event information for WebSocket connection',
+    description:
+      'Returns Pusher channel and event information for WebSocket connection',
   })
   @ApiParam({ name: 'awb', description: 'Shipment AWB number' })
   @ApiResponse({
@@ -157,7 +170,8 @@ export class TrackingController {
   @Get('gateway-status')
   @ApiOperation({
     summary: 'Get WebSocket gateway status',
-    description: 'Check if WebSocket server is operational and get connection stats',
+    description:
+      'Check if WebSocket server is operational and get connection stats',
   })
   @ApiResponse({
     status: 200,
@@ -207,7 +221,8 @@ export class TrackingController {
   @Get('test-event/:awb')
   @ApiOperation({
     summary: 'Send test WebSocket event',
-    description: 'Broadcasts a test event to all clients subscribed to this AWB (for debugging)',
+    description:
+      'Broadcasts a test event to all clients subscribed to this AWB (for debugging)',
   })
   @ApiParam({ name: 'awb', description: 'Shipment AWB number' })
   @ApiResponse({
@@ -225,7 +240,8 @@ export class TrackingController {
   @Get('monitor')
   @ApiOperation({
     summary: 'Get WebSocket monitoring data',
-    description: 'Returns comprehensive monitoring information for WebSocket gateway',
+    description:
+      'Returns comprehensive monitoring information for WebSocket gateway',
   })
   @ApiResponse({
     status: 200,

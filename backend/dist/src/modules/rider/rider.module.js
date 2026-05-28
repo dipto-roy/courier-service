@@ -15,6 +15,7 @@ const shipment_entity_1 = require("../../entities/shipment.entity");
 const manifest_entity_1 = require("../../entities/manifest.entity");
 const rider_location_entity_1 = require("../../entities/rider-location.entity");
 const user_entity_1 = require("../../entities/user.entity");
+const notifications_module_1 = require("../notifications/notifications.module");
 let RiderModule = class RiderModule {
 };
 exports.RiderModule = RiderModule;
@@ -22,6 +23,7 @@ exports.RiderModule = RiderModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([shipment_entity_1.Shipment, manifest_entity_1.Manifest, rider_location_entity_1.RiderLocation, user_entity_1.User]),
+            notifications_module_1.NotificationsModule,
         ],
         controllers: [rider_controller_1.RiderController],
         providers: [rider_service_1.RiderService],

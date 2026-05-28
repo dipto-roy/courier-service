@@ -7,9 +7,7 @@ import { User } from '../../entities/user.entity';
 import { Shipment } from '../../entities/shipment.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Transaction, User, Shipment]),
-  ],
+  imports: [TypeOrmModule.forFeature([Transaction, User, Shipment])],
   controllers: [PaymentsController],
   providers: [PaymentsService],
   exports: [PaymentsService],

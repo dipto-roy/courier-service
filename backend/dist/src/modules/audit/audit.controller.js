@@ -105,7 +105,9 @@ let AuditController = class AuditController {
     getIpAddress(req) {
         const forwarded = req.headers['x-forwarded-for'];
         if (forwarded) {
-            return typeof forwarded === 'string' ? forwarded.split(',')[0] : forwarded[0];
+            return typeof forwarded === 'string'
+                ? forwarded.split(',')[0]
+                : forwarded[0];
         }
         return req.ip || req.socket.remoteAddress || 'unknown';
     }
@@ -150,15 +152,51 @@ __decorate([
         summary: 'Get audit logs with filtering',
         description: 'Retrieve audit logs with optional filtering by user, entity, action, date range, and IP address. Supports pagination.',
     }),
-    (0, swagger_1.ApiQuery)({ name: 'userId', required: false, description: 'Filter by user ID' }),
-    (0, swagger_1.ApiQuery)({ name: 'entityType', required: false, description: 'Filter by entity type (e.g., shipment, user, pickup)' }),
-    (0, swagger_1.ApiQuery)({ name: 'entityId', required: false, description: 'Filter by entity ID' }),
-    (0, swagger_1.ApiQuery)({ name: 'action', required: false, description: 'Filter by action (e.g., create, update, delete, status_change)' }),
-    (0, swagger_1.ApiQuery)({ name: 'startDate', required: false, description: 'Start date for date range filter (ISO 8601)' }),
-    (0, swagger_1.ApiQuery)({ name: 'endDate', required: false, description: 'End date for date range filter (ISO 8601)' }),
-    (0, swagger_1.ApiQuery)({ name: 'ipAddress', required: false, description: 'Filter by IP address' }),
-    (0, swagger_1.ApiQuery)({ name: 'page', required: false, description: 'Page number (default: 1)' }),
-    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, description: 'Items per page (default: 20, max: 100)' }),
+    (0, swagger_1.ApiQuery)({
+        name: 'userId',
+        required: false,
+        description: 'Filter by user ID',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'entityType',
+        required: false,
+        description: 'Filter by entity type (e.g., shipment, user, pickup)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'entityId',
+        required: false,
+        description: 'Filter by entity ID',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'action',
+        required: false,
+        description: 'Filter by action (e.g., create, update, delete, status_change)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'startDate',
+        required: false,
+        description: 'Start date for date range filter (ISO 8601)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'endDate',
+        required: false,
+        description: 'End date for date range filter (ISO 8601)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'ipAddress',
+        required: false,
+        description: 'Filter by IP address',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'page',
+        required: false,
+        description: 'Page number (default: 1)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'limit',
+        required: false,
+        description: 'Items per page (default: 20, max: 100)',
+    }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'Audit logs retrieved successfully',
@@ -266,7 +304,11 @@ __decorate([
         summary: 'Get user activity logs',
         description: 'Retrieve all actions performed by a specific user, ordered by most recent first.',
     }),
-    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, description: 'Maximum number of logs to return (default: 50)' }),
+    (0, swagger_1.ApiQuery)({
+        name: 'limit',
+        required: false,
+        description: 'Maximum number of logs to return (default: 50)',
+    }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'User activity logs retrieved successfully',
@@ -284,7 +326,11 @@ __decorate([
         summary: 'Get recent audit logs',
         description: 'Retrieve the most recent audit logs across the entire system for admin dashboard.',
     }),
-    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, description: 'Maximum number of logs to return (default: 100)' }),
+    (0, swagger_1.ApiQuery)({
+        name: 'limit',
+        required: false,
+        description: 'Maximum number of logs to return (default: 100)',
+    }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'Recent audit logs retrieved successfully',
@@ -301,8 +347,16 @@ __decorate([
         summary: 'Get audit statistics',
         description: 'Get comprehensive audit statistics including total logs, breakdown by entity type and action, top users, and activity trends.',
     }),
-    (0, swagger_1.ApiQuery)({ name: 'startDate', required: false, description: 'Start date for statistics (ISO 8601)' }),
-    (0, swagger_1.ApiQuery)({ name: 'endDate', required: false, description: 'End date for statistics (ISO 8601)' }),
+    (0, swagger_1.ApiQuery)({
+        name: 'startDate',
+        required: false,
+        description: 'Start date for statistics (ISO 8601)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'endDate',
+        required: false,
+        description: 'End date for statistics (ISO 8601)',
+    }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'Audit statistics retrieved successfully',

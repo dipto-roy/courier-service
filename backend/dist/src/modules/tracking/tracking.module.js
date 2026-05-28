@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrackingModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
 const tracking_controller_1 = require("./tracking.controller");
 const tracking_service_1 = require("./tracking.service");
 const tracking_gateway_1 = require("./tracking.gateway");
@@ -16,6 +18,7 @@ const shipment_entity_1 = require("../../entities/shipment.entity");
 const rider_location_entity_1 = require("../../entities/rider-location.entity");
 const pickup_entity_1 = require("../../entities/pickup.entity");
 const manifest_entity_1 = require("../../entities/manifest.entity");
+const guards_1 = require("../../common/guards");
 let TrackingModule = class TrackingModule {
 };
 exports.TrackingModule = TrackingModule;
@@ -23,9 +26,16 @@ exports.TrackingModule = TrackingModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([shipment_entity_1.Shipment, rider_location_entity_1.RiderLocation, pickup_entity_1.Pickup, manifest_entity_1.Manifest]),
+            jwt_1.JwtModule.registerAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: (configService) => ({
+                    secret: configService.get('JWT_SECRET'),
+                }),
+                inject: [config_1.ConfigService],
+            }),
         ],
         controllers: [tracking_controller_1.TrackingController],
-        providers: [tracking_service_1.TrackingService, tracking_gateway_1.TrackingGateway],
+        providers: [tracking_service_1.TrackingService, tracking_gateway_1.TrackingGateway, guards_1.WsJwtGuard],
         exports: [tracking_service_1.TrackingService, tracking_gateway_1.TrackingGateway],
     })
 ], TrackingModule);

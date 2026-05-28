@@ -47,7 +47,8 @@ export class PricingService {
     const codFee = this.calculateCODFee(codAmount);
 
     // Total fee
-    const totalFee = baseFee + weightFee + distanceFee + expressSurcharge + codFee;
+    const totalFee =
+      baseFee + weightFee + distanceFee + expressSurcharge + codFee;
 
     return {
       baseFee,
@@ -75,7 +76,10 @@ export class PricingService {
   /**
    * Calculate expected delivery date based on delivery type
    */
-  calculateExpectedDelivery(deliveryType: DeliveryType, pickupDate: Date = new Date()): Date {
+  calculateExpectedDelivery(
+    deliveryType: DeliveryType,
+    pickupDate: Date = new Date(),
+  ): Date {
     const expressSlaHours = parseInt(
       this.configService.get<string>('EXPRESS_SLA_HOURS', '24'),
     );

@@ -21,7 +21,9 @@ let SmsService = SmsService_1 = class SmsService {
     senderId;
     constructor(configService) {
         this.configService = configService;
-        this.apiUrl = this.configService.get('SMS_API_URL') || 'https://api.sms-gateway.com/send';
+        this.apiUrl =
+            this.configService.get('SMS_API_URL') ||
+                'https://api.sms-gateway.com/send';
         this.apiKey = this.configService.get('SMS_API_KEY') || '';
         this.senderId = this.configService.get('SMS_SENDER_ID') || 'FastX';
         this.logger.log('SMS service initialized');
@@ -104,10 +106,11 @@ let SmsService = SmsService_1 = class SmsService {
             }, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    Accept: 'application/json',
                 },
             });
-            if (response.data.status === 'success' || response.data.status === 'SUCCESS') {
+            if (response.data.status === 'success' ||
+                response.data.status === 'SUCCESS') {
                 this.logger.log(`SMS sent via SSL Wireless to ${to}`);
                 return true;
             }
@@ -163,7 +166,7 @@ let SmsService = SmsService_1 = class SmsService {
             }, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.apiKey}`,
+                    Authorization: `Bearer ${this.apiKey}`,
                 },
             });
             this.logger.log(`SMS sent via Generic API to ${to}`);
@@ -179,7 +182,7 @@ let SmsService = SmsService_1 = class SmsService {
             'shipment-created': (ctx) => `FastX: Your shipment ${ctx.awb} has been created. Track at ${ctx.trackingUrl}`,
             'shipment-picked-up': (ctx) => `FastX: Shipment ${ctx.awb} picked up and in transit. Expected delivery: ${ctx.expectedDelivery}`,
             'out-for-delivery': (ctx) => `FastX: Your shipment ${ctx.awb} is out for delivery. Rider: ${ctx.riderName} ${ctx.riderPhone}`,
-            'delivered': (ctx) => `FastX: Shipment ${ctx.awb} delivered successfully at ${ctx.deliveredAt}. Thank you!`,
+            delivered: (ctx) => `FastX: Shipment ${ctx.awb} delivered successfully at ${ctx.deliveredAt}. Thank you!`,
             'failed-delivery': (ctx) => `FastX: Delivery failed for ${ctx.awb}. Reason: ${ctx.failureReason}. Contact: ${ctx.supportPhone}`,
             'otp-verification': (ctx) => `FastX: Your OTP is ${ctx.otp}. Valid for ${ctx.expiryMinutes || 5} minutes. Do not share.`,
             'delivery-otp': (ctx) => `FastX: Your delivery OTP for ${ctx.awb} is ${ctx.otp}. Share with rider to confirm delivery.`,
@@ -196,7 +199,7 @@ let SmsService = SmsService_1 = class SmsService {
     }
     async sendBulkSms(recipients, message) {
         try {
-            const promises = recipients.map(phone => this.sendSms({ to: phone, message }));
+            const promises = recipients.map((phone) => this.sendSms({ to: phone, message }));
             await Promise.all(promises);
             this.logger.log(`Bulk SMS sent to ${recipients.length} recipients`);
             return true;
@@ -211,7 +214,7 @@ let SmsService = SmsService_1 = class SmsService {
             to: phone,
             message: '',
             template: 'otp-verification',
-            context: { otp, expiryMinutes: 5 }
+            context: { otp, expiryMinutes: 5 },
         });
     }
     async sendDeliveryOtp(phone, awb, otp) {
@@ -219,7 +222,7 @@ let SmsService = SmsService_1 = class SmsService {
             to: phone,
             message: '',
             template: 'delivery-otp',
-            context: { awb, otp }
+            context: { awb, otp },
         });
     }
 };

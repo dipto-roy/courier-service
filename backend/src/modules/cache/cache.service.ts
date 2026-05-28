@@ -86,7 +86,10 @@ export class CacheService implements OnModuleInit {
         await this.redisClient.del(...keys);
       }
     } catch (error) {
-      this.logger.error(`Error deleting cache pattern ${pattern}:`, error.message);
+      this.logger.error(
+        `Error deleting cache pattern ${pattern}:`,
+        error.message,
+      );
     }
   }
 
@@ -124,7 +127,10 @@ export class CacheService implements OnModuleInit {
       const value = await this.redisClient.hget(key, field);
       return value ? JSON.parse(value) : null;
     } catch (error) {
-      this.logger.error(`Error getting hash field ${field} from ${key}:`, error.message);
+      this.logger.error(
+        `Error getting hash field ${field} from ${key}:`,
+        error.message,
+      );
       return null;
     }
   }
@@ -134,7 +140,10 @@ export class CacheService implements OnModuleInit {
       const stringValue = JSON.stringify(value);
       await this.redisClient.hset(key, field, stringValue);
     } catch (error) {
-      this.logger.error(`Error setting hash field ${field} in ${key}:`, error.message);
+      this.logger.error(
+        `Error setting hash field ${field} in ${key}:`,
+        error.message,
+      );
     }
   }
 
@@ -147,7 +156,10 @@ export class CacheService implements OnModuleInit {
       }
       return result;
     } catch (error) {
-      this.logger.error(`Error getting all hash fields from ${key}:`, error.message);
+      this.logger.error(
+        `Error getting all hash fields from ${key}:`,
+        error.message,
+      );
       return {};
     }
   }
@@ -156,7 +168,10 @@ export class CacheService implements OnModuleInit {
     try {
       await this.redisClient.hdel(key, field);
     } catch (error) {
-      this.logger.error(`Error deleting hash field ${field} from ${key}:`, error.message);
+      this.logger.error(
+        `Error deleting hash field ${field} from ${key}:`,
+        error.message,
+      );
     }
   }
 
@@ -164,7 +179,7 @@ export class CacheService implements OnModuleInit {
 
   async lpush(key: string, ...values: any[]): Promise<void> {
     try {
-      const stringValues = values.map(v => JSON.stringify(v));
+      const stringValues = values.map((v) => JSON.stringify(v));
       await this.redisClient.lpush(key, ...stringValues);
     } catch (error) {
       this.logger.error(`Error pushing to list ${key}:`, error.message);
@@ -173,7 +188,7 @@ export class CacheService implements OnModuleInit {
 
   async rpush(key: string, ...values: any[]): Promise<void> {
     try {
-      const stringValues = values.map(v => JSON.stringify(v));
+      const stringValues = values.map((v) => JSON.stringify(v));
       await this.redisClient.rpush(key, ...stringValues);
     } catch (error) {
       this.logger.error(`Error pushing to list ${key}:`, error.message);
@@ -183,7 +198,7 @@ export class CacheService implements OnModuleInit {
   async lrange<T>(key: string, start: number, stop: number): Promise<T[]> {
     try {
       const values = await this.redisClient.lrange(key, start, stop);
-      return values.map(v => JSON.parse(v));
+      return values.map((v) => JSON.parse(v));
     } catch (error) {
       this.logger.error(`Error getting list range from ${key}:`, error.message);
       return [];
@@ -202,7 +217,7 @@ export class CacheService implements OnModuleInit {
 
   async sadd(key: string, ...members: any[]): Promise<void> {
     try {
-      const stringMembers = members.map(m => JSON.stringify(m));
+      const stringMembers = members.map((m) => JSON.stringify(m));
       await this.redisClient.sadd(key, ...stringMembers);
     } catch (error) {
       this.logger.error(`Error adding to set ${key}:`, error.message);
@@ -211,7 +226,7 @@ export class CacheService implements OnModuleInit {
 
   async srem(key: string, ...members: any[]): Promise<void> {
     try {
-      const stringMembers = members.map(m => JSON.stringify(m));
+      const stringMembers = members.map((m) => JSON.stringify(m));
       await this.redisClient.srem(key, ...stringMembers);
     } catch (error) {
       this.logger.error(`Error removing from set ${key}:`, error.message);
@@ -221,9 +236,12 @@ export class CacheService implements OnModuleInit {
   async smembers<T>(key: string): Promise<T[]> {
     try {
       const members = await this.redisClient.smembers(key);
-      return members.map(m => JSON.parse(m));
+      return members.map((m) => JSON.parse(m));
     } catch (error) {
-      this.logger.error(`Error getting set members from ${key}:`, error.message);
+      this.logger.error(
+        `Error getting set members from ${key}:`,
+        error.message,
+      );
       return [];
     }
   }
@@ -234,7 +252,10 @@ export class CacheService implements OnModuleInit {
       const result = await this.redisClient.sismember(key, stringMember);
       return result === 1;
     } catch (error) {
-      this.logger.error(`Error checking set membership in ${key}:`, error.message);
+      this.logger.error(
+        `Error checking set membership in ${key}:`,
+        error.message,
+      );
       return false;
     }
   }
@@ -247,11 +268,17 @@ export class CacheService implements OnModuleInit {
       await this.redisPubClient.publish(channel, stringMessage);
       this.logger.debug(`Published to channel ${channel}`);
     } catch (error) {
-      this.logger.error(`Error publishing to channel ${channel}:`, error.message);
+      this.logger.error(
+        `Error publishing to channel ${channel}:`,
+        error.message,
+      );
     }
   }
 
-  async subscribe(channel: string, callback: (message: any) => void): Promise<void> {
+  async subscribe(
+    channel: string,
+    callback: (message: any) => void,
+  ): Promise<void> {
     try {
       await this.redisSubClient.subscribe(channel);
       this.redisSubClient.on('message', (ch, msg) => {
@@ -260,13 +287,19 @@ export class CacheService implements OnModuleInit {
             const message = JSON.parse(msg);
             callback(message);
           } catch (error) {
-            this.logger.error(`Error parsing message from ${channel}:`, error.message);
+            this.logger.error(
+              `Error parsing message from ${channel}:`,
+              error.message,
+            );
           }
         }
       });
       this.logger.log(`Subscribed to channel ${channel}`);
     } catch (error) {
-      this.logger.error(`Error subscribing to channel ${channel}:`, error.message);
+      this.logger.error(
+        `Error subscribing to channel ${channel}:`,
+        error.message,
+      );
     }
   }
 
@@ -275,7 +308,10 @@ export class CacheService implements OnModuleInit {
       await this.redisSubClient.unsubscribe(channel);
       this.logger.log(`Unsubscribed from channel ${channel}`);
     } catch (error) {
-      this.logger.error(`Error unsubscribing from channel ${channel}:`, error.message);
+      this.logger.error(
+        `Error unsubscribing from channel ${channel}:`,
+        error.message,
+      );
     }
   }
 
@@ -295,16 +331,22 @@ export class CacheService implements OnModuleInit {
       const stringMember = JSON.stringify(member);
       await this.redisClient.zrem(key, stringMember);
     } catch (error) {
-      this.logger.error(`Error removing from sorted set ${key}:`, error.message);
+      this.logger.error(
+        `Error removing from sorted set ${key}:`,
+        error.message,
+      );
     }
   }
 
   async zrangebyscore<T>(key: string, min: number, max: number): Promise<T[]> {
     try {
       const members = await this.redisClient.zrangebyscore(key, min, max);
-      return members.map(m => JSON.parse(m));
+      return members.map((m) => JSON.parse(m));
     } catch (error) {
-      this.logger.error(`Error getting sorted set range from ${key}:`, error.message);
+      this.logger.error(
+        `Error getting sorted set range from ${key}:`,
+        error.message,
+      );
       return [];
     }
   }
@@ -313,7 +355,10 @@ export class CacheService implements OnModuleInit {
     try {
       await this.redisClient.zremrangebyscore(key, min, max);
     } catch (error) {
-      this.logger.error(`Error removing sorted set range from ${key}:`, error.message);
+      this.logger.error(
+        `Error removing sorted set range from ${key}:`,
+        error.message,
+      );
     }
   }
 
@@ -341,7 +386,10 @@ export class CacheService implements OnModuleInit {
     try {
       return await this.redisClient.incrby(key, increment);
     } catch (error) {
-      this.logger.error(`Error incrementing key ${key} by ${increment}:`, error.message);
+      this.logger.error(
+        `Error incrementing key ${key} by ${increment}:`,
+        error.message,
+      );
       return 0;
     }
   }

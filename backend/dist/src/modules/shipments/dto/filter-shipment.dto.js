@@ -27,13 +27,19 @@ class FilterShipmentDto extends dto_1.PaginationDto {
 }
 exports.FilterShipmentDto = FilterShipmentDto;
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'FX20251028', description: 'Search by AWB number' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'FX20251028',
+        description: 'Search by AWB number',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], FilterShipmentDto.prototype, "awb", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'merchant-uuid', description: 'Filter by merchant ID' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'merchant-uuid',
+        description: 'Filter by merchant ID',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
@@ -79,25 +85,37 @@ __decorate([
     __metadata("design:type", String)
 ], FilterShipmentDto.prototype, "paymentStatus", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'Dhaka', description: 'Filter by receiver city' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'Dhaka',
+        description: 'Filter by receiver city',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], FilterShipmentDto.prototype, "receiverCity", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: '2025-10-28', description: 'Filter from date (YYYY-MM-DD)' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: '2025-10-28',
+        description: 'Filter from date (YYYY-MM-DD)',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], FilterShipmentDto.prototype, "fromDate", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: '2025-10-29', description: 'Filter to date (YYYY-MM-DD)' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: '2025-10-29',
+        description: 'Filter to date (YYYY-MM-DD)',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], FilterShipmentDto.prototype, "toDate", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'John Doe', description: 'Search by receiver name or phone' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'John Doe',
+        description: 'Search by receiver name or phone',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)

@@ -31,13 +31,19 @@ class UpdateUserDto {
 }
 exports.UpdateUserDto = UpdateUserDto;
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'John Doe', description: 'Full name of the user' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'John Doe',
+        description: 'Full name of the user',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "fullName", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'john.doe@example.com', description: 'Email address' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'john.doe@example.com',
+        description: 'Email address',
+    }),
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
@@ -49,14 +55,21 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "phone", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'Password@123', description: 'User password (min 6 characters)' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'Password@123',
+        description: 'User password (min 6 characters)',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(6),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "password", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ enum: enums_1.UserRole, example: enums_1.UserRole.MERCHANT, description: 'User role' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        enum: enums_1.UserRole,
+        example: enums_1.UserRole.MERCHANT,
+        description: 'User role',
+    }),
     (0, class_validator_1.IsEnum)(enums_1.UserRole),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
@@ -74,31 +87,46 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "area", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'House 12, Road 5', description: 'Detailed address' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'House 12, Road 5',
+        description: 'Detailed address',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "address", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'ABC Company Ltd.', description: 'Company name (for Merchant)' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'ABC Company Ltd.',
+        description: 'Company name (for Merchant)',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "companyName", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'www.abccompany.com', description: 'Business website' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'www.abccompany.com',
+        description: 'Business website',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "businessWebsite", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: true, description: 'Email verification status' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: true,
+        description: 'Email verification status',
+    }),
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], UpdateUserDto.prototype, "isEmailVerified", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: true, description: 'Phone verification status' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: true,
+        description: 'Phone verification status',
+    }),
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)

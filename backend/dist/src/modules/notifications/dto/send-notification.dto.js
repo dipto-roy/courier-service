@@ -221,7 +221,10 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({
         description: 'Additional data payload',
-        example: { shipmentId: '123e4567-e89b-12d3-a456-426614174001', action: 'VIEW_SHIPMENT' },
+        example: {
+            shipmentId: '123e4567-e89b-12d3-a456-426614174001',
+            action: 'VIEW_SHIPMENT',
+        },
     }),
     (0, class_validator_1.IsObject)(),
     (0, class_validator_1.IsOptional)(),

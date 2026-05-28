@@ -371,7 +371,13 @@ let HubService = class HubService {
     async findOne(manifestId) {
         const manifest = await this.manifestRepository.findOne({
             where: { id: manifestId },
-            relations: ['createdBy', 'receivedBy', 'rider', 'shipments', 'shipments.merchant'],
+            relations: [
+                'createdBy',
+                'receivedBy',
+                'rider',
+                'shipments',
+                'shipments.merchant',
+            ],
         });
         if (!manifest) {
             throw new common_1.NotFoundException('Manifest not found');
@@ -434,10 +440,30 @@ let HubService = class HubService {
         }
         const [total, created, inTransit, received, closed] = await Promise.all([
             queryBuilder.getCount(),
-            queryBuilder.clone().andWhere('manifest.status = :status', { status: manifest_entity_1.ManifestStatus.CREATED }).getCount(),
-            queryBuilder.clone().andWhere('manifest.status = :status', { status: manifest_entity_1.ManifestStatus.IN_TRANSIT }).getCount(),
-            queryBuilder.clone().andWhere('manifest.status = :status', { status: manifest_entity_1.ManifestStatus.RECEIVED }).getCount(),
-            queryBuilder.clone().andWhere('manifest.status = :status', { status: manifest_entity_1.ManifestStatus.CLOSED }).getCount(),
+            queryBuilder
+                .clone()
+                .andWhere('manifest.status = :status', {
+                status: manifest_entity_1.ManifestStatus.CREATED,
+            })
+                .getCount(),
+            queryBuilder
+                .clone()
+                .andWhere('manifest.status = :status', {
+                status: manifest_entity_1.ManifestStatus.IN_TRANSIT,
+            })
+                .getCount(),
+            queryBuilder
+                .clone()
+                .andWhere('manifest.status = :status', {
+                status: manifest_entity_1.ManifestStatus.RECEIVED,
+            })
+                .getCount(),
+            queryBuilder
+                .clone()
+                .andWhere('manifest.status = :status', {
+                status: manifest_entity_1.ManifestStatus.CLOSED,
+            })
+                .getCount(),
         ]);
         return {
             total,

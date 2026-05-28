@@ -35,7 +35,8 @@ export class PaymentsController {
   @Roles(UserRole.ADMIN, UserRole.RIDER)
   @ApiOperation({
     summary: 'Record COD collection',
-    description: 'Record COD collection when shipment is delivered. Automatically creates transaction record.',
+    description:
+      'Record COD collection when shipment is delivered. Automatically creates transaction record.',
   })
   @ApiParam({
     name: 'shipmentId',
@@ -63,10 +64,22 @@ export class PaymentsController {
       },
     },
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Shipment not found' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid shipment status or payment method' })
-  async recordCodCollection(@Param('shipmentId') shipmentId: string, @Request() req: any) {
-    return await this.paymentsService.recordCodCollection(shipmentId, req.user.userId);
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Shipment not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid shipment status or payment method',
+  })
+  async recordCodCollection(
+    @Param('shipmentId') shipmentId: string,
+    @Request() req: any,
+  ) {
+    return await this.paymentsService.recordCodCollection(
+      shipmentId,
+      req.user.userId,
+    );
   }
 
   @Post('record-delivery-fee/:shipmentId')
@@ -84,7 +97,10 @@ export class PaymentsController {
     status: HttpStatus.CREATED,
     description: 'Delivery fee recorded successfully',
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Shipment not found' })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Shipment not found',
+  })
   async recordDeliveryFee(@Param('shipmentId') shipmentId: string) {
     return await this.paymentsService.recordDeliveryFee(shipmentId);
   }
@@ -93,7 +109,8 @@ export class PaymentsController {
   @Roles(UserRole.ADMIN, UserRole.FINANCE)
   @ApiOperation({
     summary: 'Initiate payout to merchant',
-    description: 'Initiate T+7 payout to merchant. Validates available balance and creates payout transaction.',
+    description:
+      'Initiate T+7 payout to merchant. Validates available balance and creates payout transaction.',
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -117,17 +134,30 @@ export class PaymentsController {
       },
     },
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Merchant not found' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Insufficient balance' })
-  async initiatePayout(@Body() initiatePayoutDto: InitiatePayoutDto, @Request() req: any) {
-    return await this.paymentsService.initiatePayout(initiatePayoutDto, req.user.userId);
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Merchant not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Insufficient balance',
+  })
+  async initiatePayout(
+    @Body() initiatePayoutDto: InitiatePayoutDto,
+    @Request() req: any,
+  ) {
+    return await this.paymentsService.initiatePayout(
+      initiatePayoutDto,
+      req.user.userId,
+    );
   }
 
   @Patch('complete-payout/:transactionId')
   @Roles(UserRole.ADMIN, UserRole.FINANCE)
   @ApiOperation({
     summary: 'Complete a payout',
-    description: 'Mark a payout transaction as completed after successful bank transfer.',
+    description:
+      'Mark a payout transaction as completed after successful bank transfer.',
   })
   @ApiParam({
     name: 'transactionId',
@@ -138,13 +168,22 @@ export class PaymentsController {
     status: HttpStatus.OK,
     description: 'Payout completed successfully',
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Transaction not found' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid transaction type or status' })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Transaction not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid transaction type or status',
+  })
   async completePayout(
     @Param('transactionId') transactionId: string,
     @Body('referenceNumber') referenceNumber?: string,
   ) {
-    return await this.paymentsService.completePayout(transactionId, referenceNumber);
+    return await this.paymentsService.completePayout(
+      transactionId,
+      referenceNumber,
+    );
   }
 
   @Patch('fail-payout/:transactionId')
@@ -162,7 +201,10 @@ export class PaymentsController {
     status: HttpStatus.OK,
     description: 'Payout marked as failed and balance reversed',
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Transaction not found' })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Transaction not found',
+  })
   async failPayout(
     @Param('transactionId') transactionId: string,
     @Body('reason') reason: string,
@@ -174,7 +216,8 @@ export class PaymentsController {
   @Roles(UserRole.ADMIN, UserRole.FINANCE, UserRole.MERCHANT, UserRole.CUSTOMER)
   @ApiOperation({
     summary: 'Get transactions with filters',
-    description: 'Retrieve transactions with pagination and filters. Merchants can only see their own transactions.',
+    description:
+      'Retrieve transactions with pagination and filters. Merchants can only see their own transactions.',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -200,12 +243,15 @@ export class PaymentsController {
       },
     },
   })
-  async getTransactions(@Query() filterDto: PaymentFilterDto, @Request() req: any) {
+  async getTransactions(
+    @Query() filterDto: PaymentFilterDto,
+    @Request() req: any,
+  ) {
     // If user is merchant, filter by their ID
     if (req.user.role === UserRole.MERCHANT) {
       filterDto.merchantId = req.user.userId;
     }
-    
+
     return await this.paymentsService.getTransactions(filterDto);
   }
 
@@ -224,7 +270,10 @@ export class PaymentsController {
     status: HttpStatus.OK,
     description: 'Transaction details',
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Transaction not found' })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Transaction not found',
+  })
   async getTransaction(@Param('transactionId') transactionId: string) {
     return await this.paymentsService.getTransaction(transactionId);
   }
@@ -233,7 +282,8 @@ export class PaymentsController {
   @Roles(UserRole.ADMIN, UserRole.FINANCE, UserRole.MERCHANT)
   @ApiOperation({
     summary: 'Get pending COD collections',
-    description: 'Get COD collections that are older than 7 days and pending payout.',
+    description:
+      'Get COD collections that are older than 7 days and pending payout.',
   })
   @ApiParam({
     name: 'merchantId',
@@ -263,7 +313,8 @@ export class PaymentsController {
   @Roles(UserRole.ADMIN, UserRole.FINANCE, UserRole.MERCHANT)
   @ApiOperation({
     summary: 'Get pending balance for merchant',
-    description: 'Calculate pending balance available for payout (T+7 eligible amount).',
+    description:
+      'Calculate pending balance available for payout (T+7 eligible amount).',
   })
   @ApiParam({
     name: 'merchantId',
@@ -275,12 +326,13 @@ export class PaymentsController {
     description: 'Pending balance calculated',
     schema: {
       example: {
-        pendingBalance: 15750.50,
+        pendingBalance: 15750.5,
       },
     },
   })
   async getPendingBalance(@Param('merchantId') merchantId: string) {
-    const pendingBalance = await this.paymentsService.calculatePendingBalance(merchantId);
+    const pendingBalance =
+      await this.paymentsService.calculatePendingBalance(merchantId);
     return { pendingBalance };
   }
 
@@ -288,7 +340,8 @@ export class PaymentsController {
   @Roles(UserRole.ADMIN, UserRole.FINANCE, UserRole.MERCHANT)
   @ApiOperation({
     summary: 'Get merchant payment statistics',
-    description: 'Get comprehensive payment statistics for a specific merchant.',
+    description:
+      'Get comprehensive payment statistics for a specific merchant.',
   })
   @ApiParam({
     name: 'merchantId',
@@ -301,7 +354,7 @@ export class PaymentsController {
     schema: {
       example: {
         walletBalance: 5000,
-        pendingBalance: 15750.50,
+        pendingBalance: 15750.5,
         totalCodCollected: 150000,
         totalCodTransactions: 250,
         totalDeliveryFees: 7500,
@@ -311,7 +364,10 @@ export class PaymentsController {
       },
     },
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Merchant not found' })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Merchant not found',
+  })
   async getMerchantStatistics(@Param('merchantId') merchantId: string) {
     return await this.paymentsService.getMerchantStatistics(merchantId);
   }

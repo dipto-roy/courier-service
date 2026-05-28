@@ -5,7 +5,12 @@ import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
 import { Notification } from '../../entities/notification.entity';
 import { NotificationType } from '../../common/enums';
-import { SendNotificationDto, SendEmailDto, SendSmsDto, SendPushNotificationDto } from './dto';
+import {
+  SendNotificationDto,
+  SendEmailDto,
+  SendSmsDto,
+  SendPushNotificationDto,
+} from './dto';
 import { EmailService } from './email.service';
 import { SmsService } from './sms.service';
 import { PushService } from './push.service';
@@ -26,7 +31,9 @@ export class NotificationsService {
 
   // ==================== Main Notification Methods ====================
 
-  async sendNotification(sendNotificationDto: SendNotificationDto): Promise<Notification> {
+  async sendNotification(
+    sendNotificationDto: SendNotificationDto,
+  ): Promise<Notification> {
     try {
       // Create notification record
       const notification = this.notificationRepository.create({
@@ -54,7 +61,10 @@ export class NotificationsService {
     }
   }
 
-  async processNotification(notificationId: string, dto: SendNotificationDto): Promise<void> {
+  async processNotification(
+    notificationId: string,
+    dto: SendNotificationDto,
+  ): Promise<void> {
     try {
       const notification = await this.notificationRepository.findOne({
         where: { id: notificationId },
@@ -116,9 +126,14 @@ export class NotificationsService {
         errorMessage: errorMessage || undefined,
       });
 
-      this.logger.log(`Notification ${notificationId} ${success ? 'sent' : 'failed'}`);
+      this.logger.log(
+        `Notification ${notificationId} ${success ? 'sent' : 'failed'}`,
+      );
     } catch (error) {
-      this.logger.error(`Failed to process notification ${notificationId}:`, error.message);
+      this.logger.error(
+        `Failed to process notification ${notificationId}:`,
+        error.message,
+      );
       throw error;
     }
   }
@@ -145,7 +160,9 @@ export class NotificationsService {
     }
   }
 
-  async sendPushNotification(pushDto: SendPushNotificationDto): Promise<boolean> {
+  async sendPushNotification(
+    pushDto: SendPushNotificationDto,
+  ): Promise<boolean> {
     try {
       await this.notificationQueue.add('send-push', pushDto);
       return true;
@@ -157,7 +174,12 @@ export class NotificationsService {
 
   // ==================== Shipment Notification Templates ====================
 
-  async notifyShipmentCreated(userId: string, shipmentId: string, awb: string, data: any): Promise<void> {
+  async notifyShipmentCreated(
+    userId: string,
+    shipmentId: string,
+    awb: string,
+    data: any,
+  ): Promise<void> {
     const notification: SendNotificationDto = {
       userId,
       shipmentId,
@@ -182,7 +204,12 @@ export class NotificationsService {
     });
   }
 
-  async notifyShipmentPickedUp(userId: string, shipmentId: string, awb: string, data: any): Promise<void> {
+  async notifyShipmentPickedUp(
+    userId: string,
+    shipmentId: string,
+    awb: string,
+    data: any,
+  ): Promise<void> {
     await this.sendNotification({
       userId,
       shipmentId,
@@ -202,7 +229,13 @@ export class NotificationsService {
     });
   }
 
-  async notifyOutForDelivery(userId: string, shipmentId: string, awb: string, riderName: string, riderPhone: string): Promise<void> {
+  async notifyOutForDelivery(
+    userId: string,
+    shipmentId: string,
+    awb: string,
+    riderName: string,
+    riderPhone: string,
+  ): Promise<void> {
     const data = { awb, riderName, riderPhone };
 
     await this.sendNotification({
@@ -223,10 +256,20 @@ export class NotificationsService {
       data,
     });
 
-    await this.pushService.sendDeliveryAlert(userId, shipmentId, awb, riderName);
+    await this.pushService.sendDeliveryAlert(
+      userId,
+      shipmentId,
+      awb,
+      riderName,
+    );
   }
 
-  async notifyDelivered(userId: string, shipmentId: string, awb: string, deliveredAt: string): Promise<void> {
+  async notifyDelivered(
+    userId: string,
+    shipmentId: string,
+    awb: string,
+    deliveredAt: string,
+  ): Promise<void> {
     const data = { awb, deliveredAt };
 
     await this.sendNotification({
@@ -257,7 +300,12 @@ export class NotificationsService {
     });
   }
 
-  async notifyDeliveryFailed(userId: string, shipmentId: string, awb: string, reason: string): Promise<void> {
+  async notifyDeliveryFailed(
+    userId: string,
+    shipmentId: string,
+    awb: string,
+    reason: string,
+  ): Promise<void> {
     const data = { awb, failureReason: reason };
 
     await this.sendNotification({
@@ -281,7 +329,10 @@ export class NotificationsService {
 
   // ==================== User Notification Methods ====================
 
-  async getUserNotifications(userId: string, isRead?: boolean): Promise<Notification[]> {
+  async getUserNotifications(
+    userId: string,
+    isRead?: boolean,
+  ): Promise<Notification[]> {
     const query: any = { userId };
     if (isRead !== undefined) {
       query.isRead = isRead;
@@ -294,7 +345,10 @@ export class NotificationsService {
     });
   }
 
-  async markAsRead(notificationId: string, userId: string): Promise<Notification> {
+  async markAsRead(
+    notificationId: string,
+    userId: string,
+  ): Promise<Notification> {
     const notification = await this.notificationRepository.findOne({
       where: { id: notificationId, userId },
     });
@@ -322,7 +376,10 @@ export class NotificationsService {
     });
   }
 
-  async deleteNotification(notificationId: string, userId: string): Promise<void> {
+  async deleteNotification(
+    notificationId: string,
+    userId: string,
+  ): Promise<void> {
     const result = await this.notificationRepository.delete({
       id: notificationId,
       userId,
@@ -335,7 +392,11 @@ export class NotificationsService {
 
   // ==================== Payment Notifications ====================
 
-  async notifyPayoutInitiated(userId: string, amount: number, transactionId: string): Promise<void> {
+  async notifyPayoutInitiated(
+    userId: string,
+    amount: number,
+    transactionId: string,
+  ): Promise<void> {
     await this.sendNotification({
       userId,
       type: NotificationType.EMAIL,
@@ -344,10 +405,20 @@ export class NotificationsService {
       data: { amount, transactionId },
     });
 
-    await this.pushService.sendPaymentNotification(userId, amount, transactionId, 'debit');
+    await this.pushService.sendPaymentNotification(
+      userId,
+      amount,
+      transactionId,
+      'debit',
+    );
   }
 
-  async notifyPayoutCompleted(userId: string, amount: number, transactionId: string, referenceNumber: string): Promise<void> {
+  async notifyPayoutCompleted(
+    userId: string,
+    amount: number,
+    transactionId: string,
+    referenceNumber: string,
+  ): Promise<void> {
     await this.sendNotification({
       userId,
       type: NotificationType.EMAIL,
@@ -367,8 +438,18 @@ export class NotificationsService {
 
   // ==================== Rider Notifications ====================
 
-  async notifyPickupAssignment(riderId: string, pickupId: string, address: string, itemCount: number): Promise<void> {
-    await this.pushService.sendPickupAssignment(riderId, pickupId, address, itemCount);
+  async notifyPickupAssignment(
+    riderId: string,
+    pickupId: string,
+    address: string,
+    itemCount: number,
+  ): Promise<void> {
+    await this.pushService.sendPickupAssignment(
+      riderId,
+      pickupId,
+      address,
+      itemCount,
+    );
 
     await this.sendNotification({
       userId: riderId,
@@ -379,8 +460,16 @@ export class NotificationsService {
     });
   }
 
-  async notifyManifestAssignment(riderId: string, manifestId: string, shipmentCount: number): Promise<void> {
-    await this.pushService.sendManifestAssignment(riderId, manifestId, shipmentCount);
+  async notifyManifestAssignment(
+    riderId: string,
+    manifestId: string,
+    shipmentCount: number,
+  ): Promise<void> {
+    await this.pushService.sendManifestAssignment(
+      riderId,
+      manifestId,
+      shipmentCount,
+    );
 
     await this.sendNotification({
       userId: riderId,
@@ -398,9 +487,17 @@ export class NotificationsService {
 
     const [total, sent, failed, unread] = await Promise.all([
       this.notificationRepository.count({ where: query }),
-      this.notificationRepository.count({ where: { ...query, deliveryStatus: 'sent' } }),
-      this.notificationRepository.count({ where: { ...query, deliveryStatus: 'failed' } }),
-      userId ? this.notificationRepository.count({ where: { userId, isRead: false } }) : 0,
+      this.notificationRepository.count({
+        where: { ...query, deliveryStatus: 'sent' },
+      }),
+      this.notificationRepository.count({
+        where: { ...query, deliveryStatus: 'failed' },
+      }),
+      userId
+        ? this.notificationRepository.count({
+            where: { userId, isRead: false },
+          })
+        : 0,
     ]);
 
     const byType = await this.notificationRepository

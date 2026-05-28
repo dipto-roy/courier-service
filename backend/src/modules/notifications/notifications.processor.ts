@@ -5,7 +5,12 @@ import { NotificationsService } from './notifications.service';
 import { EmailService } from './email.service';
 import { SmsService } from './sms.service';
 import { PushService } from './push.service';
-import { SendNotificationDto, SendEmailDto, SendSmsDto, SendPushNotificationDto } from './dto';
+import {
+  SendNotificationDto,
+  SendEmailDto,
+  SendSmsDto,
+  SendPushNotificationDto,
+} from './dto';
 
 @Processor('notifications')
 export class NotificationsProcessor {
@@ -19,9 +24,11 @@ export class NotificationsProcessor {
   ) {}
 
   @Process('send-notification')
-  async handleSendNotification(job: Job<{ notificationId: string } & SendNotificationDto>) {
+  async handleSendNotification(
+    job: Job<{ notificationId: string } & SendNotificationDto>,
+  ) {
     this.logger.log(`Processing notification job ${job.id}`);
-    
+
     try {
       await this.notificationsService.processNotification(
         job.data.notificationId,
@@ -37,7 +44,7 @@ export class NotificationsProcessor {
   @Process('send-email')
   async handleSendEmail(job: Job<SendEmailDto>) {
     this.logger.log(`Processing email job ${job.id}`);
-    
+
     try {
       await this.emailService.sendEmail(job.data);
       this.logger.log(`Email job ${job.id} completed`);
@@ -50,7 +57,7 @@ export class NotificationsProcessor {
   @Process('send-sms')
   async handleSendSms(job: Job<SendSmsDto>) {
     this.logger.log(`Processing SMS job ${job.id}`);
-    
+
     try {
       await this.smsService.sendSms(job.data);
       this.logger.log(`SMS job ${job.id} completed`);
@@ -63,12 +70,15 @@ export class NotificationsProcessor {
   @Process('send-push')
   async handleSendPush(job: Job<SendPushNotificationDto>) {
     this.logger.log(`Processing push notification job ${job.id}`);
-    
+
     try {
       await this.pushService.sendPushNotification(job.data);
       this.logger.log(`Push notification job ${job.id} completed`);
     } catch (error) {
-      this.logger.error(`Push notification job ${job.id} failed:`, error.message);
+      this.logger.error(
+        `Push notification job ${job.id} failed:`,
+        error.message,
+      );
       throw error;
     }
   }

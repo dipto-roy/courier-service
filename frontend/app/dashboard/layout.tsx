@@ -13,28 +13,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { user, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    console.log('📊 Dashboard Layout - Auth Check:', { 
-      isAuthenticated, 
-      hasUser: !!user,
-      userEmail: user?.email,
-      isVerified: user?.isVerified 
-    });
-
-    // Redirect if not authenticated
     if (!isAuthenticated) {
-      console.log('❌ Not authenticated - Redirecting to login');
       router.replace('/login');
       return;
     }
 
-    // Redirect if not verified
     if (user && !user.isVerified) {
-      console.log('📧 Not verified - Redirecting to OTP');
       router.replace('/verify-otp');
-      return;
     }
-
-    console.log('✅ Auth check passed - Showing dashboard');
   }, [isAuthenticated, user, router]);
 
   // Show loading while checking auth or redirecting

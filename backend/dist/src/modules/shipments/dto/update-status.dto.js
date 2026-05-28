@@ -39,7 +39,10 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateStatusDto.prototype, "remarks", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: 'Dhaka Hub', description: 'Current location' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        example: 'Dhaka Hub',
+        description: 'Current location',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)

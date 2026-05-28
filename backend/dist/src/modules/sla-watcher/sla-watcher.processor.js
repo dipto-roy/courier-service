@@ -33,7 +33,7 @@ let SlaWatcherProcessor = SlaWatcherProcessor_1 = class SlaWatcherProcessor {
         }
     }
     async handleDeliverySLAViolation(job) {
-        const { shipmentId, awb, merchantId, riderId, status, violationType, slaHours } = job.data;
+        const { shipmentId, awb, merchantId, riderId, status, violationType, slaHours, } = job.data;
         this.logger.warn(`Processing delivery SLA violation for shipment ${awb}`);
         try {
             await this.auditService.logShipmentAction('system', shipmentId, 'sla_violation', `Delivery SLA of ${slaHours} hours exceeded for shipment ${awb}. Current status: ${status}`, null, { violationType, slaHours, status, riderId }, 'system', 'SLA Watcher');

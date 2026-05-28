@@ -51,7 +51,7 @@ let PushService = PushService_1 = class PushService {
     }
     async sendToMultipleUsers(userIds, title, body, data) {
         try {
-            const channels = userIds.map(userId => `private-user-${userId}`);
+            const channels = userIds.map((userId) => `private-user-${userId}`);
             await this.pusher.trigger(channels, 'notification', {
                 title,
                 body,

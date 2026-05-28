@@ -16,12 +16,6 @@ export const useAuthStore = create<AuthStore>()(
       ...initialState,
 
       setAuth: (user, accessToken, refreshToken) => {
-        console.log('🔐 setAuth called:', { 
-          user: user?.email, 
-          hasAccessToken: !!accessToken, 
-          hasRefreshToken: !!refreshToken 
-        });
-
         set({
           user,
           accessToken,
@@ -29,14 +23,13 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: true,
         });
 
-        // Store tokens in localStorage for API client
         if (typeof window !== 'undefined') {
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
-          console.log('✅ Tokens stored in localStorage');
+          // Lightweight cookie for middleware route guard (non-httpOnly, JS-writable).
+          document.cookie = 'fastx_logged_in=1; path=/; max-age=604800; SameSite=Lax';
         }
 
-        // Emit login event
         eventBus.emit(EVENT_NAMES.AUTH.LOGIN, user);
       },
 
@@ -47,26 +40,23 @@ export const useAuthStore = create<AuthStore>()(
       updateTokens: (accessToken, refreshToken) => {
         set({ accessToken, refreshToken });
 
-        // Update tokens in localStorage
         if (typeof window !== 'undefined') {
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
         }
 
-        // Emit token refresh event
         eventBus.emit(EVENT_NAMES.AUTH.TOKEN_REFRESH);
       },
 
       logout: () => {
         set(initialState);
 
-        // Clear tokens from localStorage
         if (typeof window !== 'undefined') {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
+          document.cookie = 'fastx_logged_in=; path=/; max-age=0; SameSite=Lax';
         }
 
-        // Emit logout event
         eventBus.emit(EVENT_NAMES.AUTH.LOGOUT);
       },
 

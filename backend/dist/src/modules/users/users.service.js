@@ -26,10 +26,7 @@ let UsersService = class UsersService {
     }
     async create(createUserDto) {
         const existingUser = await this.userRepository.findOne({
-            where: [
-                { email: createUserDto.email },
-                { phone: createUserDto.phone },
-            ],
+            where: [{ email: createUserDto.email }, { phone: createUserDto.phone }],
         });
         if (existingUser) {
             if (existingUser.email === createUserDto.email) {
@@ -48,7 +45,7 @@ let UsersService = class UsersService {
         return await this.userRepository.save(user);
     }
     async findAll(filterDto) {
-        const { page = 1, limit = 10, search, role, isActive, isEmailVerified, isPhoneVerified, isKYCVerified, city } = filterDto;
+        const { page = 1, limit = 10, search, role, isActive, isEmailVerified, isPhoneVerified, isKYCVerified, city, } = filterDto;
         const skip = (page - 1) * limit;
         const where = {};
         if (role) {
@@ -164,9 +161,15 @@ let UsersService = class UsersService {
     }
     async getStatistics() {
         const totalUsers = await this.userRepository.count();
-        const activeUsers = await this.userRepository.count({ where: { isActive: true } });
-        const verifiedUsers = await this.userRepository.count({ where: { isVerified: true } });
-        const kycVerifiedUsers = await this.userRepository.count({ where: { isKycVerified: true } });
+        const activeUsers = await this.userRepository.count({
+            where: { isActive: true },
+        });
+        const verifiedUsers = await this.userRepository.count({
+            where: { isVerified: true },
+        });
+        const kycVerifiedUsers = await this.userRepository.count({
+            where: { isKycVerified: true },
+        });
         const roleStats = await this.userRepository
             .createQueryBuilder('user')
             .select('user.role', 'role')

@@ -8,8 +8,9 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { TrackingService } from './tracking.service';
+import { WsJwtGuard } from '../../common/guards';
 
 @WebSocketGateway({
   cors: {
@@ -17,7 +18,9 @@ import { TrackingService } from './tracking.service';
   },
   namespace: '/tracking',
 })
-export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class TrackingGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server: Server;
 
@@ -50,7 +53,9 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   /**
    * Subscribe to shipment tracking updates
+   * JWT required: pass token via handshake.auth.token
    */
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('subscribe-tracking')
   async handleSubscribe(
     @MessageBody() data: { awb: string },
@@ -80,7 +85,9 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
         client.emit('tracking-data', trackingData);
       } catch (trackingError) {
         // Shipment might not exist yet, but subscription is still valid
-        this.logger.log(`Client ${client.id} subscribed to ${awb} (shipment not found yet)`);
+        this.logger.log(
+          `Client ${client.id} subscribed to ${awb} (shipment not found yet)`,
+        );
       }
 
       this.logger.log(`Client ${client.id} subscribed to ${awb}`);
@@ -129,7 +136,11 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
     this.logger.log(`Client ${client.id} unsubscribed from ${awb}`);
 
-    return { success: true, awb, message: `Successfully unsubscribed from ${awb}` };
+    return {
+      success: true,
+      awb,
+      message: `Successfully unsubscribed from ${awb}`,
+    };
   }
 
   /**
@@ -153,7 +164,8 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
       client.emit('tracking-data', trackingData);
       return trackingData;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Tracking fetch error for ${awb}:`, errorMessage);
       const errorResponse = { success: false, error: errorMessage };
       client.emit('error', errorResponse);

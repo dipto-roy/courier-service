@@ -343,9 +343,17 @@ let NotificationsService = NotificationsService_1 = class NotificationsService {
         const query = userId ? { userId } : {};
         const [total, sent, failed, unread] = await Promise.all([
             this.notificationRepository.count({ where: query }),
-            this.notificationRepository.count({ where: { ...query, deliveryStatus: 'sent' } }),
-            this.notificationRepository.count({ where: { ...query, deliveryStatus: 'failed' } }),
-            userId ? this.notificationRepository.count({ where: { userId, isRead: false } }) : 0,
+            this.notificationRepository.count({
+                where: { ...query, deliveryStatus: 'sent' },
+            }),
+            this.notificationRepository.count({
+                where: { ...query, deliveryStatus: 'failed' },
+            }),
+            userId
+                ? this.notificationRepository.count({
+                    where: { userId, isRead: false },
+                })
+                : 0,
         ]);
         const byType = await this.notificationRepository
             .createQueryBuilder('notification')

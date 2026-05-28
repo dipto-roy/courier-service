@@ -40,13 +40,15 @@ let PickupService = class PickupService {
         return await this.pickupRepository.save(pickup);
     }
     async findAll(filterDto, user) {
-        const { page = 1, limit = 10, merchantId, agentId, status, pickupCity, fromDate, toDate, search } = filterDto;
+        const { page = 1, limit = 10, merchantId, agentId, status, pickupCity, fromDate, toDate, search, } = filterDto;
         const queryBuilder = this.pickupRepository
             .createQueryBuilder('pickup')
             .leftJoinAndSelect('pickup.merchant', 'merchant')
             .leftJoinAndSelect('pickup.agent', 'agent');
         if (user.role === enums_1.UserRole.MERCHANT) {
-            queryBuilder.andWhere('pickup.merchantId = :merchantId', { merchantId: user.id });
+            queryBuilder.andWhere('pickup.merchantId = :merchantId', {
+                merchantId: user.id,
+            });
         }
         else if (user.role === enums_1.UserRole.AGENT) {
             queryBuilder.andWhere('pickup.agentId = :agentId', { agentId: user.id });
@@ -125,7 +127,8 @@ let PickupService = class PickupService {
         if (!pickup) {
             throw new common_1.NotFoundException(`Pickup with ID ${id} not found`);
         }
-        if (pickup.status === pickup_entity_1.PickupStatus.COMPLETED || pickup.status === pickup_entity_1.PickupStatus.CANCELLED) {
+        if (pickup.status === pickup_entity_1.PickupStatus.COMPLETED ||
+            pickup.status === pickup_entity_1.PickupStatus.CANCELLED) {
             throw new common_1.BadRequestException('Cannot assign a completed or cancelled pickup');
         }
         const agent = await this.userRepository.findOne({
@@ -163,7 +166,8 @@ let PickupService = class PickupService {
         if (pickup.agentId !== user.id) {
             throw new common_1.ForbiddenException('You can only complete pickups assigned to you');
         }
-        if (pickup.status !== pickup_entity_1.PickupStatus.IN_PROGRESS && pickup.status !== pickup_entity_1.PickupStatus.ASSIGNED) {
+        if (pickup.status !== pickup_entity_1.PickupStatus.IN_PROGRESS &&
+            pickup.status !== pickup_entity_1.PickupStatus.ASSIGNED) {
             throw new common_1.BadRequestException('Only in-progress or assigned pickups can be completed');
         }
         const { shipmentAwbs } = completePickupDto;
@@ -216,7 +220,9 @@ let PickupService = class PickupService {
     async getStatistics(user) {
         const queryBuilder = this.pickupRepository.createQueryBuilder('pickup');
         if (user.role === enums_1.UserRole.MERCHANT) {
-            queryBuilder.where('pickup.merchantId = :merchantId', { merchantId: user.id });
+            queryBuilder.where('pickup.merchantId = :merchantId', {
+                merchantId: user.id,
+            });
         }
         else if (user.role === enums_1.UserRole.AGENT) {
             queryBuilder.where('pickup.agentId = :agentId', { agentId: user.id });

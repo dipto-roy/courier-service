@@ -62,7 +62,10 @@ export class PickupController {
   @Get('statistics')
   @Roles(UserRole.ADMIN, UserRole.MERCHANT, UserRole.AGENT, UserRole.HUB_STAFF)
   @ApiOperation({ summary: 'Get pickup statistics' })
-  @ApiResponse({ status: 200, description: 'Statistics retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Statistics retrieved successfully',
+  })
   async getStatistics(@CurrentUser() user: User) {
     return this.pickupService.getStatistics(user);
   }
@@ -70,7 +73,10 @@ export class PickupController {
   @Get('today')
   @Roles(UserRole.AGENT)
   @ApiOperation({ summary: "Get agent's assigned pickups for today" })
-  @ApiResponse({ status: 200, description: 'Today pickups retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Today pickups retrieved successfully',
+  })
   async getAgentTodayPickups(@CurrentUser() user: User) {
     return this.pickupService.getAgentTodayPickups(user);
   }
@@ -88,7 +94,10 @@ export class PickupController {
   @Roles(UserRole.MERCHANT, UserRole.ADMIN)
   @ApiOperation({ summary: 'Update pickup (only pending pickups)' })
   @ApiResponse({ status: 200, description: 'Pickup updated successfully' })
-  @ApiResponse({ status: 400, description: 'Only pending pickups can be updated' })
+  @ApiResponse({
+    status: 400,
+    description: 'Only pending pickups can be updated',
+  })
   @ApiResponse({ status: 404, description: 'Pickup not found' })
   async update(
     @Param('id') id: string,
@@ -117,7 +126,10 @@ export class PickupController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Start pickup (Agent)' })
   @ApiResponse({ status: 200, description: 'Pickup started successfully' })
-  @ApiResponse({ status: 400, description: 'Only assigned pickups can be started' })
+  @ApiResponse({
+    status: 400,
+    description: 'Only assigned pickups can be started',
+  })
   @ApiResponse({ status: 403, description: 'Not assigned to you' })
   async startPickup(@Param('id') id: string, @CurrentUser() user: User) {
     return this.pickupService.startPickup(id, user);
@@ -128,7 +140,10 @@ export class PickupController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Complete pickup with shipment scanning (Agent)' })
   @ApiResponse({ status: 200, description: 'Pickup completed successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid shipments or pickup status' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid shipments or pickup status',
+  })
   @ApiResponse({ status: 403, description: 'Not assigned to you' })
   async completePickup(
     @Param('id') id: string,

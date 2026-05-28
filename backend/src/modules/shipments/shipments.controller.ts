@@ -91,7 +91,10 @@ export class ShipmentsController {
     @Param('status') status: string,
     @CurrentUser() user: User,
   ) {
-    return await this.shipmentsService.findAll({ status } as FilterShipmentDto, user);
+    return await this.shipmentsService.findAll(
+      { status } as FilterShipmentDto,
+      user,
+    );
   }
 
   @Get('track/:awb')
@@ -135,12 +138,7 @@ export class ShipmentsController {
   }
 
   @Patch(':id/status')
-  @Roles(
-    UserRole.ADMIN,
-    UserRole.HUB_STAFF,
-    UserRole.AGENT,
-    UserRole.RIDER,
-  )
+  @Roles(UserRole.ADMIN, UserRole.HUB_STAFF, UserRole.AGENT, UserRole.RIDER)
   @ApiOperation({ summary: 'Update shipment status' })
   @ApiResponse({ status: 200, description: 'Status updated successfully' })
   @ApiResponse({ status: 404, description: 'Shipment not found' })
@@ -149,11 +147,7 @@ export class ShipmentsController {
     @Body() updateStatusDto: UpdateStatusDto,
     @CurrentUser() user: User,
   ) {
-    return await this.shipmentsService.updateStatus(
-      id,
-      updateStatusDto,
-      user,
-    );
+    return await this.shipmentsService.updateStatus(id, updateStatusDto, user);
   }
 
   @Delete(':id')
@@ -198,7 +192,8 @@ export class ShipmentsController {
       properties: {
         csvData: {
           type: 'string',
-          description: 'CSV data as a string with header and data rows separated by newlines',
+          description:
+            'CSV data as a string with header and data rows separated by newlines',
           example:
             'receiverName,receiverPhone,receiverCity,receiverArea,receiverAddress,weight,codAmount,deliveryType\nJane Smith,01798765432,Dhaka,Dhanmondi,House 5 Road 3,2.5,3500,normal\nMichael Johnson,01687654321,Chittagong,Nasirabad,Building 10 Block A,1.2,1500,express',
         },
