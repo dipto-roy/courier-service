@@ -32,14 +32,26 @@ export function ShipmentForm() {
     const completeData = {
       ...formData,
       package: data,
-      // Default values - these should come from hub selection
       pickupHubId: formData.pickupHubId || '1',
       deliveryHubId: formData.deliveryHubId || '1',
       paymentMethod: formData.paymentMethod || ('PREPAID' as const),
       serviceType: formData.serviceType || ('STANDARD' as const),
     } as CreateShipmentFormData;
 
-    createShipment(completeData);
+    createShipment({
+      senderName: completeData.sender.name,
+      senderPhone: completeData.sender.phone,
+      senderAddress: completeData.sender.addressLine1,
+      receiverName: completeData.receiver.name,
+      receiverPhone: completeData.receiver.phone,
+      receiverAddress: completeData.receiver.addressLine1,
+      receiverCity: completeData.receiver.city,
+      receiverZone: completeData.receiver.state,
+      weight: completeData.package.weight,
+      itemDescription: completeData.package.description,
+      codAmount: completeData.codAmount ?? 0,
+      specialInstructions: completeData.specialInstructions,
+    });
   };
 
   const steps = [

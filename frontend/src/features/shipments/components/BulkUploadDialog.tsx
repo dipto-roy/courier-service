@@ -18,6 +18,7 @@ import {
 } from '../hooks';
 import { bulkShipmentRowSchema } from '../types';
 import type { BulkShipmentRow } from '../types';
+import type { CreateShipmentRequest } from '@/src/common/types';
 
 interface BulkUploadDialogProps {
   open: boolean;
@@ -135,7 +136,7 @@ export function BulkUploadDialog({
   const handleUpload = () => {
     if (parsedData.length === 0) return;
 
-    bulkUpload(parsedData, {
+    bulkUpload({ shipments: parsedData as unknown as CreateShipmentRequest[] }, {
       onSuccess: (response) => {
         setUploadSuccess(true);
         setUploadResults({
