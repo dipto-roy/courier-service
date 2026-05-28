@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/src/features/auth/stores';
 import { UserRole, ShipmentStatus } from '@/src/common/types';
 import { RiderDashboard } from '@/src/features/rider/components';
@@ -20,8 +22,22 @@ import {
 import { StatusBadge } from '@/src/features/shipments/components/StatusBadge';
 import { formatDateTime } from '@/src/common/lib/utils';
 
+const ROLE_REDIRECTS: Partial<Record<UserRole, string>> = {
+  [UserRole.ADMIN]: '/dashboard/admin',
+  [UserRole.FINANCE]: '/dashboard/finance',
+  [UserRole.SUPPORT]: '/dashboard/support',
+  [UserRole.AGENT]: '/dashboard/agent',
+};
+
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user?.role && ROLE_REDIRECTS[user.role as UserRole]) {
+      router.replace(ROLE_REDIRECTS[user.role as UserRole]!);
+    }
+  }, [user?.role, router]);
 
   // Role-based dashboard
   if (user?.role === UserRole.RIDER) {
@@ -36,7 +52,15 @@ export default function DashboardPage() {
     return <MerchantDashboard />;
   }
 
-  // Default dashboard for other roles
+  // Roles with dedicated sub-pages — show spinner while redirecting
+  if (user?.role && ROLE_REDIRECTS[user.role as UserRole]) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+      </div>
+    );
+  }
+
   return <DefaultDashboard />;
 }
 

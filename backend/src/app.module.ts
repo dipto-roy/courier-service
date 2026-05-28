@@ -20,6 +20,12 @@ import { CacheModule } from './modules/cache/cache.module';
 import { SlaWatcherModule } from './modules/sla-watcher/sla-watcher.module';
 import { CsrfModule } from './csrf/csrf.module';
 import { HealthModule } from './modules/health/health.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { MerchantModule } from './modules/merchant/merchant.module';
+import { FinanceModule } from './modules/finance/finance.module';
+import { SupportModule } from './modules/support/support.module';
+import { UploadModule } from './modules/upload/upload.module';
+import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { JwtAuthGuard } from './common/guards';
 import { HttpExceptionFilter } from './common/filters';
 import { LoggingInterceptor } from './common/interceptors';
@@ -76,6 +82,12 @@ import { CsrfMiddleware } from './common/middleware/csrf.middleware';
     AuditModule,
     SlaWatcherModule,
     CsrfModule,
+    AdminModule,
+    MerchantModule,
+    FinanceModule,
+    SupportModule,
+    UploadModule,
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [

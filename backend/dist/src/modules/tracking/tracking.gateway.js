@@ -17,6 +17,7 @@ const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
 const common_1 = require("@nestjs/common");
 const tracking_service_1 = require("./tracking.service");
+const guards_1 = require("../../common/guards");
 let TrackingGateway = class TrackingGateway {
     trackingService;
     server;
@@ -184,6 +185,7 @@ __decorate([
     __metadata("design:type", socket_io_1.Server)
 ], TrackingGateway.prototype, "server", void 0);
 __decorate([
+    (0, common_1.UseGuards)(guards_1.WsJwtGuard),
     (0, websockets_1.SubscribeMessage)('subscribe-tracking'),
     __param(0, (0, websockets_1.MessageBody)()),
     __param(1, (0, websockets_1.ConnectedSocket)()),

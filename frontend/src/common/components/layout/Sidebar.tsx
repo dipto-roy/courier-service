@@ -13,6 +13,14 @@ import {
   CreditCard,
   Bell,
   BarChart3,
+  Users,
+  Shield,
+  HeadphonesIcon,
+  DollarSign,
+  MapPin,
+  ClipboardList,
+  AlertTriangle,
+  Settings,
   LucideIcon,
 } from 'lucide-react';
 
@@ -26,10 +34,40 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   {
+    href: '/dashboard/admin',
+    label: 'Admin',
+    icon: Shield,
+    roles: [UserRole.ADMIN],
+  },
+  {
+    href: '/dashboard/finance',
+    label: 'Finance',
+    icon: DollarSign,
+    roles: [UserRole.FINANCE, UserRole.ADMIN],
+  },
+  {
+    href: '/dashboard/support',
+    label: 'Support',
+    icon: HeadphonesIcon,
+    roles: [UserRole.SUPPORT, UserRole.ADMIN],
+  },
+  {
+    href: '/dashboard/agent',
+    label: 'Agent',
+    icon: ClipboardList,
+    roles: [UserRole.AGENT, UserRole.ADMIN],
+  },
+  {
     href: '/dashboard/shipments',
     label: 'Shipments',
     icon: Package,
-    roles: [UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN],
+    roles: [UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN, UserRole.AGENT],
+  },
+  {
+    href: '/dashboard/pickups',
+    label: 'Pickups',
+    icon: MapPin,
+    roles: [UserRole.AGENT, UserRole.ADMIN, UserRole.MERCHANT],
   },
   {
     href: '/dashboard/rider',
@@ -43,26 +81,53 @@ const navItems: NavItem[] = [
     icon: Building2,
     roles: [UserRole.HUB_STAFF, UserRole.ADMIN],
   },
-  // ❌ NOTE: /dashboard/users route does not exist - removed from sidebar
-  // Uncomment when the route is created
-  // { href: '/dashboard/users', label: 'Users', icon: Users, roles: [UserRole.ADMIN, UserRole.SUPPORT] },
+  {
+    href: '/dashboard/users',
+    label: 'Users',
+    icon: Users,
+    roles: [UserRole.ADMIN, UserRole.SUPPORT],
+  },
   {
     href: '/dashboard/payments',
     label: 'Payments',
     icon: CreditCard,
-    roles: [UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN],
+    roles: [UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.ADMIN, UserRole.FINANCE],
   },
   {
     href: '/dashboard/notifications',
     label: 'Notifications',
     icon: Bell,
-    roles: [UserRole.CUSTOMER, UserRole.MERCHANT, UserRole.RIDER, UserRole.ADMIN, UserRole.HUB_STAFF, UserRole.SUPPORT],
+    roles: [
+      UserRole.CUSTOMER,
+      UserRole.MERCHANT,
+      UserRole.RIDER,
+      UserRole.ADMIN,
+      UserRole.HUB_STAFF,
+      UserRole.SUPPORT,
+    ],
   },
   {
     href: '/dashboard/analytics',
     label: 'Analytics',
     icon: BarChart3,
-    roles: [UserRole.MERCHANT, UserRole.ADMIN, UserRole.HUB_STAFF],
+    roles: [UserRole.MERCHANT, UserRole.ADMIN, UserRole.FINANCE, UserRole.HUB_STAFF],
+  },
+  {
+    href: '/dashboard/audit',
+    label: 'Audit Log',
+    icon: ClipboardList,
+    roles: [UserRole.ADMIN],
+  },
+  {
+    href: '/dashboard/sla',
+    label: 'SLA Monitor',
+    icon: AlertTriangle,
+    roles: [UserRole.ADMIN, UserRole.SUPPORT, UserRole.HUB_STAFF],
+  },
+  {
+    href: '/dashboard/settings',
+    label: 'Settings',
+    icon: Settings,
   },
 ];
 
@@ -75,19 +140,13 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
 
-  // Filter navigation items based on user role
   const filteredNavItems = navItems.filter((item) => {
-    // If no specific roles defined, show to everyone
-    if (!item.roles || item.roles.length === 0) {
-      return true;
-    }
-    // Show item only if user's role is in the allowed roles
+    if (!item.roles || item.roles.length === 0) return true;
     return user?.role && item.roles.includes(user.role as UserRole);
   });
 
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
@@ -95,7 +154,6 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={cn(
           'fixed left-0 top-16 z-40 h-[calc(100vh-4rem)] w-64 border-r bg-background transition-transform duration-200 md:translate-x-0',
@@ -103,10 +161,11 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
         )}
       >
         <div className="flex h-full flex-col">
-          {/* Navigation */}
           <nav className="flex-1 space-y-1 overflow-y-auto p-4">
             {filteredNavItems.map((item) => {
-              const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+              const isActive =
+                pathname === item.href ||
+                (item.href !== '/dashboard' && pathname?.startsWith(`${item.href}/`));
               const Icon = item.icon;
 
               return (
@@ -128,11 +187,8 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
             })}
           </nav>
 
-          {/* Footer */}
           <div className="border-t p-4">
-            <p className="text-xs text-muted-foreground">
-              © 2025 Courier Service
-            </p>
+            <p className="text-xs text-muted-foreground">© 2025 FastX Courier</p>
           </div>
         </div>
       </aside>

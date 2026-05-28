@@ -6,3 +6,4 @@ export * from './rider-location.entity';
 export * from './transaction.entity';
 export * from './notification.entity';
 export * from './audit-log.entity';
+export * from './support-ticket.entity';

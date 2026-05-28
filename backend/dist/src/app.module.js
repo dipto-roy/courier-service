@@ -29,6 +29,12 @@ const cache_module_1 = require("./modules/cache/cache.module");
 const sla_watcher_module_1 = require("./modules/sla-watcher/sla-watcher.module");
 const csrf_module_1 = require("./csrf/csrf.module");
 const health_module_1 = require("./modules/health/health.module");
+const admin_module_1 = require("./modules/admin/admin.module");
+const merchant_module_1 = require("./modules/merchant/merchant.module");
+const finance_module_1 = require("./modules/finance/finance.module");
+const support_module_1 = require("./modules/support/support.module");
+const upload_module_1 = require("./modules/upload/upload.module");
+const webhooks_module_1 = require("./modules/webhooks/webhooks.module");
 const guards_1 = require("./common/guards");
 const filters_1 = require("./common/filters");
 const interceptors_1 = require("./common/interceptors");
@@ -91,6 +97,12 @@ exports.AppModule = AppModule = __decorate([
             audit_module_1.AuditModule,
             sla_watcher_module_1.SlaWatcherModule,
             csrf_module_1.CsrfModule,
+            admin_module_1.AdminModule,
+            merchant_module_1.MerchantModule,
+            finance_module_1.FinanceModule,
+            support_module_1.SupportModule,
+            upload_module_1.UploadModule,
+            webhooks_module_1.WebhooksModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

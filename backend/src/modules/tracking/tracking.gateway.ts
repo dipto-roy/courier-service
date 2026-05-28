@@ -8,8 +8,9 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { TrackingService } from './tracking.service';
+import { WsJwtGuard } from '../../common/guards';
 
 @WebSocketGateway({
   cors: {
@@ -50,7 +51,9 @@ export class TrackingGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   /**
    * Subscribe to shipment tracking updates
+   * JWT required: pass token via handshake.auth.token
    */
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage('subscribe-tracking')
   async handleSubscribe(
     @MessageBody() data: { awb: string },

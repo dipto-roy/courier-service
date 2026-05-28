@@ -10,7 +10,7 @@ import { Shipment } from '../../entities/shipment.entity';
 import { Manifest } from '../../entities/manifest.entity';
 import { RiderLocation } from '../../entities/rider-location.entity';
 import { User } from '../../entities/user.entity';
-import { ShipmentStatus, PaymentMethod, PaymentStatus } from '../../common/enums';
+import { ShipmentStatus, PaymentMethod, PaymentStatus, NotificationType } from '../../common/enums';
 import {
   DeliveryAttemptDto,
   FailedDeliveryDto,
@@ -18,6 +18,7 @@ import {
   RTODto,
   GenerateOTPDto,
 } from './dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class RiderService {
@@ -30,6 +31,7 @@ export class RiderService {
     private riderLocationRepository: Repository<RiderLocation>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private notificationsService: NotificationsService,
   ) {}
 
   /**
@@ -135,7 +137,20 @@ export class RiderService {
     shipment.otpCode = otp;
     await this.shipmentRepository.save(shipment);
 
-    // TODO: Send OTP to customer via SMS/Email using Notification service
+    const customerShipment = await this.shipmentRepository.findOne({
+      where: { awb: awbNumber },
+      relations: ['merchant'],
+    });
+
+    if (customerShipment?.receiverPhone) {
+      this.notificationsService.sendNotification({
+        userId: customerShipment.merchantId,
+        shipmentId: customerShipment.id,
+        type: NotificationType.SMS,
+        title: 'Delivery OTP',
+        message: `Your delivery OTP for shipment ${awbNumber} is: ${otp}. Do not share this with anyone.`,
+      }).catch(() => undefined);
+    }
 
     return {
       success: true,
@@ -232,7 +247,18 @@ export class RiderService {
       );
     }
 
-    // TODO: Send delivery confirmation notification to merchant and customer
+    const deliveredShipment = await this.shipmentRepository.findOne({
+      where: { awb: awbNumber },
+    });
+    if (deliveredShipment) {
+      this.notificationsService.sendNotification({
+        userId: deliveredShipment.merchantId,
+        shipmentId: deliveredShipment.id,
+        type: NotificationType.EMAIL,
+        title: 'Shipment Delivered',
+        message: `Shipment ${awbNumber} has been successfully delivered.`,
+      }).catch(() => undefined);
+    }
 
     return {
       success: true,
@@ -298,7 +324,18 @@ export class RiderService {
       );
     }
 
-    // TODO: Send failed delivery notification to merchant and customer
+    const failedShipment = await this.shipmentRepository.findOne({
+      where: { awb: awbNumber },
+    });
+    if (failedShipment) {
+      this.notificationsService.sendNotification({
+        userId: failedShipment.merchantId,
+        shipmentId: failedShipment.id,
+        type: NotificationType.EMAIL,
+        title: 'Delivery Attempt Failed',
+        message: `Delivery attempt for shipment ${awbNumber} was unsuccessful.`,
+      }).catch(() => undefined);
+    }
 
     return {
       success: true,
@@ -336,7 +373,18 @@ export class RiderService {
 
     await this.shipmentRepository.save(shipment);
 
-    // TODO: Send RTO notification to merchant
+    const rtoShipment = await this.shipmentRepository.findOne({
+      where: { awb: awbNumber },
+    });
+    if (rtoShipment) {
+      this.notificationsService.sendNotification({
+        userId: rtoShipment.merchantId,
+        shipmentId: rtoShipment.id,
+        type: NotificationType.EMAIL,
+        title: 'RTO Initiated',
+        message: `Shipment ${awbNumber} has been marked for Return to Origin (RTO). Reason: ${reason}.`,
+      }).catch(() => undefined);
+    }
 
     return {
       success: true,
