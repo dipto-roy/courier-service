@@ -69,6 +69,57 @@ npm run dev
    - Backend API: http://localhost:3000
    - Frontend App: http://localhost:3001 (if using default Next.js port)
 
+### Running with Docker
+
+```bash
+cp .env.example .env
+```
+
+**Development** — source is bind-mounted and watched, so editing code does *not*
+require a rebuild. Only dependency changes (`package.json` / `package-lock.json`)
+do.
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+```
+
+**Production-style** — builds optimized images:
+
+```bash
+docker compose up --build
+```
+
+**Seed the database** (creates the test accounts) once the backend is healthy:
+
+```bash
+docker compose --profile tools run --rm migrate
+```
+
+#### Host ports
+
+Containers always talk to each other on internal ports (`postgres:5432`,
+`redis:6379`, `backend:3001`). Only the published host ports are configurable,
+so a locally installed PostgreSQL or Redis will not clash:
+
+| Service | Host port (default) | Override |
+|---|---|---|
+| PostgreSQL | 5433 | `POSTGRES_HOST_PORT` |
+| Redis | 6380 | `REDIS_HOST_PORT` |
+| Backend | 3001 | `BACKEND_HOST_PORT` |
+| Frontend | 3000 | `FRONTEND_HOST_PORT` |
+
+#### Schema management
+
+There is no schema-creating migration yet, so the schema is built by TypeORM
+`synchronize` (`DB_SYNCHRONIZE=true`). The migrations under
+`backend/src/migrations` only seed data, and TypeORM runs migrations *before*
+`synchronize` — which is why seeding is a separate `migrate` service rather than
+`migrationsRun`. Once real schema migrations exist, set `DB_SYNCHRONIZE=false`
+and `USE_MIGRATIONS=true`.
+
+> `NEXT_PUBLIC_*` values are inlined into the client bundle at build time. After
+> changing them, rebuild the frontend image — a restart alone has no effect.
+
 ## Git Workflow
 
 ### Branches

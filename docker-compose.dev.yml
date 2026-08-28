@@ -1,0 +1,43 @@
+# Development overlay — source is bind-mounted and watched, so editing code
+# does NOT require `docker compose build`. Only dependency changes
+# (package.json / package-lock.json) need a rebuild.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Build output (backend/dist, frontend/.next) is written into the bind mount
+# rather than an anonymous volume: `nest build` rmdir's dist on every rebuild,
+# which fails with EBUSY when dist is a mount point. Both paths are gitignored.
+# Containers run as the host UID/GID so those files stay owned by you.
+
+services:
+  backend:
+    build:
+      target: development
+    user: "${DOCKER_UID:-1000}:${DOCKER_GID:-1000}"
+    environment:
+      NODE_ENV: development
+      DB_SYNCHRONIZE: "true"
+      USE_MIGRATIONS: "true"
+      # Set to true if the host filesystem does not deliver inotify events
+      # (common on macOS/Windows bind mounts and some network shares).
+      CHOKIDAR_USEPOLLING: ${CHOKIDAR_USEPOLLING:-false}
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      target: development
+    user: "${DOCKER_UID:-1000}:${DOCKER_GID:-1000}"
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: ${WATCHPACK_POLLING:-false}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    # In dev the frontend only needs the backend process up, not a passing
+    # health check — otherwise a backend crash-loop blocks the UI entirely.
+    depends_on:
+      backend:
+        condition: service_started
