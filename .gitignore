@@ -2,6 +2,20 @@
 /backend/dist
 /backend/node_modules
 /backend/build
+# `tsc <file>.ts` ignores tsconfig.json, so outDir is skipped and the emit
+# lands next to the source instead of in dist/. Declarations and source maps
+# are never hand-written here, so they can be ignored wholesale; the .js
+# strays are listed by name because hand-written scripts share the directory.
+/backend/*.d.ts
+/backend/*.js.map
+/backend/scripts/*.d.ts
+/backend/scripts/*.js.map
+/backend/quick-websocket-test.js
+/backend/test-gps-tracking.js
+/backend/test-live-websocket.js
+/backend/test-notifications.js
+/backend/test-websocket.js
+/backend/scripts/export-swagger.js
 /frontend/dist
 /frontend/node_modules
 /frontend/build
