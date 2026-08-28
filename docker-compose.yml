@@ -47,6 +47,13 @@ services:
     restart: unless-stopped
     ports:
       - "${BACKEND_HOST_PORT:-3001}:3001"
+    # Supplies secrets that have no safe default (mail credentials, CSRF_SECRET,
+    # SMS/Pusher keys). Values here are overridden by `environment:` below, so
+    # the container-specific hosts set there still win over the host-oriented
+    # values in backend/.env. Optional so a fresh clone still comes up.
+    env_file:
+      - path: ./backend/.env
+        required: false
     environment:
       PORT: 3001
       NODE_ENV: production
@@ -72,9 +79,12 @@ services:
       JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION:-7d}
       EMAIL_HOST: ${EMAIL_HOST:-smtp.gmail.com}
       EMAIL_PORT: ${EMAIL_PORT:-587}
-      EMAIL_USER: ${EMAIL_USER:-}
-      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-}
       EMAIL_FROM: ${EMAIL_FROM:-FastX Courier <noreply@fastxcourier.com>}
+      # EMAIL_USER/EMAIL_PASSWORD are intentionally NOT listed here. A
+      # `${VAR:-}` default expands to an empty string, which counts as "set"
+      # and silently clobbers the value from env_file, leaving the mailer
+      # authenticating with empty credentials (Gmail: 535-5.7.8). They come
+      # from backend/.env, or from the real environment in CI/production.
       ALLOWED_ORIGINS: http://localhost:${FRONTEND_HOST_PORT:-3000}
     depends_on:
       postgres:

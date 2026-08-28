@@ -24,7 +24,12 @@ export class CsrfMiddleware implements NestMiddleware {
       '/api/csrf/token',
     ];
 
-    const isPublicPath = publicPaths.some((path) => req.path.startsWith(path));
+    // Use originalUrl: forRoutes('*') mounts this middleware on a wildcard
+    // route, so req.path is stripped to '/' and never matches publicPaths.
+    const requestPath = req.originalUrl.split('?')[0];
+    const isPublicPath = publicPaths.some((path) =>
+      requestPath.startsWith(path),
+    );
     const isGetRequest = ['GET', 'HEAD', 'OPTIONS'].includes(req.method);
 
     if (isPublicPath || isGetRequest) {

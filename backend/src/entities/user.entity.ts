@@ -15,21 +15,30 @@ import { Pickup } from './pickup.entity';
 import { RiderLocation } from './rider-location.entity';
 import { Transaction } from './transaction.entity';
 
+// email/phone uniqueness is scoped to live rows only. A plain UNIQUE constraint
+// would keep soft-deleted rows blocking the address forever, so signup after an
+// admin delete would pass the application check and then fail on a raw 23505.
 @Entity('users')
-@Index(['email'])
-@Index(['phone'])
+@Index('UQ_users_email_active', ['email'], {
+  unique: true,
+  where: '"deleted_at" IS NULL',
+})
+@Index('UQ_users_phone_active', ['phone'], {
+  unique: true,
+  where: '"deleted_at" IS NULL',
+})
 @Index(['role'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Column()
   name: string;
 
-  @Column({ unique: true })
+  @Column()
   phone: string;
 
   @Column()

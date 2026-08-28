@@ -1,8 +1,10 @@
 import {
   Injectable,
+  Logger,
   UnauthorizedException,
   BadRequestException,
   ConflictException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,8 +21,14 @@ import {
 } from '../../common/utils';
 import { EmailService } from '../notifications/email.service';
 
+const SECONDS_PER_MINUTE = 60;
+const DEFAULT_OTP_EXPIRATION_SECONDS = '300';
+const DEFAULT_OTP_LENGTH = '6';
+
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -29,17 +37,90 @@ export class AuthService {
     private readonly emailService: EmailService,
   ) {}
 
+  private getOtpLength(): number {
+    return parseInt(
+      this.configService.get('OTP_LENGTH') || DEFAULT_OTP_LENGTH,
+      10,
+    );
+  }
+
+  private getOtpExpirySeconds(): number {
+    return parseInt(
+      this.configService.get('OTP_EXPIRATION') ||
+        DEFAULT_OTP_EXPIRATION_SECONDS,
+      10,
+    );
+  }
+
+  /**
+   * Sends the OTP verification email.
+   * Returns false (and logs the cause) instead of throwing, so each caller
+   * decides whether a mail failure should block its flow.
+   */
+  private async sendOtpEmail(user: User, otpCode: string): Promise<boolean> {
+    try {
+      await this.emailService.sendEmail({
+        to: user.email,
+        subject: 'Verify Your FastX Courier Account',
+        template: 'otp-verification',
+        context: {
+          userName: user.name,
+          otp: otpCode,
+          expiryMinutes: Math.ceil(
+            this.getOtpExpirySeconds() / SECONDS_PER_MINUTE,
+          ),
+        },
+      });
+
+      this.logger.log(`OTP email sent to ${user.email}`);
+      return true;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `Failed to send OTP email to ${user.email}: ${message}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      return false;
+    }
+  }
+
+  /**
+   * Names the field that actually collided. The lookup is a single OR query, so
+   * without this the client cannot tell an email clash from a phone clash and
+   * keeps retrying with a new email while the phone stays duplicated.
+   */
+  private describeSignupConflict(
+    existingUser: User,
+    email: string,
+    phone: string,
+  ): string {
+    const emailTaken =
+      existingUser.email?.toLowerCase() === email.toLowerCase();
+    const phoneTaken = existingUser.phone === phone;
+
+    if (emailTaken && phoneTaken) {
+      return 'An account with this email and phone number already exists';
+    }
+
+    if (emailTaken) {
+      return 'An account with this email already exists';
+    }
+
+    return 'An account with this phone number already exists';
+  }
+
   async signup(signupDto: SignupDto) {
     const { email, phone, password, ...rest } = signupDto;
 
-    // Check if user already exists
+    // Soft-deleted rows are excluded here and by the partial unique indexes, so
+    // a deleted account's email/phone can be registered again.
     const existingUser = await this.userRepository.findOne({
       where: [{ email }, { phone }],
     });
 
     if (existingUser) {
       throw new ConflictException(
-        'User with this email or phone already exists',
+        this.describeSignupConflict(existingUser, email, phone),
       );
     }
 
@@ -47,10 +128,8 @@ export class AuthService {
     const hashedPassword = await hashPassword(password);
 
     // Generate OTP for email verification
-    const otpCode = generateOTP(6);
-    const otpExpiry = getOTPExpiry(
-      parseInt(this.configService.get('OTP_EXPIRATION') || '300'),
-    );
+    const otpCode = generateOTP(this.getOtpLength());
+    const otpExpiry = getOTPExpiry(this.getOtpExpirySeconds());
 
     // Create user
     const user = this.userRepository.create({
@@ -65,22 +144,9 @@ export class AuthService {
 
     await this.userRepository.save(user);
 
-    // Send OTP via email
-    try {
-      await this.emailService.sendEmail({
-        to: email,
-        subject: 'Verify Your FastX Courier Account',
-        template: 'otp-verification',
-        context: {
-          userName: user.name,
-          otp: otpCode,
-          expiryMinutes: 5,
-        },
-      });
-    } catch (error) {
-      // Log error but don't fail registration
-      console.error('Failed to send OTP email:', error.message);
-    }
+    // Send OTP via email. A mail failure must not fail registration, but the
+    // response has to report it so the client can prompt for a resend.
+    const otpSent = await this.sendOtpEmail(user, otpCode);
 
     // Generate tokens (user can access app but needs to verify)
     const tokens = await this.generateTokens(user);
@@ -90,8 +156,10 @@ export class AuthService {
     await this.userRepository.save(user);
 
     return {
-      message:
-        'User created successfully. Please verify your account with OTP.',
+      message: otpSent
+        ? 'User created successfully. Please verify your account with OTP.'
+        : 'User created successfully, but the verification email could not be sent. Please request a new OTP.',
+      otpSent,
       user: this.sanitizeUser(user),
       ...tokens,
     };
@@ -122,33 +190,20 @@ export class AuthService {
     // Check if user is verified
     if (!user.isVerified) {
       // Regenerate and send new OTP
-      const otpCode = generateOTP(6);
-      const otpExpiry = getOTPExpiry(
-        parseInt(this.configService.get('OTP_EXPIRATION') || '300'),
-      );
+      const otpCode = generateOTP(this.getOtpLength());
+      const otpExpiry = getOTPExpiry(this.getOtpExpirySeconds());
 
       user.otpCode = otpCode;
       user.otpExpiry = otpExpiry;
       await this.userRepository.save(user);
 
       // Send OTP via email
-      try {
-        await this.emailService.sendEmail({
-          to: user.email,
-          subject: 'Verify Your FastX Courier Account',
-          template: 'otp-verification',
-          context: {
-            userName: user.name,
-            otp: otpCode,
-            expiryMinutes: 5,
-          },
-        });
-      } catch (error) {
-        console.error('Failed to send OTP email:', error.message);
-      }
+      const otpSent = await this.sendOtpEmail(user, otpCode);
 
       throw new BadRequestException(
-        'Account not verified. A new OTP has been sent.',
+        otpSent
+          ? 'Account not verified. A new OTP has been sent.'
+          : 'Account not verified. The verification email could not be sent. Please request a new OTP.',
       );
     }
 
@@ -226,30 +281,21 @@ export class AuthService {
     }
 
     // Generate new OTP
-    const otpCode = generateOTP(6);
-    const otpExpiry = getOTPExpiry(
-      parseInt(this.configService.get('OTP_EXPIRATION') || '300'),
-    );
+    const otpCode = generateOTP(this.getOtpLength());
+    const otpExpiry = getOTPExpiry(this.getOtpExpirySeconds());
 
     user.otpCode = otpCode;
     user.otpExpiry = otpExpiry;
     await this.userRepository.save(user);
 
-    // Send OTP via email
-    try {
-      await this.emailService.sendEmail({
-        to: email,
-        subject: 'Verify Your FastX Courier Account',
-        template: 'otp-verification',
-        context: {
-          userName: user.name,
-          otp: otpCode,
-          expiryMinutes: 5,
-        },
-      });
-    } catch (error) {
-      console.error('Failed to send OTP email:', error.message);
-      throw new BadRequestException('Failed to send OTP. Please try again.');
+    // Send OTP via email. Sending is the whole point of this endpoint, so a
+    // failure here must surface as an error rather than a success response.
+    const otpSent = await this.sendOtpEmail(user, otpCode);
+
+    if (!otpSent) {
+      throw new ServiceUnavailableException(
+        'Failed to send OTP. Please try again.',
+      );
     }
 
     return {
