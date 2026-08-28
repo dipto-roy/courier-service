@@ -30,6 +30,7 @@ import { JwtAuthGuard } from './common/guards';
 import { HttpExceptionFilter } from './common/filters';
 import { LoggingInterceptor } from './common/interceptors';
 import { CsrfMiddleware } from './common/middleware/csrf.middleware';
+import { getDatabaseConfig } from './config/database.config';
 
 @Module({
   imports: [
@@ -39,17 +40,7 @@ import { CsrfMiddleware } from './common/middleware/csrf.middleware';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DATABASE_HOST'),
-        port: configService.get('DATABASE_PORT'),
-        username: configService.get('DATABASE_USER'),
-        password: configService.get('DATABASE_PASSWORD'),
-        database: configService.get('DATABASE_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('NODE_ENV') === 'development',
-        logging: configService.get('NODE_ENV') === 'development',
-      }),
+      useFactory: getDatabaseConfig,
       inject: [ConfigService],
     }),
     ThrottlerModule.forRoot([

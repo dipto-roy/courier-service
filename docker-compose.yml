@@ -1,17 +1,27 @@
+name: fastx-courier
+
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: courier_service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DATABASE_NAME:-courier_service}
+      POSTGRES_USER: ${DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      # Host port only — override POSTGRES_HOST_PORT in .env when a local
+      # PostgreSQL already owns 5432. Services inside the network always
+      # reach this container on postgres:5432 regardless of this mapping.
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DATABASE_USER:-postgres} -d ${DATABASE_NAME:-courier_service}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -20,7 +30,9 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "${REDIS_HOST_PORT:-6380}:6379"
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -31,17 +43,32 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: production
     restart: unless-stopped
     ports:
-      - "3001:3001"
+      - "${BACKEND_HOST_PORT:-3001}:3001"
+    # Supplies secrets that have no safe default (mail credentials, CSRF_SECRET,
+    # SMS/Pusher keys). Values here are overridden by `environment:` below, so
+    # the container-specific hosts set there still win over the host-oriented
+    # values in backend/.env. Optional so a fresh clone still comes up.
+    env_file:
+      - path: ./backend/.env
+        required: false
     environment:
       PORT: 3001
       NODE_ENV: production
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
-      DATABASE_NAME: courier_service
+      DATABASE_USER: ${DATABASE_USER:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      DATABASE_NAME: ${DATABASE_NAME:-courier_service}
+      # There is no schema-creating migration in src/migrations, so the schema
+      # comes from TypeORM synchronize. Set DB_SYNCHRONIZE=false and
+      # USE_MIGRATIONS=true once real schema migrations exist.
+      # Seed data is applied separately by the `migrate` service below,
+      # because TypeORM runs migrations before synchronize.
+      DB_SYNCHRONIZE: ${DB_SYNCHRONIZE:-true}
+      USE_MIGRATIONS: ${USE_MIGRATIONS:-false}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ""
@@ -52,30 +79,78 @@ services:
       JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION:-7d}
       EMAIL_HOST: ${EMAIL_HOST:-smtp.gmail.com}
       EMAIL_PORT: ${EMAIL_PORT:-587}
-      EMAIL_USER: ${EMAIL_USER:-}
-      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-}
       EMAIL_FROM: ${EMAIL_FROM:-FastX Courier <noreply@fastxcourier.com>}
-      ALLOWED_ORIGINS: http://localhost:3000
+      # EMAIL_USER/EMAIL_PASSWORD are intentionally NOT listed here. A
+      # `${VAR:-}` default expands to an empty string, which counts as "set"
+      # and silently clobbers the value from env_file, leaving the mailer
+      # authenticating with empty credentials (Gmail: 535-5.7.8). They come
+      # from backend/.env, or from the real environment in CI/production.
+      ALLOWED_ORIGINS: http://localhost:${FRONTEND_HOST_PORT:-3000}
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # One-shot seeder. Not started by `up` — it lives behind a profile:
+  #   docker compose --profile tools run --rm migrate
+  # Uses the development target because data-source.ts resolves migrations
+  # from src/ and needs ts-node, which the production image omits.
+  migrate:
+    profiles: ["tools"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    command: ["npm", "run", "migration:run"]
+    environment:
+      NODE_ENV: development
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${DATABASE_USER:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      DATABASE_NAME: ${DATABASE_NAME:-courier_service}
+    depends_on:
+      backend:
         condition: service_healthy
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: runner
+      # NEXT_PUBLIC_* is baked into the client bundle at build time. Changing
+      # these requires a rebuild of the frontend image, not just a restart.
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_HOST_PORT:-3001}/api
+        NEXT_PUBLIC_SOCKET_URL: http://localhost:${BACKEND_HOST_PORT:-3001}
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-FastX Courier}
+        NEXT_PUBLIC_ENABLE_NOTIFICATIONS: ${NEXT_PUBLIC_ENABLE_NOTIFICATIONS:-true}
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${FRONTEND_HOST_PORT:-3000}:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:3001/api
-      NEXT_PUBLIC_SOCKET_URL: http://localhost:3001
-      NEXT_PUBLIC_APP_NAME: FastX Courier
-      NEXT_PUBLIC_ENABLE_NOTIFICATIONS: "true"
+      # Server-side rendering reads these at runtime.
+      NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_HOST_PORT:-3001}/api
+      NEXT_PUBLIC_SOCKET_URL: http://localhost:${BACKEND_HOST_PORT:-3001}
+      NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-FastX Courier}
+      NEXT_PUBLIC_ENABLE_NOTIFICATIONS: ${NEXT_PUBLIC_ENABLE_NOTIFICATIONS:-true}
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
 volumes:
   postgres_data:
+  redis_data:

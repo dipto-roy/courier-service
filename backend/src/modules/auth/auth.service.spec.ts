@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ConflictException,
   BadRequestException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -118,6 +119,69 @@ describe('AuthService', () => {
         ConflictException,
       );
     });
+
+    it('names the email when only the email collides', async () => {
+      userRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        phone: '+8809999999999',
+      });
+
+      await expect(service.signup(signupDto as any)).rejects.toThrow(
+        'An account with this email already exists',
+      );
+    });
+
+    it('names the phone when only the phone collides', async () => {
+      userRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        email: 'someone-else@example.com',
+      });
+
+      await expect(service.signup(signupDto as any)).rejects.toThrow(
+        'An account with this phone number already exists',
+      );
+    });
+
+    it('names both fields when email and phone collide', async () => {
+      userRepository.findOne.mockResolvedValueOnce(mockUser);
+
+      await expect(service.signup(signupDto as any)).rejects.toThrow(
+        'An account with this email and phone number already exists',
+      );
+    });
+
+    it('matches an existing email case-insensitively', async () => {
+      userRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        email: 'TEST@EXAMPLE.COM',
+        phone: '+8809999999999',
+      });
+
+      await expect(service.signup(signupDto as any)).rejects.toThrow(
+        'An account with this email already exists',
+      );
+    });
+
+    it('reports otpSent true when the OTP email is delivered', async () => {
+      userRepository.findOne.mockResolvedValueOnce(null);
+
+      const result = await service.signup(signupDto as any);
+
+      expect(result.otpSent).toBe(true);
+      expect(result.message).toContain('Please verify your account with OTP');
+    });
+
+    it('still creates the user but reports otpSent false when email sending fails', async () => {
+      userRepository.findOne.mockResolvedValueOnce(null);
+      emailService.sendEmail.mockRejectedValueOnce(new Error('SMTP EAUTH'));
+
+      const result = await service.signup(signupDto as any);
+
+      expect(userRepository.save).toHaveBeenCalled();
+      expect(result).toHaveProperty('accessToken');
+      expect(result.otpSent).toBe(false);
+      expect(result.message).toContain('could not be sent');
+    });
   });
 
   describe('login', () => {
@@ -163,6 +227,47 @@ describe('AuthService', () => {
       await expect(service.login(loginDto)).rejects.toThrow(
         BadRequestException,
       );
+      expect(emailService.sendEmail).toHaveBeenCalled();
+    });
+  });
+
+  describe('OTP email failures', () => {
+    it('login reports the delivery failure instead of claiming an OTP was sent', async () => {
+      userRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        isVerified: false,
+      });
+      emailService.sendEmail.mockRejectedValueOnce(new Error('SMTP EAUTH'));
+
+      await expect(
+        service.login({
+          email: mockUser.email,
+          password: 'password123',
+        } as any),
+      ).rejects.toThrow(/could not be sent/);
+    });
+
+    it('resendOtp throws ServiceUnavailableException when email sending fails', async () => {
+      userRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        isVerified: false,
+      });
+      emailService.sendEmail.mockRejectedValueOnce(new Error('SMTP EAUTH'));
+
+      await expect(service.resendOtp(mockUser.email as string)).rejects.toThrow(
+        ServiceUnavailableException,
+      );
+    });
+
+    it('resendOtp succeeds when email sending works', async () => {
+      userRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        isVerified: false,
+      });
+
+      const result = await service.resendOtp(mockUser.email as string);
+
+      expect(result.message).toBe('OTP sent successfully');
       expect(emailService.sendEmail).toHaveBeenCalled();
     });
   });

@@ -2,11 +2,22 @@ import {
   IsEmail,
   IsString,
   MinLength,
-  IsEnum,
+  IsIn,
   IsOptional,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '../../../common/enums';
+
+/**
+ * Roles a stranger may claim on the public signup endpoint. Staff roles
+ * (ADMIN, AGENT, HUB_STAFF, FINANCE, SUPPORT) are provisioned by an admin —
+ * accepting the whole UserRole enum here would let anyone self-register as one.
+ */
+export const PUBLIC_SIGNUP_ROLES: readonly UserRole[] = [
+  UserRole.CUSTOMER,
+  UserRole.MERCHANT,
+  UserRole.RIDER,
+];
 
 export class SignupDto {
   @ApiProperty({ example: 'John Doe' })
@@ -26,9 +37,14 @@ export class SignupDto {
   @MinLength(8)
   password: string;
 
-  @ApiPropertyOptional({ enum: UserRole, default: UserRole.CUSTOMER })
+  @ApiPropertyOptional({
+    enum: PUBLIC_SIGNUP_ROLES,
+    default: UserRole.CUSTOMER,
+  })
   @IsOptional()
-  @IsEnum(UserRole)
+  @IsIn(PUBLIC_SIGNUP_ROLES, {
+    message: `role must be one of: ${PUBLIC_SIGNUP_ROLES.join(', ')}`,
+  })
   role?: UserRole;
 
   @ApiPropertyOptional({ example: 'Dhaka' })
